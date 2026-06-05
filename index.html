@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Julie Cheung — Portfolio</title>
+<style>
+  /* =====================================================================
+     SELF-HOSTED FONTS
+     Drop the licensed .woff2 files into a /fonts folder next to index.html.
+     Until you do, the site falls back to the system fonts in the stacks below
+     (Georgia / system sans) and still looks fine.
+     NOTE: the "Test ..." names in the Figma export are TRIAL fonts and are not
+     licensed for a live site — buy the webfont license and use those files here.
+     ===================================================================== */
+  @font-face {
+    font-family: "Martina Plantijn";
+    src: url("fonts/MartinaPlantijn-Regular.woff2") format("woff2");
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Martina Plantijn";
+    src: url("fonts/MartinaPlantijn-Medium.woff2") format("woff2");
+    font-weight: 500; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Geograph";
+    src: url("fonts/Geograph-Regular.woff2") format("woff2");
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  /* =====================================================================
+     DESIGN TOKENS  (extracted 1:1 from the Figma file "Vibe Code")
+     ===================================================================== */
+  :root {
+    /* Colors */
+    --bg-start:  #F4F0E7;   /* gradient top    */
+    --bg-end:    #E3D3C5;   /* gradient bottom */
+    --ink-hero:  #222824;   /* hero headline   */
+    --ink-nav:   #1F2220;   /* logo + nav links*/
+    --ink-icon:  #363636;   /* hamburger lines */
+
+    /* Type families.
+       These are the exact family names used in Figma (trial fonts).
+       Upload the licensed font files to Webflow under these names and the
+       site will match the mockup pixel-for-pixel. Fallbacks below keep it
+       looking right until then. */
+    --serif: "Test Martina Plantijn", "Martina Plantijn", Georgia, "Times New Roman", serif;
+    --sans:  "Test Geograph", "Geograph", -apple-system, "Helvetica Neue", Arial, sans-serif;
+
+    /* Layout */
+    --content-width: 1136px;
+    --nav-h: 89px;          /* nav block height; used to make nav + hero = 100vh */
+  }
+
+  /* =====================================================================
+     RESET / BASE
+     ===================================================================== */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink-nav);
+    background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Full-page color layer: fades the WHOLE viewport to #D9BDA3 once scrolled to
+     the next section, so there's no seam between sections. z-index: -1 keeps it
+     above the page gradient but behind all content. */
+  .bg-overlay {
+    position: fixed;
+    inset: 0;
+    background: #D9BDA3;
+    opacity: 0;
+    transition: opacity .5s ease;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .bg-overlay.is-active { opacity: 1; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; height: auto; }
+
+  /* Centered content rail fixed at 1136px with no L/R padding.
+     The hero text's 40px left inset is handled directly on .text-hero via left: 40px. */
+  .container {
+    width: 100%;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* =====================================================================
+     NAVIGATION  (Figma: Div_Nav_D / _T / _M)
+     ===================================================================== */
+  .div-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 40px;     /* Figma stackPaddingTop    */
+    padding-bottom: 24px;  /* Figma stackPaddingBottom */
+  }
+
+  /* Desktop only: keep the nav items off the screen edge on narrower desktop
+     widths (992-1136px), where the centered rail has no L/R padding. */
+  @media (min-width: 992px) {
+    .div-nav { padding-left: 24px; padding-right: 24px; }
+  }
+
+  .logo {                                   /* Figma: Logo */
+    font-family: var(--serif);
+    font-weight: 500;                       /* Martina Plantijn Medium */
+    font-size: 25px;
+    line-height: 1;
+    color: var(--ink-nav);
+    white-space: nowrap;
+  }
+
+  .nav-links {                              /* Figma: Frame 74 */
+    display: flex;
+    align-items: center;
+    gap: 48px;                              /* Figma stackSpacing */
+  }
+  .nav-links a {
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1;                         /* Figma 100% */
+    color: var(--ink-nav);
+    position: relative;
+    transition: opacity .2s ease;
+  }
+  /* subtle editorial underline on hover */
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -4px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s ease;
+  }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* Hamburger — hidden until mobile (Figma: Group 97, 3 strokes) */
+  .nav-toggle {
+    display: none;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-toggle .bars {
+    display: block;
+    width: 28px;
+    height: 16px;
+    position: relative;
+  }
+  .nav-toggle .bars span {
+    position: absolute;
+    left: 0;
+    width: 28px;
+    height: 2px;
+    background: var(--ink-icon);
+    border-radius: 2px;
+  }
+  .nav-toggle .bars span:nth-child(1) { top: 0; }
+  .nav-toggle .bars span:nth-child(2) { top: 7px; }
+  .nav-toggle .bars span:nth-child(3) { top: 14px; }
+
+  /* =====================================================================
+     HERO  (Figma: Div_Hero_D / _T / Div_Hero)
+     ===================================================================== */
+  .div-hero {
+    position: relative;                     /* anchor for the overlapping text */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;              /* illustration sits on the right */
+    /* Fill the viewport below the 89px nav so the hero centers vertically. */
+    min-height: calc(100vh - var(--nav-h)); /* nav + hero fill the viewport; hero stays centered */
+  }
+
+  .text-hero {                              /* Figma: Text_Hero */
+    /* Fixed width so it never re-wraps as the page narrows; it overlaps the
+       illustration on its way down to the 991px breakpoint (req #4). */
+    position: absolute;
+    left: 64px;                             /* 64px left inset */
+    top: 50%;
+    transform: translateY(calc(-50% - 76px)); /* centered, lifted 76px (earlier +40, then +16 more) */
+    width: 540px;
+    max-width: 540px;
+    z-index: 2;                             /* text stays on top of the illustration */
+  }
+  .text-hero h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 400;                       /* Martina Plantijn Regular */
+    font-size: 46px;
+    line-height: 1.15;                      /* Figma lineHeight 1.15 RAW */
+    color: var(--ink-hero);
+  }
+
+  /* Accent words ("thoughtful", "intuitive"): #e0512f, italic */
+  .accent {
+    color: #e0512f;
+    font-style: italic;
+  }
+
+  .art-hero {                               /* Figma: Art_Hero */
+    flex: 0 0 614px;
+    width: 614px;
+    max-width: 614px;
+    transform: translateY(-20px);           /* match the 20px optical lift (req #3) */
+    z-index: 1;
+  }
+  .art-hero img { width: 100%; }
+
+  /* =====================================================================
+     TABLET  — Figma "Tablet - 600" frame (Webflow Tablet breakpoint)
+     Hero stacks: illustration on top, text below. Nav links stay visible.
+     ===================================================================== */
+  @media (max-width: 991px) {               /* desktop → tablet at Webflow's native 991px breakpoint (req #1) */
+    .container { padding-left: 24px; padding-right: 24px; }   /* 24px L/R margin (req #3) */
+
+    .div-hero {
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 40px;
+      min-height: 0;                        /* cancel the desktop full-height centering */
+      padding-bottom: 56px;
+    }
+    .art-hero  { order: 1; width: 100%; max-width: 552px; flex: 0 0 auto; transform: none; }
+    /* Text_Hero drops back into flow, full width, centered (req #3, also covers mobile req #4) */
+    .text-hero {
+      order: 2;
+      position: static;
+      left: auto;
+      top: auto;
+      transform: none;
+      width: 100%;
+      max-width: 100%;
+      text-align: center;
+    }
+  }
+
+  /* =====================================================================
+     MOBILE  — Figma "Mobile - 479px" frame (Webflow Mobile Portrait)
+     Headline shrinks to 34px, hamburger replaces the links.
+     ===================================================================== */
+  @media (max-width: 479px) {
+    .div-nav {
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
+    .nav-links { display: none; }           /* collapsed into menu */
+    .nav-toggle { display: inline-flex; }
+
+    /* dropdown panel when menu is open */
+    .nav-links.open {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: absolute;
+      top: 80px;
+      left: 0;
+      right: 0;
+      padding: 24px;
+      background: var(--bg-start);
+      box-shadow: 0 12px 24px rgba(34, 40, 36, .08);
+      z-index: 20;
+    }
+
+    .div-hero {
+      padding-bottom: 48px;
+      gap: 40px;
+    }
+    .art-hero  { width: 100%; max-width: 100%; }
+    .text-hero { width: 100%; max-width: 100%; }
+    .text-hero h1 { font-size: 34px; }      /* Figma mobile headline */
+  }
+
+  /* =====================================================================
+     STICKY HEADER + SCROLL BEHAVIOR (added)
+     Sticks to the top; fades UP and out on scroll-down; slides back on scroll-up.
+     ===================================================================== */
+  .div-nav-section {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: transparent;                /* no background at the very top of the page */
+    transition: transform .35s ease, opacity .35s ease, background-color .35s ease;
+    will-change: transform, opacity;
+  }
+  .div-nav-section.nav-solid {
+    background: var(--bg-start);            /* background appears once scrolled away from the top */
+  }
+  .div-nav-section.nav-hidden {
+    transform: translateY(-100%);           /* fades up out of view */
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* =====================================================================
+     NEXT SECTION placeholder (added) — simulates the page continuing 1000px down
+     ===================================================================== */
+  .next-section {
+    min-height: 1000px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 96px;
+    background: transparent;   /* page color is handled by the full-page .bg-overlay */
+  }
+  .next-section p {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 24px;
+    color: var(--ink-hero);
+    opacity: .45;
+  }
+</style>
+</head>
+<body>
+  <!-- Full-page color layer (fades the whole viewport to #D9BDA3 on scroll) -->
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <!-- ================= NAVIGATION ================= -->
+  <header class="div-nav-section">
+    <nav class="div-nav container" aria-label="Primary">
+      <a class="logo" href="#">Julie Cheung</a>
+
+      <div class="nav-links" id="navLinks">
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <span class="bars" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ================= HERO ================= -->
+  <main>
+    <section class="div-hero container" aria-label="Intro">
+      <div class="text-hero">
+        <h1>Julie brings 15 years of experience turning complexity into <span class="accent">thoughtful</span> and <span class="accent">intuitive</span> design</h1>
+      </div>
+      <div class="art-hero">
+        <img src="images/Art_Hero_Big.png" alt="Illustration of Julie holding flowers, standing on a path among trees" />
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= NEXT SECTION (placeholder, +1000px) ================= -->
+  <section class="next-section" aria-label="Next section">
+    <p>Next section</p>
+  </section>
+
+  <script>
+    // Mobile menu toggle (only relevant at the mobile breakpoint)
+    var toggle = document.getElementById('navToggle');
+    var links  = document.getElementById('navLinks');
+    toggle.addEventListener('click', function () {
+      var open = links.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    });
+
+    // Hide the header on scroll-down, reveal it on scroll-up (stays sticky).
+    (function () {
+      var header = document.querySelector('.div-nav-section');
+      var lastY  = window.pageYOffset;
+      var navH   = header.offsetHeight;
+      var ticking = false;
+
+      function update() {
+        var y = window.pageYOffset;
+
+        // Background: transparent at the very top, solid once scrolled away from it.
+        if (y > 10) { header.classList.add('nav-solid'); }
+        else        { header.classList.remove('nav-solid'); }
+
+        if (y > lastY && y > navH) {
+          header.classList.add('nav-hidden');      // scrolling down
+        } else if (y < lastY) {
+          header.classList.remove('nav-hidden');   // scrolling up
+        }
+        lastY = y < 0 ? 0 : y;
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', function () {
+        if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+      }, { passive: true });
+    })();
+
+    // Animate the next section's background to #D9BDA3 when it scrolls into
+    // view, and back out when it leaves. Fires once per crossing, so it reads
+    // as a deliberate color change rather than a scroll-linked fade.
+    (function () {
+      var section = document.querySelector('.next-section');
+      var overlay = document.querySelector('.bg-overlay');
+      if (!section || !overlay) { return; }
+      if (!('IntersectionObserver' in window)) { overlay.classList.add('is-active'); return; }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          overlay.classList.toggle('is-active', entry.isIntersecting);
+        });
+      }, { rootMargin: '0px 0px -40% 0px', threshold: 0 });
+      io.observe(section);
+    })();
+  </script>
+</body>
+</html>

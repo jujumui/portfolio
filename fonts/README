@@ -1,0 +1,13 @@
+Drop the licensed webfont files into this folder. Required filenames (must match exactly):
+
+  MartinaPlantijn-Regular.woff2   — Martina Plantijn, weight 400
+  MartinaPlantijn-Medium.woff2    — Martina Plantijn, weight 500
+  Geograph-Regular.woff2          — Geograph, weight 400
+
+These filenames are referenced directly in the @font-face rules in index.html.
+Until the files are present, the site falls back gracefully to Georgia (serif) and
+system sans-serif fonts and still looks fine.
+
+NOTE: The "Test Martina Plantijn" / "Test Geograph" names in the original Figma
+export are TRIAL fonts and are NOT licensed for production use. Purchase the full
+webfont licenses before deploying.

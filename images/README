@@ -1,0 +1,6 @@
+Add Art_Hero_Big.png to this folder.
+
+This image is referenced from the hero section in index.html as:
+  src="images/Art_Hero_Big.png"
+
+Until the file is added, the hero illustration will show as a broken image — that is expected.
