@@ -218,33 +218,37 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* "Select Projects" heading image */
 .projects-heading {
-  margin-bottom: 48px;
+  margin-bottom: 24px;
 }
 .projects-heading img {
-  height: 56px;
-  width: auto;
+  width: 433px;
+  height: auto;
+}
+
+/* White card containing all project rows */
+.projects-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 72px 80px;
 }
 
 /* Individual project row */
 .project-row {
   display: flex;
   align-items: flex-start;
-  gap: 48px; /* Change 5: 48px between image and text */
-  padding-top: 40px;
-  padding-bottom: 40px;
-  border-top: 1px solid rgba(34, 40, 36, 0.15);
+  gap: 48px;
+  margin-bottom: 56px;
 }
 .project-row:last-child {
-  border-bottom: 1px solid rgba(34, 40, 36, 0.15);
+  margin-bottom: 0;
 }
 
-/* Project image — fixed width, image retains size, text wraps */
+/* Project image */
 .project-img {
-  flex: 0 0 500px; /* Change 4+5: image keeps its width, text wraps */
-  width: 500px;
+  flex: 0 0 320px;
+  width: 320px;
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(34, 40, 36, 0.10), 0 1px 4px rgba(34, 40, 36, 0.06);
 }
 .project-img img {
   width: 100%;
@@ -254,12 +258,11 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* Coming Soon placeholder */
 .project-img-placeholder {
-  flex: 0 0 500px;
-  width: 500px;
-  height: 313px;
+  flex: 0 0 320px;
+  width: 320px;
+  height: 200px;
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(34, 40, 36, 0.10), 0 1px 4px rgba(34, 40, 36, 0.06);
 }
 .project-img-placeholder img {
   width: 100%;
@@ -274,22 +277,11 @@ img { display: block; max-width: 100%; height: auto; }
   padding-top: 8px;
 }
 
-.project-company {
-  font-family: var(--sans);
-  font-weight: 400;
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-hero);
-  opacity: 0.5;
-  margin: 0 0 12px 0;
-}
-
 .project-title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: 32px;
-  line-height: 1.15;
+  font-size: 40px;
+  line-height: 1.1;
   color: var(--ink-hero);
   margin: 0 0 16px 0;
 }
@@ -300,21 +292,19 @@ img { display: block; max-width: 100%; height: auto; }
   font-size: 15px;
   line-height: 1.65;
   color: var(--ink-hero);
-  opacity: 0.75;
-  margin: 0 0 24px 0;
+  margin: 0 0 20px 0;
 }
 
 .project-link {
   font-family: var(--sans);
   font-weight: 400;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink-hero);
   text-decoration: underline;
   text-underline-offset: 3px;
-  opacity: 0.6;
   transition: opacity .2s ease;
 }
-.project-link:hover { opacity: 1; }
+.project-link:hover { opacity: 0.6; }
 
 /* =====================================================================
    STICKY HEADER + SCROLL BEHAVIOR
@@ -363,6 +353,7 @@ img { display: block; max-width: 100%; height: auto; }
   }
 
   /* Projects: stack image over text on tablet */
+  .projects-card { padding: 40px 32px; }
   .project-row {
     flex-direction: column;
     gap: 24px;
@@ -374,7 +365,7 @@ img { display: block; max-width: 100%; height: auto; }
     height: auto;
   }
   .project-img-placeholder {
-    height: 240px;
+    height: 200px;
   }
 }
 
@@ -403,8 +394,9 @@ img { display: block; max-width: 100%; height: auto; }
   .text-hero { width: 100%; max-width: 100%; }
   .text-hero h1 { font-size: 34px; }
 
-  .project-title { font-size: 24px; }
+  .project-title { font-size: 28px; }
   .projects-section { padding-top: 56px; padding-bottom: 80px; }
+  .projects-card { padding: 32px 20px; }
 }
 </style>
 </head>
@@ -449,57 +441,58 @@ img { display: block; max-width: 100%; height: auto; }
       <img src="images/select-projects-heading.png" alt="Select Projects" />
     </div>
 
-    <!-- DoorDash -->
-    <div class="project-row">
-      <div class="project-img-placeholder">
-        <img src="images/doordash.png" alt="DoorDash project — coming soon" />
-      </div>
-      <div class="project-text">
-        <p class="project-company">DoorDash</p>
-        <h2 class="project-title">DoorDash</h2>
-        <p class="project-desc">Led the product design platform for the DoorDash merchant team. I partnered closely with engineers, PMs, and data scientists to ship features that helped millions of merchants grow their business.</p>
-        <a class="project-link" href="#">Read more</a>
-      </div>
-    </div>
+    <!-- White card -->
+    <div class="projects-card">
 
-    <!-- Faire -->
-    <div class="project-row">
-      <div class="project-img">
-        <img src="images/faire.png" alt="Faire project screenshot" />
+      <!-- DoorDash -->
+      <div class="project-row">
+        <div class="project-img-placeholder">
+          <img src="images/doordash.png" alt="DoorDash project — coming soon" />
+        </div>
+        <div class="project-text">
+          <h2 class="project-title">DoorDash</h2>
+          <p class="project-desc">On the Digital Commerce Platform (new bets) team, I launched multiple 0→1 products to build new lines of business.</p>
+          <a class="project-link" href="#">Read case study</a>
+        </div>
       </div>
-      <div class="project-text">
-        <p class="project-company">Faire</p>
-        <h2 class="project-title">Faire</h2>
-        <p class="project-desc">At Faire, I focused on brand and retail design — developing a brand identity through visual design and creating a cohesive experience across various products. I also helped to define and scale a design system.</p>
-        <a class="project-link" href="#">Read more</a>
-      </div>
-    </div>
 
-    <!-- BigCommerce -->
-    <div class="project-row">
-      <div class="project-img">
-        <img src="images/bigcommerce.png" alt="BigCommerce project screenshot" />
+      <!-- Faire -->
+      <div class="project-row">
+        <div class="project-img">
+          <img src="images/faire.png" alt="Faire project screenshot" />
+        </div>
+        <div class="project-text">
+          <h2 class="project-title">Faire</h2>
+          <p class="project-desc">On the Faire Direct team, I owned design vision and strategy, and launched various experiments to help brands deepen retailer partnerships.</p>
+          <a class="project-link" href="#">Read case study</a>
+        </div>
       </div>
-      <div class="project-text">
-        <p class="project-company">BigCommerce</p>
-        <h2 class="project-title">BigCommerce</h2>
-        <p class="project-desc">At BigCommerce I led experience design for merchant tools and high-growth features. I worked as lead designer and design lead, shaping product vision and execution across a team of designers.</p>
-        <a class="project-link" href="#">Read more</a>
-      </div>
-    </div>
 
-    <!-- Trail575 -->
-    <div class="project-row">
-      <div class="project-img">
-        <img src="images/trail575.png" alt="Trail575 project photo" />
+      <!-- BigCommerce -->
+      <div class="project-row">
+        <div class="project-img">
+          <img src="images/bigcommerce.png" alt="BigCommerce project screenshot" />
+        </div>
+        <div class="project-text">
+          <h2 class="project-title">BigCommerce</h2>
+          <p class="project-desc">On the Merchandising team, I drove design strategy and launched Page Builder, a 0→1 product that empowers brands to design eCommerce stores without code.</p>
+          <a class="project-link" href="#">Read case study</a>
+        </div>
       </div>
-      <div class="project-text">
-        <p class="project-company">Trail575</p>
-        <h2 class="project-title">Trail575</h2>
-        <p class="project-desc">Trail575 is a 100% natural, soy-based candle brand I co-founded that weaves trail stories into each scent. I led brand design, packaging, and the end-to-end e-commerce experience — from identity to shelf to checkout.</p>
-        <a class="project-link" href="#">Read more</a>
+
+      <!-- Trail575 -->
+      <div class="project-row">
+        <div class="project-img">
+          <img src="images/trail575.png" alt="Trail575 project photo" />
+        </div>
+        <div class="project-text">
+          <h2 class="project-title">Trail575</h2>
+          <p class="project-desc">I founded Trail575, an artisanal DTC candle brand built from the ground up. Handled everything from brand identity and packaging design to sales and fulfillment.</p>
+          <a class="project-link" href="#">Read case study</a>
+        </div>
       </div>
-    </div>
+
+    </div><!-- /projects-card -->
 
   </div>
 </section>
