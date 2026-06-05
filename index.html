@@ -229,15 +229,16 @@ img { display: block; max-width: 100%; height: auto; }
 .projects-card {
   background: #ffffff;
   border-radius: 8px;
-  padding: 72px 80px;
+  padding: 60px 80px;
+  box-shadow: 0 2px 24px rgba(34, 40, 36, 0.08);
 }
 
 /* Individual project row */
 .project-row {
   display: flex;
   align-items: flex-start;
-  gap: 48px;
-  margin-bottom: 56px;
+  gap: 56px;
+  margin-bottom: 64px;
 }
 .project-row:last-child {
   margin-bottom: 0;
@@ -260,7 +261,7 @@ img { display: block; max-width: 100%; height: auto; }
 .project-img-placeholder {
   flex: 0 0 320px;
   width: 320px;
-  height: 200px;
+  height: 204px;
   border-radius: 6px;
   overflow: hidden;
 }
@@ -280,31 +281,32 @@ img { display: block; max-width: 100%; height: auto; }
 .project-title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: 40px;
+  font-size: 44px;
   line-height: 1.1;
   color: var(--ink-hero);
-  margin: 0 0 16px 0;
+  margin: 0 0 12px 0;
 }
 
 .project-desc {
   font-family: var(--sans);
   font-weight: 400;
   font-size: 15px;
-  line-height: 1.65;
+  line-height: 1.7;
   color: var(--ink-hero);
-  margin: 0 0 20px 0;
+  opacity: 0.75;
+  margin: 0 0 16px 0;
 }
 
 .project-link {
   font-family: var(--sans);
   font-weight: 400;
-  font-size: 15px;
+  font-size: 13px;
   color: var(--ink-hero);
   text-decoration: underline;
   text-underline-offset: 3px;
   transition: opacity .2s ease;
 }
-.project-link:hover { opacity: 0.6; }
+.project-link:hover { opacity: 0.5; }
 
 /* =====================================================================
    STICKY HEADER + SCROLL BEHAVIOR
