@@ -524,12 +524,13 @@ img { display: block; max-width: 100%; height: auto; }
 </section>
 
 <script>
-// Hero h1 line-reveal animation
+// Hero h1 word-reveal animation
 (function () {
   var h1 = document.querySelector('.text-hero h1');
   if (!h1) return;
 
-  // Split text nodes into per-word spans, preserve element nodes (.accent)
+  // Walk child nodes, splitting text nodes into per-word spans
+  // while preserving element nodes (e.g. .accent spans) intact.
   var nodes = Array.prototype.slice.call(h1.childNodes);
   var words = [];
 
@@ -542,7 +543,7 @@ img { display: block; max-width: 100%; height: auto; }
           frag.appendChild(document.createTextNode(part));
         } else if (part.length) {
           var s = document.createElement('span');
-          s.style.display = 'inline-block';
+          s.className = 'word-reveal';
           s.textContent = part;
           words.push(s);
           frag.appendChild(s);
@@ -550,45 +551,27 @@ img { display: block; max-width: 100%; height: auto; }
       });
       h1.replaceChild(frag, node);
     } else if (node.nodeType === Node.ELEMENT_NODE) {
-      node.style.display = 'inline-block';
+      // Wrap the whole accent span as a single animated unit
+      node.classList.add('word-reveal');
       words.push(node);
     }
   });
 
-  // Group words into lines by their top offset, then wrap each line
-  // in a span so the whole line fades as one unit.
-  var lines = [];
+  // Set initial invisible state via inline style (no FOUC)
   words.forEach(function (w) {
-    var top = w.getBoundingClientRect().top;
-    var last = lines[lines.length - 1];
-    if (!last || Math.abs(top - last.top) > 4) {
-      lines.push({ top: top, els: [w] });
-    } else {
-      last.els.push(w);
-    }
+    w.style.opacity = '0';
+    w.style.transition = 'none';
   });
 
-  // Wrap each line group in a single animatable span
-  var lineSpans = lines.map(function (line) {
-    var wrapper = document.createElement('span');
-    wrapper.style.display = 'inline';
-    wrapper.style.opacity = '0';
-    wrapper.style.transition = 'none';
-    var first = line.els[0];
-    first.parentNode.insertBefore(wrapper, first);
-    line.els.forEach(function (el) { wrapper.appendChild(el); });
-    return wrapper;
-  });
-
-  var delay = 300;    // ms between each line
-  var duration = 500; // ms fade duration
+  var delay = 60;   // ms between each word
+  var duration = 400; // ms fade duration
 
   requestAnimationFrame(function () {
     requestAnimationFrame(function () {
-      lineSpans.forEach(function (span, i) {
+      words.forEach(function (w, i) {
         setTimeout(function () {
-          span.style.transition = 'opacity ' + duration + 'ms ease';
-          span.style.opacity = '1';
+          w.style.transition = 'opacity ' + duration + 'ms ease';
+          w.style.opacity = '1';
         }, i * delay);
       });
     });
