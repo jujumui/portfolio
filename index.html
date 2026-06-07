@@ -176,6 +176,11 @@ img { display: block; max-width: 100%; height: auto; }
   z-index: 2;
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-7px); }
+}
+
 .text-hero h1 {
   margin: 0;
   font-family: var(--serif);
@@ -183,6 +188,7 @@ img { display: block; max-width: 100%; height: auto; }
   font-size: 46px;
   line-height: 1.15;
   color: var(--ink-hero);
+  animation: float 4.5s ease-in-out infinite;
 }
 
 .accent {
