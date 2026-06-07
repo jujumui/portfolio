@@ -177,7 +177,7 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
+  from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -188,7 +188,12 @@ img { display: block; max-width: 100%; height: auto; }
   font-size: 46px;
   line-height: 1.15;
   color: var(--ink-hero);
-  animation: fadeUp 700ms ease forwards;
+}
+
+.text-hero h1 .line {
+  display: block;
+  opacity: 0;
+  animation: fadeUp 650ms ease forwards;
 }
 
 .accent {
@@ -530,6 +535,59 @@ img { display: block; max-width: 100%; height: auto; }
 </section>
 
 <script>
+// Hero h1 line-by-line fade-up
+(function () {
+  var h1 = document.querySelector('.text-hero h1');
+  if (!h1) return;
+
+  // Split text nodes into word spans, keep element nodes (.accent) intact
+  var nodes = Array.prototype.slice.call(h1.childNodes);
+  var words = [];
+  nodes.forEach(function (node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      var parts = node.textContent.split(/(\s+)/);
+      var frag = document.createDocumentFragment();
+      parts.forEach(function (part) {
+        if (/^\s+$/.test(part)) {
+          frag.appendChild(document.createTextNode(part));
+        } else if (part.length) {
+          var s = document.createElement('span');
+          s.style.display = 'inline-block';
+          s.textContent = part;
+          words.push(s);
+          frag.appendChild(s);
+        }
+      });
+      h1.replaceChild(frag, node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      node.style.display = 'inline-block';
+      words.push(node);
+    }
+  });
+
+  // Group words by vertical position into lines
+  var lines = [];
+  words.forEach(function (w) {
+    var top = Math.round(w.getBoundingClientRect().top);
+    var last = lines[lines.length - 1];
+    if (!last || Math.abs(top - last.top) > 4) {
+      lines.push({ top: top, els: [w] });
+    } else {
+      last.els.push(w);
+    }
+  });
+
+  // Wrap each line in a .line span and set staggered animation-delay
+  lines.forEach(function (line, i) {
+    var wrapper = document.createElement('span');
+    wrapper.className = 'line';
+    wrapper.style.animationDelay = (i * 150) + 'ms';
+    var first = line.els[0];
+    first.parentNode.insertBefore(wrapper, first);
+    line.els.forEach(function (el) { wrapper.appendChild(el); });
+  });
+})();
+
 // Project rows animate in on scroll
 (function () {
   var rows = document.querySelectorAll('.project-row');
