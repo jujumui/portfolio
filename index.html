@@ -176,11 +176,6 @@ img { display: block; max-width: 100%; height: auto; }
   z-index: 2;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 .text-hero h1 {
   margin: 0;
   font-family: var(--serif);
@@ -188,7 +183,6 @@ img { display: block; max-width: 100%; height: auto; }
   font-size: 46px;
   line-height: 1.15;
   color: var(--ink-hero);
-  animation: fadeUp 700ms ease forwards;
 }
 
 .accent {
@@ -530,6 +524,56 @@ img { display: block; max-width: 100%; height: auto; }
 </section>
 
 <script>
+// Hero h1 typewriter effect
+(function () {
+  var h1 = document.querySelector('.text-hero h1');
+  if (!h1) return;
+
+  // Build a flat array of {char, accent} from the existing nodes
+  var chars = [];
+  h1.childNodes.forEach(function (node) {
+    var isAccent = node.nodeType === Node.ELEMENT_NODE && node.classList.contains('accent');
+    var text = node.textContent;
+    for (var i = 0; i < text.length; i++) {
+      chars.push({ char: text[i], accent: isAccent });
+    }
+  });
+
+  // Clear h1 and prepare two live nodes to append into
+  h1.innerHTML = '';
+  var plainNode  = document.createTextNode('');
+  var accentNode = null;
+  h1.appendChild(plainNode);
+
+  var speed = 35; // ms per character
+  var i = 0;
+
+  function type() {
+    if (i >= chars.length) return;
+    var c = chars[i++];
+
+    if (c.accent) {
+      // Ensure we have a current accent span
+      if (!accentNode) {
+        accentNode = document.createElement('span');
+        accentNode.className = 'accent';
+        h1.appendChild(accentNode);
+        // New plain node after the span for future plain chars
+        plainNode = document.createTextNode('');
+        h1.appendChild(plainNode);
+      }
+      accentNode.textContent += c.char;
+    } else {
+      accentNode = null; // reset so next accent gets a fresh span
+      plainNode.textContent += c.char;
+    }
+
+    setTimeout(type, speed);
+  }
+
+  type();
+})();
+
 // Project rows animate in on scroll
 (function () {
   var rows = document.querySelectorAll('.project-row');
