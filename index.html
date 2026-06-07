@@ -176,6 +176,11 @@ img { display: block; max-width: 100%; height: auto; }
   z-index: 2;
 }
 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .text-hero h1 {
   margin: 0;
   font-family: var(--serif);
@@ -183,6 +188,7 @@ img { display: block; max-width: 100%; height: auto; }
   font-size: 46px;
   line-height: 1.15;
   color: var(--ink-hero);
+  animation: fadeUp 700ms ease forwards;
 }
 
 .accent {
@@ -524,32 +530,6 @@ img { display: block; max-width: 100%; height: auto; }
 </section>
 
 <script>
-// Hero h1 subtle cursor parallax
-(function () {
-  var h1 = document.querySelector('.text-hero h1');
-  if (!h1) return;
-
-  var current = { x: 0, y: 0 };
-  var target  = { x: 0, y: 0 };
-  var range   = 10; // max px shift in any direction
-  var rafId   = null;
-
-  window.addEventListener('mousemove', function (e) {
-    // Normalize cursor to -1..1 relative to viewport center
-    target.x = ((e.clientX / window.innerWidth)  - 0.5) * 2 * range;
-    target.y = ((e.clientY / window.innerHeight) - 0.5) * 2 * range;
-  }, { passive: true });
-
-  function tick() {
-    // Lerp toward target for smooth lag
-    current.x += (target.x - current.x) * 0.06;
-    current.y += (target.y - current.y) * 0.06;
-    h1.style.transform = 'translate(' + current.x.toFixed(2) + 'px, ' + current.y.toFixed(2) + 'px)';
-    rafId = requestAnimationFrame(tick);
-  }
-  tick();
-})();
-
 // Project rows animate in on scroll
 (function () {
   var rows = document.querySelectorAll('.project-row');
