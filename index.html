@@ -524,6 +524,60 @@ img { display: block; max-width: 100%; height: auto; }
 </section>
 
 <script>
+// Hero h1 word-reveal animation
+(function () {
+  var h1 = document.querySelector('.text-hero h1');
+  if (!h1) return;
+
+  // Walk child nodes, splitting text nodes into per-word spans
+  // while preserving element nodes (e.g. .accent spans) intact.
+  var nodes = Array.prototype.slice.call(h1.childNodes);
+  var words = [];
+
+  nodes.forEach(function (node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      var parts = node.textContent.split(/(\s+)/);
+      var frag = document.createDocumentFragment();
+      parts.forEach(function (part) {
+        if (/^\s+$/.test(part)) {
+          frag.appendChild(document.createTextNode(part));
+        } else if (part.length) {
+          var s = document.createElement('span');
+          s.className = 'word-reveal';
+          s.textContent = part;
+          words.push(s);
+          frag.appendChild(s);
+        }
+      });
+      h1.replaceChild(frag, node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Wrap the whole accent span as a single animated unit
+      node.classList.add('word-reveal');
+      words.push(node);
+    }
+  });
+
+  // Set initial invisible state via inline style (no FOUC)
+  words.forEach(function (w) {
+    w.style.opacity = '0';
+    w.style.transition = 'none';
+  });
+
+  var delay = 60;   // ms between each word
+  var duration = 400; // ms fade duration
+
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      words.forEach(function (w, i) {
+        setTimeout(function () {
+          w.style.transition = 'opacity ' + duration + 'ms ease';
+          w.style.opacity = '1';
+        }, i * delay);
+      });
+    });
+  });
+})();
+
 // Mobile menu toggle
 var toggle = document.getElementById('navToggle');
 var links  = document.getElementById('navLinks');
