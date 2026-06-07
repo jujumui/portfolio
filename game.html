@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farm Walk</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: monospace; }
+  canvas { image-rendering: pixelated; border: 3px solid #4a3728; border-radius: 4px; display: block; }
+  #ui { color: #e8d5b7; margin-top: 12px; font-size: 13px; letter-spacing: 1px; opacity: 0.8; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="ui">← → Arrow Keys or A/D to Move</div>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+const W = 800, H = 320;
+canvas.width = W;
+canvas.height = H;
+canvas.style.width = Math.min(W, window.innerWidth - 20) + 'px';
+canvas.style.height = (Math.min(W, window.innerWidth - 20) / W * H) + 'px';
+
+// --- Pixel art palette from screenshot ---
+const P = {
+  skyTop:    '#6ee7e7',
+  skyBot:    '#a8eaea',
+  mtnDark:   '#2d7a3a',
+  mtnMid:    '#3d9a4a',
+  mtnLight:  '#4db85a',
+  mtnSnow:   '#8fd4c0',
+  grass:     '#5ab030',
+  grassDark: '#3d8020',
+  dirt:      '#c8943a',
+  dirtDark:  '#a07028',
+  dirtLight: '#ddb050',
+  fencePost: '#7a5030',
+  fenceRail: '#9a6840',
+  treeTrunk: '#7a5030',
+  treeLeaf:  '#2d8830',
+  treeLeaf2: '#3aaa40',
+  roofBrick: '#c04828',
+  roofBrick2:'#a03820',
+  wallWood:  '#8a7060',
+  wallDark:  '#6a5040',
+  doorBrown: '#7a5030',
+  sunYellow: '#f0c020',
+  sunGreen:  '#40a030',
+  flowerYel: '#f0c020',
+  flowerCtr: '#c05010',
+  pumpkin:   '#e06818',
+  weathervane:'#8a6040',
+  chickenW:  '#f0ead8',
+  chickenR:  '#d03020',
+  bushGreen: '#2a7820',
+  bushBerry: '#c02020',
+  mushroom:  '#e04020',
+  mushroomC: '#f0d0a0',
+};
+
+// --- Camera / scroll ---
+let camX = 0;
+const WORLD_W = 1600;
+const GROUND_Y = H - 70; // top of dirt path
+
+// --- Player ---
+const player = {
+  x: 120,
+  y: GROUND_Y,
+  w: 18,
+  h: 28,
+  vx: 0,
+  dir: 1, // 1=right, -1=left
+  frame: 0,
+  frameTimer: 0,
+  walking: false,
+};
+
+// --- Input ---
+const keys = {};
+window.addEventListener('keydown', e => { keys[e.key] = true; });
+window.addEventListener('keyup',   e => { keys[e.key] = false; });
+
+// ===================== DRAW HELPERS =====================
+
+function rect(x, y, w, h, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(Math.round(x - camX), Math.round(y), Math.round(w), Math.round(h));
+}
+
+function rectAbs(x, y, w, h, color) { // no camera
+  ctx.fillStyle = color;
+  ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+}
+
+// ===================== SCENE ELEMENTS =====================
+
+function drawSky() {
+  const grad = ctx.createLinearGradient(0, 0, 0, GROUND_Y - 80);
+  grad.addColorStop(0, P.skyTop);
+  grad.addColorStop(1, P.skyBot);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, GROUND_Y - 80);
+}
+
+function drawMountains() {
+  // Back mountains (parallax: move at 20% of camera)
+  const px = -camX * 0.2;
+
+  function mtn(bx, bw, bh, col1, col2) {
+    const tx = bx + bw / 2;
+    const ty = GROUND_Y - 130 - bh;
+    ctx.fillStyle = col1;
+    ctx.beginPath();
+    ctx.moveTo(bx + px, GROUND_Y - 130);
+    ctx.lineTo(tx + px, ty);
+    ctx.lineTo(bx + bw + px, GROUND_Y - 130);
+    ctx.closePath();
+    ctx.fill();
+    // shadow side
+    ctx.fillStyle = col2;
+    ctx.beginPath();
+    ctx.moveTo(tx + px, ty);
+    ctx.lineTo(tx + px, ty + 20);
+    ctx.lineTo(bx + bw + px, GROUND_Y - 130);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  mtn(-60,  240, 160, P.mtnMid,   P.mtnDark);
+  mtn(130,  200, 140, P.mtnLight,  P.mtnMid);
+  mtn(280,  260, 170, P.mtnMid,   P.mtnDark);
+  mtn(480,  220, 150, P.mtnLight,  P.mtnMid);
+  mtn(640,  240, 165, P.mtnMid,   P.mtnDark);
+  mtn(830,  200, 145, P.mtnLight,  P.mtnMid);
+  // snow caps
+  ctx.fillStyle = P.mtnSnow;
+  function snow(bx, bw, bh) {
+    const tx = bx + bw/2 + px, ty = GROUND_Y - 130 - bh;
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx - 18, ty + 28);
+    ctx.lineTo(tx + 18, ty + 28);
+    ctx.closePath();
+    ctx.fill();
+  }
+  snow(-60,240,160); snow(280,260,170); snow(640,240,165);
+}
+
+function drawGrass() {
+  // Dark grass band behind fence
+  rect(0, GROUND_Y - 85, WORLD_W, 55, P.grassDark);
+  // Bright grass strip
+  rect(0, GROUND_Y - 35, WORLD_W, 18, P.grass);
+}
+
+function drawFence() {
+  // Fence runs full world width, sits on grass
+  const fy = GROUND_Y - 78;
+  const railY1 = fy + 8, railY2 = fy + 22;
+  for (let x = 0; x < WORLD_W; x += 36) {
+    rect(x, fy, 7, 38, P.fencePost);
+    // pointed top
+    rect(x + 1, fy - 6, 5, 8, P.fencePost);
+  }
+  rect(0, railY1, WORLD_W, 5, P.fenceRail);
+  rect(0, railY2, WORLD_W, 5, P.fenceRail);
+}
+
+// ---- Trees ----
+function drawTree(wx, wy) {
+  const trunkH = 28, trunkW = 10;
+  const tx = wx - trunkW / 2;
+  rect(tx, wy - trunkH, trunkW, trunkH, P.treeTrunk);
+  // foliage layers
+  [
+    [wx, wy - trunkH - 22, 38],
+    [wx, wy - trunkH - 40, 30],
+    [wx, wy - trunkH - 54, 22],
+  ].forEach(([cx, cy, r]) => {
+    ctx.fillStyle = P.treeLeaf;
+    ctx.beginPath();
+    ctx.arc(cx - camX, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = P.treeLeaf2;
+    ctx.beginPath();
+    ctx.arc(cx - camX - 8, cy - 5, r * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function drawPineTree(wx, wy) {
+  rect(wx - 4, wy - 24, 8, 24, P.treeTrunk);
+  [[wx, wy - 20, 20, 28],[wx, wy - 40, 16, 28],[wx, wy - 58, 12, 26]].forEach(([cx,cy,w,h]) => {
+    ctx.fillStyle = '#1a6030';
+    ctx.beginPath();
+    ctx.moveTo(cx - camX - w, cy + h);
+    ctx.lineTo(cx - camX, cy);
+    ctx.lineTo(cx - camX + w, cy + h);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#2a8040';
+    ctx.beginPath();
+    ctx.moveTo(cx - camX - w*0.5, cy + h);
+    ctx.lineTo(cx - camX, cy);
+    ctx.lineTo(cx - camX + w*0.5, cy + h);
+    ctx.closePath();
+    ctx.fill();
+  });
+}
+
+// ---- House ----
+function drawHouse(wx, wy) {
+  const hx = wx - camX;
+  // foundation shadow
+  ctx.fillStyle = '#5a3820';
+  ctx.fillRect(hx - 2, wy - 96 + 2, 104, 100);
+  // main wall
+  ctx.fillStyle = P.wallWood;
+  ctx.fillRect(hx, wy - 96, 100, 96);
+  // wood planks
+  ctx.fillStyle = P.wallDark;
+  for (let i = 0; i < 6; i++) ctx.fillRect(hx, wy - 96 + i * 16, 100, 2);
+  // door
+  ctx.fillStyle = P.doorBrown;
+  ctx.fillRect(hx + 36, wy - 48, 28, 48);
+  ctx.fillStyle = '#5a3018';
+  ctx.fillRect(hx + 57, wy - 28, 4, 4); // knob
+  // window
+  ctx.fillStyle = '#c0d8e8';
+  ctx.fillRect(hx + 10, wy - 72, 22, 18);
+  ctx.fillStyle = P.wallDark;
+  ctx.fillRect(hx + 10, wy - 63, 22, 2);
+  ctx.fillRect(hx + 21, wy - 72, 2, 18);
+  // roof (triangular brick)
+  ctx.fillStyle = P.roofBrick;
+  ctx.beginPath();
+  ctx.moveTo(hx - 10, wy - 96);
+  ctx.lineTo(hx + 50, wy - 160);
+  ctx.lineTo(hx + 110, wy - 96);
+  ctx.closePath();
+  ctx.fill();
+  // roof bricks pattern
+  ctx.fillStyle = P.roofBrick2;
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 5 - row; col++) {
+      ctx.fillRect(hx + col * 18 + row * 9 - 4, wy - 112 - row * 16, 14, 6);
+    }
+  }
+  // chimney
+  ctx.fillStyle = '#8a5030';
+  ctx.fillRect(hx + 60, wy - 155, 18, 30);
+  ctx.fillStyle = P.roofBrick;
+  ctx.fillRect(hx + 58, wy - 158, 22, 6);
+  // pumpkin on roof peak
+  ctx.fillStyle = P.pumpkin;
+  ctx.fillRect(hx + 44, wy - 168, 14, 10);
+  ctx.fillStyle = '#60a020';
+  ctx.fillRect(hx + 50, wy - 172, 3, 5);
+  // weathervane
+  ctx.fillStyle = P.weathervane;
+  ctx.fillRect(hx + 85, wy - 165, 2, 20);
+  ctx.fillRect(hx + 78, wy - 166, 16, 2);
+  ctx.fillStyle = '#c05010'; // rooster
+  ctx.fillRect(hx + 90, wy - 170, 6, 6);
+  ctx.fillRect(hx + 92, wy - 173, 4, 4);
+}
+
+// ---- Chicken ----
+function drawChicken(wx, wy) {
+  const cx = wx - camX;
+  ctx.fillStyle = P.chickenW;
+  ctx.fillRect(cx, wy - 12, 14, 10);
+  ctx.fillRect(cx + 3, wy - 17, 8, 7);
+  ctx.fillStyle = P.chickenR;
+  ctx.fillRect(cx + 9, wy - 18, 5, 3); // beak/comb
+  ctx.fillRect(cx + 4, wy - 8, 3, 5); // leg
+  ctx.fillRect(cx + 8, wy - 8, 3, 5);
+}
+
+// ---- Sunflowers ----
+function drawSunflower(wx, wy) {
+  const sx = wx - camX;
+  ctx.fillStyle = '#4a7820';
+  ctx.fillRect(sx + 3, wy - 36, 4, 36);
+  // petals
+  [[-6,-6],[0,-10],[6,-6],[8,0],[6,6],[0,8],[-6,6],[-8,0]].forEach(([dx,dy]) => {
+    ctx.fillStyle = P.flowerYel;
+    ctx.fillRect(sx + 5 + dx - 3, wy - 42 + dy - 3, 7, 7);
+  });
+  ctx.fillStyle = P.flowerCtr;
+  ctx.fillRect(sx + 1, wy - 46, 10, 10);
+  // leaves
+  ctx.fillStyle = '#3a8820';
+  ctx.fillRect(sx - 4, wy - 24, 10, 5);
+  ctx.fillRect(sx + 8, wy - 16, 10, 5);
+}
+
+// ---- Bushes ----
+function drawBush(wx, wy, withBerries) {
+  const bx = wx - camX;
+  [[0,0,18],[10,-6,14],[-6,-4,12],[18,-2,10]].forEach(([dx,dy,r]) => {
+    ctx.fillStyle = P.bushGreen;
+    ctx.beginPath();
+    ctx.arc(bx + dx, wy + dy, r, 0, Math.PI*2);
+    ctx.fill();
+  });
+  if (withBerries) {
+    [[2,-4],[14,0],[-2,2],[10,-8]].forEach(([dx,dy]) => {
+      ctx.fillStyle = '#d02828';
+      ctx.fillRect(bx+dx, wy+dy, 5, 5);
+    });
+  }
+}
+
+// ---- Mushroom ----
+function drawMushroom(wx, wy) {
+  const mx = wx - camX;
+  ctx.fillStyle = '#d8c8a0';
+  ctx.fillRect(mx + 3, wy - 12, 6, 12);
+  ctx.fillStyle = P.mushroom;
+  ctx.beginPath();
+  ctx.arc(mx + 6, wy - 14, 9, Math.PI, 0);
+  ctx.fill();
+  ctx.fillStyle = P.mushroomC;
+  ctx.fillRect(mx + 3, wy - 16, 4, 4);
+  ctx.fillRect(mx + 8, wy - 14, 3, 3);
+}
+
+// ---- Wagon ----
+function drawWagon(wx, wy) {
+  const vx = wx - camX;
+  ctx.fillStyle = '#6a5030';
+  ctx.fillRect(vx, wy - 30, 50, 25);
+  ctx.fillStyle = '#4a3820';
+  ctx.fillRect(vx + 4, wy - 28, 42, 21);
+  // wheels
+  [10, 36].forEach(ww => {
+    ctx.fillStyle = '#3a2810';
+    ctx.beginPath(); ctx.arc(vx + ww, wy, 9, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#6a4820';
+    ctx.beginPath(); ctx.arc(vx + ww, wy, 5, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#3a2810';
+    ctx.beginPath(); ctx.arc(vx + ww, wy, 2, 0, Math.PI*2); ctx.fill();
+  });
+}
+
+// ---- Dirt path ----
+function drawDirt() {
+  rect(0, GROUND_Y - 17, WORLD_W, H - GROUND_Y + 17, P.dirtDark);
+  rect(0, GROUND_Y - 14, WORLD_W, 6, P.dirtLight);
+  // pebbles
+  for (let i = 0; i < WORLD_W; i += 60) {
+    rect(i + 15, GROUND_Y - 8, 8, 4, '#b08040');
+    rect(i + 38, GROUND_Y - 4, 6, 3, '#b88848');
+  }
+}
+
+// ===================== PLAYER DRAW =====================
+
+function drawPlayer() {
+  const px = player.x - camX - player.w / 2;
+  const py = player.y - player.h;
+  const f = player.frame;
+  const flip = player.dir === -1;
+
+  ctx.save();
+  if (flip) {
+    ctx.translate(px + player.w, py);
+    ctx.scale(-1, 1);
+    ctx.translate(-px, -py);  // need to re-translate; easiest: use transform matrix
+    ctx.setTransform(-1, 0, 0, 1, px + player.w + camX - player.x + player.x - camX + player.w/2*2, 0);
+    // simpler approach:
+    ctx.restore();
+    ctx.save();
+    ctx.translate(Math.round(player.x - camX), 0);
+    ctx.scale(-1, 1);
+    ctx.translate(-Math.round(player.x - camX), 0);
+  }
+
+  const bx = flip ? W - (px + player.w) - (W - (player.x - camX)) + (player.x - camX) : px;
+
+  // shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.beginPath();
+  ctx.ellipse(Math.round(player.x - camX), player.y + 2, 12, 4, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Legs (walking animation)
+  const legSwing = player.walking ? Math.sin(f * 0.5) * 5 : 0;
+  ctx.fillStyle = '#5870c0'; // blue jeans
+  ctx.fillRect(Math.round(player.x - camX) - 5, player.y - 13 + legSwing, 5, 13);
+  ctx.fillStyle = '#4060b0';
+  ctx.fillRect(Math.round(player.x - camX), player.y - 13 - legSwing, 5, 13);
+  // boots
+  ctx.fillStyle = '#5a3010';
+  ctx.fillRect(Math.round(player.x - camX) - 6, player.y - 3 + legSwing, 7, 5);
+  ctx.fillRect(Math.round(player.x - camX) - 1, player.y - 3 - legSwing, 7, 5);
+
+  // Body / shirt
+  ctx.fillStyle = '#c03030'; // red flannel
+  ctx.fillRect(Math.round(player.x - camX) - 6, player.y - 22, 13, 11);
+  // collar/neck
+  ctx.fillStyle = '#e8c090';
+  ctx.fillRect(Math.round(player.x - camX) - 1, player.y - 23, 3, 4);
+
+  // Arms
+  const armSwing = player.walking ? Math.sin(f * 0.5) * 5 : 0;
+  ctx.fillStyle = '#c03030';
+  ctx.fillRect(Math.round(player.x - camX) - 10, player.y - 21 - armSwing, 5, 9);
+  ctx.fillStyle = '#c03030';
+  ctx.fillRect(Math.round(player.x - camX) + 6, player.y - 21 + armSwing, 5, 9);
+  // Hands
+  ctx.fillStyle = '#e8c090';
+  ctx.fillRect(Math.round(player.x - camX) - 11, player.y - 14 - armSwing, 5, 4);
+  ctx.fillRect(Math.round(player.x - camX) + 7, player.y - 14 + armSwing, 5, 4);
+
+  // Head
+  ctx.fillStyle = '#e8c090';
+  ctx.fillRect(Math.round(player.x - camX) - 6, player.y - 32, 13, 12);
+  // Hair / hat
+  ctx.fillStyle = '#7a4020';
+  ctx.fillRect(Math.round(player.x - camX) - 7, player.y - 34, 15, 5);
+  ctx.fillRect(Math.round(player.x - camX) - 3, player.y - 36, 9, 4);
+  // eyes
+  ctx.fillStyle = '#2a1808';
+  ctx.fillRect(Math.round(player.x - camX) - 3, player.y - 27, 2, 2);
+  ctx.fillRect(Math.round(player.x - camX) + 2, player.y - 27, 2, 2);
+
+  ctx.restore();
+}
+
+// ===================== WORLD LAYOUT =====================
+
+const worldObjects = [
+  // Trees
+  { type: 'tree',      x: 60,   y: GROUND_Y - 35 },
+  { type: 'bush',      x: 200,  y: GROUND_Y - 35, berries: true },
+  { type: 'mushroom',  x: 265,  y: GROUND_Y - 17 },
+  { type: 'chicken',   x: 370,  y: GROUND_Y - 17 },
+  { type: 'wagon',     x: 440,  y: GROUND_Y - 17 },
+  { type: 'house',     x: 540,  y: GROUND_Y - 17 },
+  { type: 'pinetree',  x: 720,  y: GROUND_Y - 35 },
+  { type: 'bush',      x: 810,  y: GROUND_Y - 35, berries: false },
+  { type: 'sunflower', x: 900,  y: GROUND_Y - 17 },
+  { type: 'sunflower', x: 925,  y: GROUND_Y - 17 },
+  { type: 'sunflower', x: 950,  y: GROUND_Y - 17 },
+  { type: 'sunflower', x: 975,  y: GROUND_Y - 17 },
+  { type: 'tree',      x: 1080, y: GROUND_Y - 35 },
+  { type: 'bush',      x: 1200, y: GROUND_Y - 35, berries: true },
+  { type: 'mushroom',  x: 1280, y: GROUND_Y - 17 },
+  { type: 'chicken',   x: 1380, y: GROUND_Y - 17 },
+  { type: 'sunflower', x: 1460, y: GROUND_Y - 17 },
+  { type: 'sunflower', x: 1485, y: GROUND_Y - 17 },
+  { type: 'pinetree',  x: 1540, y: GROUND_Y - 35 },
+];
+
+function drawObjects() {
+  // sort by y so closer things draw on top (they're all same y here, but good practice)
+  worldObjects.forEach(o => {
+    switch(o.type) {
+      case 'tree':      drawTree(o.x, o.y); break;
+      case 'pinetree':  drawPineTree(o.x, o.y); break;
+      case 'bush':      drawBush(o.x, o.y, o.berries); break;
+      case 'mushroom':  drawMushroom(o.x, o.y); break;
+      case 'chicken':   drawChicken(o.x, o.y); break;
+      case 'wagon':     drawWagon(o.x, o.y); break;
+      case 'house':     drawHouse(o.x, o.y); break;
+      case 'sunflower': drawSunflower(o.x, o.y); break;
+    }
+  });
+}
+
+// ===================== GAME LOOP =====================
+
+const SPEED = 2.5;
+
+function update() {
+  const left  = keys['ArrowLeft']  || keys['a'] || keys['A'];
+  const right = keys['ArrowRight'] || keys['d'] || keys['D'];
+
+  player.walking = left || right;
+
+  if (left)  { player.vx = -SPEED; player.dir = -1; }
+  else if (right) { player.vx =  SPEED; player.dir =  1; }
+  else { player.vx = 0; }
+
+  player.x += player.vx;
+  player.x = Math.max(20, Math.min(WORLD_W - 20, player.x));
+
+  // Animation frame
+  if (player.walking) {
+    player.frameTimer++;
+    if (player.frameTimer > 6) { player.frame++; player.frameTimer = 0; }
+  } else {
+    player.frame = 0; player.frameTimer = 0;
+  }
+
+  // Camera: follow player, clamp to world
+  const targetCam = player.x - W / 2;
+  camX += (targetCam - camX) * 0.12;
+  camX = Math.max(0, Math.min(WORLD_W - W, camX));
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  drawSky();
+  drawMountains();
+  drawGrass();
+  drawFence();
+  drawObjects();
+  drawDirt();
+  drawPlayer();
+}
+
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+loop();
+
+// Touch / mobile controls
+let touchStartX = null;
+canvas.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; e.preventDefault(); }, {passive:false});
+canvas.addEventListener('touchmove', e => {
+  const dx = e.touches[0].clientX - touchStartX;
+  if (dx > 10)       { keys['ArrowRight'] = true;  keys['ArrowLeft']  = false; }
+  else if (dx < -10) { keys['ArrowLeft']  = true;  keys['ArrowRight'] = false; }
+  e.preventDefault();
+}, {passive:false});
+canvas.addEventListener('touchend', e => {
+  keys['ArrowLeft'] = false; keys['ArrowRight'] = false;
+  e.preventDefault();
+}, {passive:false});
+
+window.addEventListener('resize', () => {
+  const s = Math.min(W, window.innerWidth - 20);
+  canvas.style.width  = s + 'px';
+  canvas.style.height = (s / W * H) + 'px';
+});
+</script>
+</body>
+</html>
