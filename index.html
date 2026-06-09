@@ -778,16 +778,13 @@ toggle.addEventListener('click', function () {
 
   var loaded = 0;
   var total  = srcs.length;
-
-  // Animate percentage and SVG smoothly via GSAP ticker
-  var progress = { value: 0 };
+  var done   = false;
 
   function setProgress(p) {
     pct.textContent = Math.round(p * 100) + '%';
-    var totalPaths = paths.length;
     paths.forEach(function (path, i) {
-      var start = i / totalPaths;
-      var end   = (i + 1) / totalPaths;
+      var start = i / paths.length;
+      var end   = (i + 1) / paths.length;
       var local = Math.max(0, Math.min(1, (p - start) / (end - start)));
       path.style.strokeDashoffset = totalPathLength * (1 - local);
     });
@@ -795,20 +792,13 @@ toggle.addEventListener('click', function () {
 
   function onProgress() {
     loaded++;
-    var target = loaded / total;
-    gsap.to(progress, {
-      value: target,
-      duration: 0.6,
-      ease: 'power2.out',
-      onUpdate: function () { setProgress(progress.value); },
-      onComplete: function () { if (loaded >= total) maybeComplete(); }
-    });
-  }
-
-  function maybeComplete() {
-    var elapsed = Date.now() - startTime;
-    var remaining = Math.max(0, MIN_DURATION - elapsed);
-    setTimeout(dismissLoader, remaining);
+    setProgress(loaded / total);
+    if (loaded >= total && !done) {
+      done = true;
+      var elapsed   = Date.now() - startTime;
+      var remaining = Math.max(0, MIN_DURATION - elapsed);
+      setTimeout(dismissLoader, remaining);
+    }
   }
 
   function dismissLoader() {
