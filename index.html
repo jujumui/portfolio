@@ -451,16 +451,26 @@ img { display: block; max-width: 100%; height: auto; }
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 6px 8px;
-  border-radius: 6px;
+  padding: 0;
   color: var(--ink-nav);
   font-family: var(--sans);
   font-size: 17px;
   font-weight: 400;
   line-height: 1;
-  transition: background .15s ease;
+  position: relative;
+  transition: opacity .2s ease;
 }
-.vibes-btn:hover { background: rgba(0,0,0,0.06); }
+.vibes-btn::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -4px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.vibes-btn:hover::after { transform: scaleX(1); }
 
 .vibes-bars {
   display: inline-flex;
