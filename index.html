@@ -440,6 +440,71 @@ img { display: block; max-width: 100%; height: auto; }
   .projects-heading img { width: 320px; max-width: 320px; display: block; }
   .projects-card { padding: 56px 24px 48px; gap: 72px; }
 }
+
+/* =====================================================================
+   VIBES SOUND TOGGLE
+   ===================================================================== */
+.vibes-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--ink-nav);
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1;
+  transition: background .15s ease;
+}
+.vibes-btn:hover { background: rgba(0,0,0,0.06); }
+
+.vibes-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.vbar {
+  display: block;
+  width: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transform-origin: bottom;
+}
+.vbar-1 { height: 40%; }
+.vbar-2 { height: 100%; }
+.vbar-3 { height: 30%; }
+
+@keyframes vbar1 {
+  0%, 100% { height: 40%; }
+  50%       { height: 100%; }
+}
+@keyframes vbar2 {
+  0%, 100% { height: 100%; }
+  50%       { height: 25%; }
+}
+@keyframes vbar3 {
+  0%, 100% { height: 30%; }
+  50%       { height: 85%; }
+}
+
+.vibes-bars.playing .vbar-1 {
+  animation: vbar1 1s ease-in-out infinite;
+  animation-delay: 0s;
+}
+.vibes-bars.playing .vbar-2 {
+  animation: vbar2 1s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+.vibes-bars.playing .vbar-3 {
+  animation: vbar3 1s ease-in-out infinite;
+  animation-delay: 0.1s;
+}
 </style>
 </head>
 <body>
@@ -455,6 +520,14 @@ img { display: block; max-width: 100%; height: auto; }
       <a href="#projects">Projects</a>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
+      <button class="vibes-btn" id="vibesBtn" aria-label="Toggle ambient sound" aria-pressed="false">
+        <span class="vibes-bars" id="vibesBars">
+          <span class="vbar vbar-1"></span>
+          <span class="vbar vbar-2"></span>
+          <span class="vbar vbar-3"></span>
+        </span>
+        <span class="vibes-label">Vibes</span>
+      </button>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
       <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -679,6 +752,26 @@ toggle.addEventListener('click', function () {
       gsap.set(wordEls, { clearProps: 'transform' });
       wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
     },
+  });
+})();
+
+// Vibes sound toggle
+(function () {
+  var btn   = document.getElementById('vibesBtn');
+  var bars  = document.getElementById('vibesBars');
+  if (!btn || !bars) return;
+
+  var audio = new Audio(); // src will be set once you have a file
+  audio.loop = true;
+
+  btn.addEventListener('click', function () {
+    var playing = bars.classList.toggle('playing');
+    btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+    if (playing) {
+      audio.play().catch(function () {});
+    } else {
+      audio.pause();
+    }
   });
 })();
 </script>
