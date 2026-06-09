@@ -442,42 +442,6 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* =====================================================================
-   PRELOADER
-   ===================================================================== */
-#preloader {
-  position: fixed;
-  inset: 0;
-  background: #F1E0CB;
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#preloader-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-#botanical-svg {
-  width: 56px;
-  height: auto;
-}
-.bot-path {
-  stroke-dasharray: 300;
-  stroke-dashoffset: 300;
-  transition: stroke-dashoffset 0.05s linear;
-}
-#preloader-pct {
-  font-family: var(--serif);
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  color: #5a4a3a;
-  opacity: 0.7;
-}
-
-/* =====================================================================
    VIBES SOUND TOGGLE
    ===================================================================== */
 .vibes-btn {
@@ -556,25 +520,6 @@ img { display: block; max-width: 100%; height: auto; }
 </style>
 </head>
 <body>
-
-<!-- ================= PRELOADER ================= -->
-<div id="preloader">
-  <div id="preloader-inner">
-    <svg id="botanical-svg" viewBox="0 0 80 230" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <!-- Main stem -->
-      <path class="bot-path" d="M 40 225 C 38 185 42 155 40 115 C 38 75 40 35 40 10" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round"/>
-      <!-- Left leaf low -->
-      <path class="bot-path" d="M 40 168 C 18 155 6 130 16 112 C 26 94 40 148 40 168" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- Right leaf mid -->
-      <path class="bot-path" d="M 40 135 C 62 120 74 95 64 78 C 54 61 40 118 40 135" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- Left leaf high -->
-      <path class="bot-path" d="M 40 88 C 20 76 10 55 20 42 C 30 29 40 72 40 88" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- Right leaf top -->
-      <path class="bot-path" d="M 40 62 C 60 50 68 30 58 18 C 48 6 40 48 40 62" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <div id="preloader-pct">0%</div>
-  </div>
-</div>
 
 <!-- Full-page color overlay -->
 <div class="bg-overlay" aria-hidden="true"></div>
@@ -759,106 +704,79 @@ toggle.addEventListener('click', function () {
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
-// ── Preloader ──────────────────────────────────────────────────────────
+// Hero image fade-in on load
 (function () {
-  var loader  = document.getElementById('preloader');
-  var pct     = document.getElementById('preloader-pct');
-  var paths   = Array.from(document.querySelectorAll('.bot-path'));
-  var totalPathLength = 300;
-  var MIN_DURATION = 2000; // ms — minimum time loader stays visible
-  var startTime = Date.now();
-
-  var srcs = [
-    'images/Art_Hero_Big.png',
-    'images/select-projects-heading.png',
-    'images/faire.png',
-    'images/bigcommerce.png',
-    'images/trail575.png',
-  ];
-
-  var loaded = 0;
-  var total  = srcs.length;
-  var done   = false;
-
-  function setProgress(p) {
-    pct.textContent = Math.round(p * 100) + '%';
-    paths.forEach(function (path, i) {
-      var start = i / paths.length;
-      var end   = (i + 1) / paths.length;
-      var local = Math.max(0, Math.min(1, (p - start) / (end - start)));
-      path.style.strokeDashoffset = totalPathLength * (1 - local);
-    });
+  var img = document.getElementById('heroImg');
+  if (!img) return;
+  function reveal() {
+    gsap.to(img, { opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.3 });
   }
+  if (img.complete) { reveal(); } else { img.addEventListener('load', reveal); }
+})();
 
-  function onProgress() {
-    loaded++;
-    setProgress(loaded / total);
-    if (loaded >= total && !done) {
-      done = true;
-      var elapsed   = Date.now() - startTime;
-      var remaining = Math.max(0, MIN_DURATION - elapsed);
-      setTimeout(dismissLoader, remaining);
-    }
-  }
+// Nav links reveal — same clip animation as H1, fires before it
+(function () {
+  var items = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
+  if (!items.length || typeof gsap === 'undefined') return;
 
-  function dismissLoader() {
-    // Fade in hero image so it's already visible when loader exits
-    gsap.to('#heroImg', { opacity: 1, duration: 1.0, ease: 'power2.out' });
+  var innerEls = items.map(function (el) {
+    var clip = document.createElement('span');
+    clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
+    el.parentNode.insertBefore(clip, el);
+    clip.appendChild(el);
+    var inner = document.createElement('span');
+    inner.style.cssText = 'display:inline-block;';
+    inner.appendChild(el);
+    clip.appendChild(inner);
+    return inner;
+  });
 
-    // Slide loader up and out, then play animations
-    gsap.to(loader, {
-      yPercent: -100,
-      duration: 1.0,
-      ease: 'power3.inOut',
-      delay: 0.3,
-      onComplete: function () {
-        loader.style.display = 'none';
-        playAnimations();
-      }
-    });
-  }
-
-  srcs.forEach(function (src) {
-    var img = new Image();
-    img.onload = img.onerror = onProgress;
-    img.src = src;
+  gsap.from(innerEls, {
+    yPercent: 110,
+    duration: 1.1,
+    ease: 'power4.out',
+    stagger: 0.04,
+    delay: 0.2,
+    force3D: true,
   });
 })();
 
-function playAnimations() {
-  // Nav links: simple fade + slide up
-  var navItems = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
-  gsap.from(navItems, {
-    opacity: 0,
-    y: 10,
-    duration: 0.7,
-    ease: 'power3.out',
-    stagger: 0.06,
-    delay: 0.1,
-  });
-
-  // H1: word-by-word clip reveal
+// H1 staggered word reveal
+(function () {
   var h1 = document.querySelector('.text-hero h1');
-  if (!h1) return;
+  if (!h1 || typeof gsap === 'undefined') return;
+
+  // Walk child nodes and build a flat list of word tokens,
+  // preserving .accent spans as single units.
   var nodes = Array.from(h1.childNodes);
   var wordEls = [];
+
+  // Clear h1 and rebuild with clip wrappers
   h1.innerHTML = '';
+
   nodes.forEach(function (node) {
     if (node.nodeType === Node.TEXT_NODE) {
-      node.textContent.split(/\s+/).filter(Boolean).forEach(function (word, i, arr) {
-        var clip = document.createElement('span');
-        clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
-        var inner = document.createElement('span');
-        inner.style.cssText = 'display:inline-block;';
-        inner.textContent = word;
-        clip.appendChild(inner);
-        h1.appendChild(clip);
-        if (i < arr.length - 1) h1.appendChild(document.createTextNode(' '));
-        wordEls.push(inner);
+      // Split text into words, preserve surrounding whitespace as text nodes
+      var parts = node.textContent.split(/(\s+)/);
+      parts.forEach(function (part) {
+        if (/^\s+$/.test(part)) {
+          // whitespace — keep as plain text so words space naturally
+          h1.appendChild(document.createTextNode(part));
+        } else if (part.length) {
+          var clip = document.createElement('span');
+          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
+          var inner = document.createElement('span');
+          inner.style.cssText = 'display:inline-block;';
+          inner.textContent = part;
+          clip.appendChild(inner);
+          h1.appendChild(clip);
+          wordEls.push(inner);
+        }
       });
     } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Wrap the whole element (e.g. .accent span) as one word unit
       var clip = document.createElement('span');
-      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
+      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
       var inner = node.cloneNode(true);
       inner.style.display = 'inline-block';
       clip.appendChild(inner);
@@ -866,16 +784,24 @@ function playAnimations() {
       wordEls.push(inner);
     }
   });
+
+  // Force GPU compositing
+  wordEls.forEach(function (el) { el.style.willChange = 'transform'; });
+
+  // Animate in
   gsap.from(wordEls, {
     yPercent: 110,
     duration: 1.1,
     ease: 'power4.out',
     stagger: 0.02,
-    delay: 0.2,
+    delay: 0.3,
     force3D: true,
+    onComplete: function () {
+      gsap.set(wordEls, { clearProps: 'transform' });
+      wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
+    },
   });
-}
-
+})();
 
 // Vibes sound toggle
 (function () {
