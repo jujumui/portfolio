@@ -540,24 +540,6 @@ img { display: block; max-width: 100%; height: auto; }
 </section>
 
 <script>
-// Snap to projects section on first downward scroll from hero
-(function () {
-  var projects = document.querySelector('.projects-section');
-  if (!projects) return;
-
-  var snapped = false;
-
-  function onScroll() {
-    if (snapped) return;
-    if (window.pageYOffset > 0) {
-      snapped = true;
-      window.removeEventListener('scroll', onScroll);
-      projects.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-})();
 
 // Project rows animate in on scroll
 (function () {
