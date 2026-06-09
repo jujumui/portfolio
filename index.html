@@ -608,7 +608,7 @@ img { display: block; max-width: 100%; height: auto; }
       <h1>Julie brings 15 years of experience turning complexity into <span class="accent">thoughtful</span> and <span class="accent">intuitive</span> design</h1>
     </div>
     <div class="art-hero">
-      <img id="heroImg" src="images/Art_Hero_Big.png" alt="Illustration of Julie holding flowers, standing on a path among trees" />
+      <img id="heroImg" src="images/Art_Hero_Big.png" alt="Illustration of Julie holding flowers, standing on a path among trees" style="opacity:0;" />
     </div>
   </section>
 </main>
@@ -765,7 +765,7 @@ toggle.addEventListener('click', function () {
   var pct     = document.getElementById('preloader-pct');
   var paths   = Array.from(document.querySelectorAll('.bot-path'));
   var totalPathLength = 300;
-  var MIN_DURATION = 2800; // ms — minimum time loader stays visible
+  var MIN_DURATION = 2000; // ms — minimum time loader stays visible
   var startTime = Date.now();
 
   var srcs = [
@@ -812,20 +812,21 @@ toggle.addEventListener('click', function () {
   }
 
   function dismissLoader() {
-    // Fade in hero image before loader exits so it's ready underneath
-    var heroImg = document.getElementById('heroImg');
-    gsap.set(heroImg, { opacity: 0 });
-    gsap.to(heroImg, { opacity: 1, duration: 1.2, ease: 'power2.out' });
+    // Prepare DOM (split words, wrap nav items) while loader still covers page
+    prepareAnimations();
 
-    // Slide loader up and out
+    // Fade in hero image so it's already visible when loader exits
+    gsap.to('#heroImg', { opacity: 1, duration: 1.0, ease: 'power2.out' });
+
+    // Slide loader up and out, then play animations
     gsap.to(loader, {
       yPercent: -100,
       duration: 1.0,
       ease: 'power3.inOut',
-      delay: 0.2,
+      delay: 0.3,
       onComplete: function () {
         loader.style.display = 'none';
-        startAnimations();
+        playAnimations();
       }
     });
   }
@@ -837,14 +838,13 @@ toggle.addEventListener('click', function () {
   });
 })();
 
-function startAnimations() {
+var _navInnerEls = [];
+var _h1WordEls = [];
 
-// Nav links reveal — same clip animation as H1, fires before it
-(function () {
+function prepareAnimations() {
+  // Wrap nav items in clip spans and set initial state
   var items = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
-  if (!items.length || typeof gsap === 'undefined') return;
-
-  var innerEls = items.map(function (el) {
+  _navInnerEls = items.map(function (el) {
     var clip = document.createElement('span');
     clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
     el.parentNode.insertBefore(clip, el);
@@ -855,78 +855,65 @@ function startAnimations() {
     clip.appendChild(inner);
     return inner;
   });
+  gsap.set(_navInnerEls, { yPercent: 110 });
 
-  gsap.from(innerEls, {
-    yPercent: 110,
+  // Split H1 into words and set initial state
+  var h1 = document.querySelector('.text-hero h1');
+  if (h1) {
+    var nodes = Array.from(h1.childNodes);
+    h1.innerHTML = '';
+    nodes.forEach(function (node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.textContent.split(/\s+/).filter(Boolean).forEach(function (word, i, arr) {
+          var clip = document.createElement('span');
+          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
+          var inner = document.createElement('span');
+          inner.style.cssText = 'display:inline-block;will-change:transform;';
+          inner.textContent = word;
+          clip.appendChild(inner);
+          h1.appendChild(clip);
+          if (i < arr.length - 1) h1.appendChild(document.createTextNode(' '));
+          _h1WordEls.push(inner);
+        });
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        var clip = document.createElement('span');
+        clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
+        var inner = node.cloneNode(true);
+        inner.style.cssText += 'display:inline-block;will-change:transform;';
+        clip.appendChild(inner);
+        h1.appendChild(clip);
+        _h1WordEls.push(inner);
+      }
+    });
+    gsap.set(_h1WordEls, { yPercent: 110 });
+  }
+}
+
+function playAnimations() {
+  // Nav links animate in
+  gsap.to(_navInnerEls, {
+    yPercent: 0,
     duration: 1.1,
     ease: 'power4.out',
     stagger: 0.04,
     delay: 0.2,
     force3D: true,
   });
-})();
 
-// H1 staggered word reveal
-(function () {
-  var h1 = document.querySelector('.text-hero h1');
-  if (!h1 || typeof gsap === 'undefined') return;
-
-  // Walk child nodes and build a flat list of word tokens,
-  // preserving .accent spans as single units.
-  var nodes = Array.from(h1.childNodes);
-  var wordEls = [];
-
-  // Clear h1 and rebuild with clip wrappers
-  h1.innerHTML = '';
-
-  nodes.forEach(function (node) {
-    if (node.nodeType === Node.TEXT_NODE) {
-      // Split text into words, preserve surrounding whitespace as text nodes
-      var parts = node.textContent.split(/(\s+)/);
-      parts.forEach(function (part) {
-        if (/^\s+$/.test(part)) {
-          // whitespace — keep as plain text so words space naturally
-          h1.appendChild(document.createTextNode(part));
-        } else if (part.length) {
-          var clip = document.createElement('span');
-          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
-          var inner = document.createElement('span');
-          inner.style.cssText = 'display:inline-block;';
-          inner.textContent = part;
-          clip.appendChild(inner);
-          h1.appendChild(clip);
-          wordEls.push(inner);
-        }
-      });
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      // Wrap the whole element (e.g. .accent span) as one word unit
-      var clip = document.createElement('span');
-      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
-      var inner = node.cloneNode(true);
-      inner.style.display = 'inline-block';
-      clip.appendChild(inner);
-      h1.appendChild(clip);
-      wordEls.push(inner);
-    }
-  });
-
-  // Force GPU compositing
-  wordEls.forEach(function (el) { el.style.willChange = 'transform'; });
-
-  // Animate in
-  gsap.from(wordEls, {
-    yPercent: 110,
+  // H1 words animate in
+  gsap.to(_h1WordEls, {
+    yPercent: 0,
     duration: 1.1,
     ease: 'power4.out',
     stagger: 0.02,
     delay: 0.3,
     force3D: true,
     onComplete: function () {
-      gsap.set(wordEls, { clearProps: 'transform' });
-      wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
+      gsap.set(_h1WordEls, { clearProps: 'will-change' });
     },
   });
-})();
+} // end playAnimations
+
 
 // Vibes sound toggle
 (function () {
@@ -988,8 +975,6 @@ function startAnimations() {
     }
   });
 })();
-
-} // end startAnimations
 </script>
 </body>
 </html>
