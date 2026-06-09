@@ -802,9 +802,6 @@ toggle.addEventListener('click', function () {
   }
 
   function dismissLoader() {
-    // Prepare DOM (split words, wrap nav items) while loader still covers page
-    prepareAnimations();
-
     // Fade in hero image so it's already visible when loader exits
     gsap.to('#heroImg', { opacity: 1, duration: 1.0, ease: 'power2.out' });
 
@@ -828,27 +825,23 @@ toggle.addEventListener('click', function () {
   });
 })();
 
-var _navInnerEls = [];
-var _h1WordEls = [];
-
-function prepareAnimations() {
-  // Wrap nav items
-  var items = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
-  _navInnerEls = items.map(function (el) {
-    var clip = document.createElement('span');
-    clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
-    el.parentNode.insertBefore(clip, el);
-    var inner = document.createElement('span');
-    inner.style.cssText = 'display:inline-block;transform:translateY(110%);';
-    inner.appendChild(el);
-    clip.appendChild(inner);
-    return inner;
+function playAnimations() {
+  // Nav links: simple fade + slide up
+  var navItems = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
+  gsap.from(navItems, {
+    opacity: 0,
+    y: 10,
+    duration: 0.7,
+    ease: 'power3.out',
+    stagger: 0.06,
+    delay: 0.1,
   });
 
-  // Split H1 into words
+  // H1: word-by-word clip reveal
   var h1 = document.querySelector('.text-hero h1');
   if (!h1) return;
   var nodes = Array.from(h1.childNodes);
+  var wordEls = [];
   h1.innerHTML = '';
   nodes.forEach(function (node) {
     if (node.nodeType === Node.TEXT_NODE) {
@@ -856,34 +849,31 @@ function prepareAnimations() {
         var clip = document.createElement('span');
         clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
         var inner = document.createElement('span');
-        inner.style.cssText = 'display:inline-block;transform:translateY(110%);';
+        inner.style.cssText = 'display:inline-block;';
         inner.textContent = word;
         clip.appendChild(inner);
         h1.appendChild(clip);
         if (i < arr.length - 1) h1.appendChild(document.createTextNode(' '));
-        _h1WordEls.push(inner);
+        wordEls.push(inner);
       });
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       var clip = document.createElement('span');
       clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
       var inner = node.cloneNode(true);
-      inner.style.cssText = 'display:inline-block;transform:translateY(110%);';
+      inner.style.display = 'inline-block';
       clip.appendChild(inner);
       h1.appendChild(clip);
-      _h1WordEls.push(inner);
+      wordEls.push(inner);
     }
   });
-}
-
-function playAnimations() {
-  gsap.fromTo(_navInnerEls,
-    { yPercent: 110 },
-    { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.04, delay: 0.2, force3D: true }
-  );
-  gsap.fromTo(_h1WordEls,
-    { yPercent: 110 },
-    { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.02, delay: 0.3, force3D: true }
-  );
+  gsap.from(wordEls, {
+    yPercent: 110,
+    duration: 1.1,
+    ease: 'power4.out',
+    stagger: 0.02,
+    delay: 0.2,
+    force3D: true,
+  });
 }
 
 
