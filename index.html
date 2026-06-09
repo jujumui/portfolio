@@ -45,7 +45,10 @@ html, body { margin: 0; padding: 0; }
 body {
   font-family: var(--sans);
   color: var(--ink-nav);
-  background: linear-gradient(to bottom, #E5C2A1, #FEEAD1);
+  background:
+    radial-gradient(ellipse at top left, #E5C2A1 0%, transparent 60%),
+    radial-gradient(ellipse at bottom right, #CDC1D9 0%, transparent 65%),
+    #FEEAD1;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
