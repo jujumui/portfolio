@@ -442,6 +442,42 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* =====================================================================
+   PRELOADER
+   ===================================================================== */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: #F1E0CB;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#preloader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+#botanical-svg {
+  width: 56px;
+  height: auto;
+}
+.bot-path {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  transition: stroke-dashoffset 0.05s linear;
+}
+#preloader-pct {
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: #5a4a3a;
+  opacity: 0.7;
+}
+
+/* =====================================================================
    VIBES SOUND TOGGLE
    ===================================================================== */
 .vibes-btn {
@@ -520,6 +556,25 @@ img { display: block; max-width: 100%; height: auto; }
 </style>
 </head>
 <body>
+
+<!-- ================= PRELOADER ================= -->
+<div id="preloader">
+  <div id="preloader-inner">
+    <svg id="botanical-svg" viewBox="0 0 80 230" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- Main stem -->
+      <path class="bot-path" d="M 40 225 C 38 185 42 155 40 115 C 38 75 40 35 40 10" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Left leaf low -->
+      <path class="bot-path" d="M 40 168 C 18 155 6 130 16 112 C 26 94 40 148 40 168" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Right leaf mid -->
+      <path class="bot-path" d="M 40 135 C 62 120 74 95 64 78 C 54 61 40 118 40 135" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Left leaf high -->
+      <path class="bot-path" d="M 40 88 C 20 76 10 55 20 42 C 30 29 40 72 40 88" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Right leaf top -->
+      <path class="bot-path" d="M 40 62 C 60 50 68 30 58 18 C 48 6 40 48 40 62" stroke="#5a4a3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div id="preloader-pct">0%</div>
+  </div>
+</div>
 
 <!-- Full-page color overlay -->
 <div class="bg-overlay" aria-hidden="true"></div>
@@ -704,6 +759,65 @@ toggle.addEventListener('click', function () {
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
+// ── Preloader ──────────────────────────────────────────────────────────
+(function () {
+  var loader  = document.getElementById('preloader');
+  var pct     = document.getElementById('preloader-pct');
+  var paths   = Array.from(document.querySelectorAll('.bot-path'));
+  var totalPathLength = 300; // matches stroke-dasharray
+
+  var srcs = [
+    'images/Art_Hero_Big.png',
+    'images/select-projects-heading.png',
+    'images/faire.png',
+    'images/bigcommerce.png',
+    'images/trail575.png',
+  ];
+
+  var loaded = 0;
+  var total  = srcs.length;
+
+  function onProgress() {
+    loaded++;
+    var progress = loaded / total; // 0 → 1
+    var pctVal   = Math.round(progress * 100);
+    pct.textContent = pctVal + '%';
+
+    // Draw the botanical paths progressively
+    var totalPaths = paths.length;
+    paths.forEach(function (path, i) {
+      var start = i / totalPaths;
+      var end   = (i + 1) / totalPaths;
+      var local = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+      path.style.strokeDashoffset = totalPathLength * (1 - local);
+    });
+
+    if (loaded >= total) onComplete();
+  }
+
+  function onComplete() {
+    setTimeout(function () {
+      gsap.to(loader, {
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power2.inOut',
+        onComplete: function () {
+          loader.style.display = 'none';
+          startAnimations();
+        }
+      });
+    }, 300);
+  }
+
+  srcs.forEach(function (src) {
+    var img = new Image();
+    img.onload = img.onerror = onProgress;
+    img.src = src;
+  });
+})();
+
+function startAnimations() {
+
 // Hero image fade-in on load
 (function () {
   var img = document.getElementById('heroImg');
@@ -863,6 +977,8 @@ toggle.addEventListener('click', function () {
     }
   });
 })();
+
+} // end startAnimations
 </script>
 </body>
 </html>
