@@ -842,77 +842,59 @@ var _navInnerEls = [];
 var _h1WordEls = [];
 
 function prepareAnimations() {
-  // Wrap nav items in clip spans and set initial state
+  // Wrap nav items
   var items = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
   _navInnerEls = items.map(function (el) {
     var clip = document.createElement('span');
     clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
     el.parentNode.insertBefore(clip, el);
-    clip.appendChild(el);
     var inner = document.createElement('span');
-    inner.style.cssText = 'display:inline-block;';
+    inner.style.cssText = 'display:inline-block;transform:translateY(110%);';
     inner.appendChild(el);
     clip.appendChild(inner);
     return inner;
   });
-  gsap.set(_navInnerEls, { yPercent: 110 });
 
-  // Split H1 into words and set initial state
+  // Split H1 into words
   var h1 = document.querySelector('.text-hero h1');
-  if (h1) {
-    var nodes = Array.from(h1.childNodes);
-    h1.innerHTML = '';
-    nodes.forEach(function (node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        node.textContent.split(/\s+/).filter(Boolean).forEach(function (word, i, arr) {
-          var clip = document.createElement('span');
-          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
-          var inner = document.createElement('span');
-          inner.style.cssText = 'display:inline-block;will-change:transform;';
-          inner.textContent = word;
-          clip.appendChild(inner);
-          h1.appendChild(clip);
-          if (i < arr.length - 1) h1.appendChild(document.createTextNode(' '));
-          _h1WordEls.push(inner);
-        });
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
+  if (!h1) return;
+  var nodes = Array.from(h1.childNodes);
+  h1.innerHTML = '';
+  nodes.forEach(function (node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      node.textContent.split(/\s+/).filter(Boolean).forEach(function (word, i, arr) {
         var clip = document.createElement('span');
         clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
-        var inner = node.cloneNode(true);
-        inner.style.cssText += 'display:inline-block;will-change:transform;';
+        var inner = document.createElement('span');
+        inner.style.cssText = 'display:inline-block;transform:translateY(110%);';
+        inner.textContent = word;
         clip.appendChild(inner);
         h1.appendChild(clip);
+        if (i < arr.length - 1) h1.appendChild(document.createTextNode(' '));
         _h1WordEls.push(inner);
-      }
-    });
-    gsap.set(_h1WordEls, { yPercent: 110 });
-  }
+      });
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      var clip = document.createElement('span');
+      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
+      var inner = node.cloneNode(true);
+      inner.style.cssText = 'display:inline-block;transform:translateY(110%);';
+      clip.appendChild(inner);
+      h1.appendChild(clip);
+      _h1WordEls.push(inner);
+    }
+  });
 }
 
 function playAnimations() {
-  // Nav links animate in
-  gsap.to(_navInnerEls, {
-    yPercent: 0,
-    duration: 1.1,
-    ease: 'power4.out',
-    stagger: 0.04,
-    delay: 0.2,
-    force3D: true,
-  });
-
-  // H1 words animate in
-  gsap.to(_h1WordEls, {
-    yPercent: 0,
-    duration: 1.1,
-    ease: 'power4.out',
-    stagger: 0.02,
-    delay: 0.3,
-    force3D: true,
-    onComplete: function () {
-      gsap.set(_h1WordEls, { clearProps: 'will-change' });
-    },
-  });
-} // end playAnimations
+  gsap.fromTo(_navInnerEls,
+    { yPercent: 110 },
+    { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.04, delay: 0.2, force3D: true }
+  );
+  gsap.fromTo(_h1WordEls,
+    { yPercent: 110 },
+    { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.02, delay: 0.3, force3D: true }
+  );
+}
 
 
 // Vibes sound toggle
