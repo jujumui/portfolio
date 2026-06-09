@@ -819,26 +819,6 @@ toggle.addEventListener('click', function () {
   btn.addEventListener('click', function () {
     var playing = bars.classList.toggle('playing');
     btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
-
-    // Higher-pitched click bloop
-    try {
-      var now = audioCtx ? audioCtx.currentTime : null;
-      if (now !== null) {
-        var osc  = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(1400, now);
-        osc.frequency.exponentialRampToValueAtTime(1100, now + 0.08);
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.1, now + 0.008);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
-        osc.start(now);
-        osc.stop(now + 0.08);
-      }
-    } catch(e) {}
-
     if (playing) {
       audio.play().catch(function () {});
     } else {
