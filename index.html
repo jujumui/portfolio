@@ -707,6 +707,29 @@ toggle.addEventListener('click', function () {
 <script>
 gsap.registerPlugin(ScrollToPlugin);
 
+// Inertia scroll — wheel events ease to a target with momentum feel
+(function () {
+  var targetY = window.scrollY;
+
+  window.addEventListener('wheel', function (e) {
+    e.preventDefault();
+
+    var delta = e.deltaY;
+    if (e.deltaMode === 1) delta *= 40;        // Firefox line mode
+    if (e.deltaMode === 2) delta *= window.innerHeight; // page mode
+
+    targetY += delta;
+    targetY = Math.max(0, Math.min(targetY, document.documentElement.scrollHeight - window.innerHeight));
+
+    gsap.to(window, {
+      scrollTo: { y: targetY },
+      duration: 1,
+      ease: 'power3.out',
+      overwrite: true,
+    });
+  }, { passive: false });
+})();
+
 // Smooth scroll for nav anchor links
 document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   link.addEventListener('click', function (e) {
