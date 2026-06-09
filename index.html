@@ -761,7 +761,7 @@ toggle.addEventListener('click', function () {
   var bars  = document.getElementById('vibesBars');
   if (!btn || !bars) return;
 
-  var audio = new Audio(); // src will be set once you have a file
+  var audio = new Audio('audio/lofi.mp3');
   audio.loop = true;
 
   btn.addEventListener('click', function () {
