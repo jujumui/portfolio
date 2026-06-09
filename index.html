@@ -829,14 +829,13 @@ toggle.addEventListener('click', function () {
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(1200, now);
-        osc.frequency.exponentialRampToValueAtTime(1600, now + 0.03);
-        osc.frequency.exponentialRampToValueAtTime(1000, now + 0.14);
+        osc.frequency.setValueAtTime(1400, now);
+        osc.frequency.exponentialRampToValueAtTime(1100, now + 0.08);
         gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.12, now + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+        gain.gain.linearRampToValueAtTime(0.1, now + 0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
         osc.start(now);
-        osc.stop(now + 0.14);
+        osc.stop(now + 0.08);
       }
     } catch(e) {}
 
