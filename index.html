@@ -790,6 +790,15 @@ toggle.addEventListener('click', function () {
     } catch(e) {}
   }
 
+  // Prime AudioContext on first click anywhere so hover bloop works immediately after
+  function primeAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    document.removeEventListener('click', primeAudio);
+    document.removeEventListener('touchstart', primeAudio);
+  }
+  document.addEventListener('click', primeAudio);
+  document.addEventListener('touchstart', primeAudio);
+
   // Hover bloop
   btn.addEventListener('mouseenter', bloop);
 
