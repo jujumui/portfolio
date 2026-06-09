@@ -704,6 +704,33 @@ toggle.addEventListener('click', function () {
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
+// Nav links reveal — same clip animation as H1, fires before it
+(function () {
+  var items = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn, .logo'));
+  if (!items.length || typeof gsap === 'undefined') return;
+
+  var innerEls = items.map(function (el) {
+    var clip = document.createElement('span');
+    clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em;';
+    el.parentNode.insertBefore(clip, el);
+    clip.appendChild(el);
+    var inner = document.createElement('span');
+    inner.style.cssText = 'display:inline-block;';
+    inner.appendChild(el);
+    clip.appendChild(inner);
+    return inner;
+  });
+
+  gsap.from(innerEls, {
+    yPercent: 110,
+    duration: 1.1,
+    ease: 'power4.out',
+    stagger: 0.04,
+    delay: 0.1,
+    force3D: true,
+  });
+})();
+
 // H1 staggered word reveal
 (function () {
   var h1 = document.querySelector('.text-hero h1');
