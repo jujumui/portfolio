@@ -636,5 +636,64 @@ toggle.addEventListener('click', function () {
   io.observe(section);
 })();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+// H1 staggered word reveal
+(function () {
+  var h1 = document.querySelector('.text-hero h1');
+  if (!h1 || typeof gsap === 'undefined') return;
+
+  // Walk child nodes and build a flat list of word tokens,
+  // preserving .accent spans as single units.
+  var nodes = Array.from(h1.childNodes);
+  var wordEls = [];
+
+  // Clear h1 and rebuild with clip wrappers
+  h1.innerHTML = '';
+
+  nodes.forEach(function (node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      // Split text into words, preserve surrounding whitespace as text nodes
+      var parts = node.textContent.split(/(\s+)/);
+      parts.forEach(function (part) {
+        if (/^\s+$/.test(part)) {
+          // whitespace — keep as plain text so words space naturally
+          h1.appendChild(document.createTextNode(part));
+        } else if (part.length) {
+          var clip = document.createElement('span');
+          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;';
+          var inner = document.createElement('span');
+          inner.style.cssText = 'display:inline-block;';
+          inner.textContent = part;
+          clip.appendChild(inner);
+          h1.appendChild(clip);
+          wordEls.push(inner);
+        }
+      });
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Wrap the whole element (e.g. .accent span) as one word unit
+      var clip = document.createElement('span');
+      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;';
+      var inner = node.cloneNode(true);
+      inner.style.display = 'inline-block';
+      clip.appendChild(inner);
+      h1.appendChild(clip);
+      wordEls.push(inner);
+    }
+  });
+
+  // Set initial state
+  gsap.set(wordEls, { y: '110%' });
+
+  // Animate in
+  gsap.to(wordEls, {
+    y: '0%',
+    duration: 0.85,
+    ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    stagger: 0.08,
+    delay: 0.3,
+  });
+})();
+</script>
 </body>
 </html>
