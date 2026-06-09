@@ -661,7 +661,7 @@ toggle.addEventListener('click', function () {
           h1.appendChild(document.createTextNode(part));
         } else if (part.length) {
           var clip = document.createElement('span');
-          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;';
+          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-top:0.15em;margin-top:-0.15em;padding-bottom:0.1em;margin-bottom:-0.1em;';
           var inner = document.createElement('span');
           inner.style.cssText = 'display:inline-block;';
           inner.textContent = part;
@@ -673,7 +673,7 @@ toggle.addEventListener('click', function () {
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       // Wrap the whole element (e.g. .accent span) as one word unit
       var clip = document.createElement('span');
-      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;';
+      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-top:0.15em;margin-top:-0.15em;padding-bottom:0.1em;margin-bottom:-0.1em;';
       var inner = node.cloneNode(true);
       inner.style.display = 'inline-block';
       clip.appendChild(inner);
