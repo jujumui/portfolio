@@ -771,6 +771,25 @@ toggle.addEventListener('click', function () {
   var bars  = document.getElementById('vibesBars');
   if (!btn || !bars) return;
 
+  // Hover bloop via Web Audio API
+  var audioCtx = null;
+  btn.addEventListener('mouseenter', function () {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc  = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(340, audioCtx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.15);
+    } catch(e) {}
+  });
+
   var audio = new Audio('audio/lofi.mp3');
   audio.loop = true;
 
