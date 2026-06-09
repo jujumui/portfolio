@@ -516,9 +516,16 @@ img { display: block; max-width: 100%; height: auto; }
   animation: vbar3 1s ease-in-out infinite;
   animation-delay: 0.1s;
 }
+
+#page-wrapper {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+}
 </style>
 </head>
 <body>
+<div id="page-wrapper">
 
 <!-- Full-page color overlay -->
 <div class="bg-overlay" aria-hidden="true"></div>
@@ -703,6 +710,14 @@ toggle.addEventListener('click', function () {
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
+// Clip-path circle reveal on page load
+gsap.from("#page-wrapper", {
+  clipPath: "circle(0% at 50% 50%)",
+  duration: 1.4,
+  ease: "expo.out",
+  clearProps: "clipPath"
+});
+
 // H1 staggered word reveal
 (function () {
   var h1 = document.querySelector('.text-hero h1');
@@ -756,7 +771,7 @@ toggle.addEventListener('click', function () {
     duration: 1.1,
     ease: 'power4.out',
     stagger: 0.02,
-    delay: 0.3,
+    delay: 0.6,
     force3D: true,
     onComplete: function () {
       gsap.set(wordEls, { clearProps: 'transform' });
@@ -826,5 +841,6 @@ toggle.addEventListener('click', function () {
   });
 })();
 </script>
+</div><!-- /page-wrapper -->
 </body>
 </html>
