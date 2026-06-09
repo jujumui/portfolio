@@ -608,7 +608,7 @@ img { display: block; max-width: 100%; height: auto; }
       <h1>Julie brings 15 years of experience turning complexity into <span class="accent">thoughtful</span> and <span class="accent">intuitive</span> design</h1>
     </div>
     <div class="art-hero">
-      <img id="heroImg" src="images/Art_Hero_Big.png" alt="Illustration of Julie holding flowers, standing on a path among trees" style="opacity:0;" />
+      <img id="heroImg" src="images/Art_Hero_Big.png" alt="Illustration of Julie holding flowers, standing on a path among trees" />
     </div>
   </section>
 </main>
@@ -764,7 +764,9 @@ toggle.addEventListener('click', function () {
   var loader  = document.getElementById('preloader');
   var pct     = document.getElementById('preloader-pct');
   var paths   = Array.from(document.querySelectorAll('.bot-path'));
-  var totalPathLength = 300; // matches stroke-dasharray
+  var totalPathLength = 300;
+  var MIN_DURATION = 2800; // ms — minimum time loader stays visible
+  var startTime = Date.now();
 
   var srcs = [
     'images/Art_Hero_Big.png',
@@ -777,36 +779,55 @@ toggle.addEventListener('click', function () {
   var loaded = 0;
   var total  = srcs.length;
 
-  function onProgress() {
-    loaded++;
-    var progress = loaded / total; // 0 → 1
-    var pctVal   = Math.round(progress * 100);
-    pct.textContent = pctVal + '%';
+  // Animate percentage and SVG smoothly via GSAP ticker
+  var progress = { value: 0 };
 
-    // Draw the botanical paths progressively
+  function setProgress(p) {
+    pct.textContent = Math.round(p * 100) + '%';
     var totalPaths = paths.length;
     paths.forEach(function (path, i) {
       var start = i / totalPaths;
       var end   = (i + 1) / totalPaths;
-      var local = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+      var local = Math.max(0, Math.min(1, (p - start) / (end - start)));
       path.style.strokeDashoffset = totalPathLength * (1 - local);
     });
-
-    if (loaded >= total) onComplete();
   }
 
-  function onComplete() {
-    setTimeout(function () {
-      gsap.to(loader, {
-        opacity: 0,
-        duration: 0.7,
-        ease: 'power2.inOut',
-        onComplete: function () {
-          loader.style.display = 'none';
-          startAnimations();
-        }
-      });
-    }, 300);
+  function onProgress() {
+    loaded++;
+    var target = loaded / total;
+    gsap.to(progress, {
+      value: target,
+      duration: 0.6,
+      ease: 'power2.out',
+      onUpdate: function () { setProgress(progress.value); },
+      onComplete: function () { if (loaded >= total) maybeComplete(); }
+    });
+  }
+
+  function maybeComplete() {
+    var elapsed = Date.now() - startTime;
+    var remaining = Math.max(0, MIN_DURATION - elapsed);
+    setTimeout(dismissLoader, remaining);
+  }
+
+  function dismissLoader() {
+    // Fade in hero image before loader exits so it's ready underneath
+    var heroImg = document.getElementById('heroImg');
+    gsap.set(heroImg, { opacity: 0 });
+    gsap.to(heroImg, { opacity: 1, duration: 1.2, ease: 'power2.out' });
+
+    // Slide loader up and out
+    gsap.to(loader, {
+      yPercent: -100,
+      duration: 1.0,
+      ease: 'power3.inOut',
+      delay: 0.2,
+      onComplete: function () {
+        loader.style.display = 'none';
+        startAnimations();
+      }
+    });
   }
 
   srcs.forEach(function (src) {
@@ -817,16 +838,6 @@ toggle.addEventListener('click', function () {
 })();
 
 function startAnimations() {
-
-// Hero image fade-in on load
-(function () {
-  var img = document.getElementById('heroImg');
-  if (!img) return;
-  function reveal() {
-    gsap.to(img, { opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.3 });
-  }
-  if (img.complete) { reveal(); } else { img.addEventListener('load', reveal); }
-})();
 
 // Nav links reveal — same clip animation as H1, fires before it
 (function () {
