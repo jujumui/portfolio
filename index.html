@@ -475,22 +475,23 @@ img { display: block; max-width: 100%; height: auto; }
   border-radius: 2px;
   background: currentColor;
   transform-origin: bottom;
+  will-change: transform;
 }
 .vbar-1 { height: 40%; }
 .vbar-2 { height: 100%; }
 .vbar-3 { height: 30%; }
 
 @keyframes vbar1 {
-  0%, 100% { height: 40%; }
-  50%       { height: 100%; }
+  0%, 100% { transform: scaleY(1); }
+  50%       { transform: scaleY(2.5); }
 }
 @keyframes vbar2 {
-  0%, 100% { height: 100%; }
-  50%       { height: 25%; }
+  0%, 100% { transform: scaleY(1); }
+  50%       { transform: scaleY(0.25); }
 }
 @keyframes vbar3 {
-  0%, 100% { height: 30%; }
-  50%       { height: 85%; }
+  0%, 100% { transform: scaleY(1); }
+  50%       { transform: scaleY(2.8); }
 }
 
 .vibes-bars.playing .vbar-1 {
