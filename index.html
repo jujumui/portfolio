@@ -692,7 +692,9 @@ toggle.addEventListener('click', function () {
     ease: 'power4.out',
     stagger: 0.08,
     delay: 0.3,
+    force3D: true,
     onComplete: function () {
+      gsap.set(wordEls, { clearProps: 'transform' });
       wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
     },
   });
