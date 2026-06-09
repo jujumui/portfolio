@@ -790,15 +790,6 @@ toggle.addEventListener('click', function () {
     } catch(e) {}
   }
 
-  // Fire bloop on first interaction anywhere on the page
-  function onFirstInteraction() {
-    bloop();
-    document.removeEventListener('click', onFirstInteraction);
-    document.removeEventListener('keydown', onFirstInteraction);
-  }
-  document.addEventListener('click', onFirstInteraction);
-  document.addEventListener('keydown', onFirstInteraction);
-
   // Hover bloop
   btn.addEventListener('mouseenter', bloop);
 
