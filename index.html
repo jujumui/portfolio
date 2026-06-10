@@ -867,7 +867,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
           h1.appendChild(document.createTextNode(part));
         } else if (part.length) {
           var clip = document.createElement('span');
-          clip.style.cssText = 'display:inline-block;vertical-align:bottom;padding:0.15em 0.1em;margin:-0.15em -0.1em;-webkit-mask-image:linear-gradient(to top,transparent 0%,black 8%,black 100%);mask-image:linear-gradient(to top,transparent 0%,black 8%,black 100%);';
+          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
           var inner = document.createElement('span');
           inner.style.cssText = 'display:inline-block;';
           inner.textContent = part;
@@ -879,7 +879,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       // Wrap the whole element (e.g. .accent span) as one word unit
       var clip = document.createElement('span');
-      clip.style.cssText = 'display:inline-block;vertical-align:bottom;padding:0.15em 0.1em;margin:-0.15em -0.1em;-webkit-mask-image:linear-gradient(to top,transparent 0%,black 8%,black 100%);mask-image:linear-gradient(to top,transparent 0%,black 8%,black 100%);';
+      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
       var inner = node.cloneNode(true);
       inner.style.display = 'inline-block';
       clip.appendChild(inner);
