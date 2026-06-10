@@ -26,7 +26,7 @@
    ===================================================================== */
 :root {
   --bg-hero:   #F1E0CB;
-  --bg-next:   #E3E3E9;   /* Change 2: scroll-to color */
+  --bg-next:   #F2ECE2;
   --ink-hero:  #222824;
   --ink-nav:   #1F2220;
   --ink-icon:  #363636;
@@ -79,7 +79,7 @@ html, body { margin: 0; padding: 0; }
 body {
   font-family: var(--sans);
   color: var(--ink-nav);
-  background: #F1E0CB;
+  background: var(--bg-next);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -88,17 +88,6 @@ body.is-loading {
   overflow: hidden;
 }
 
-/* Full-page color overlay — fades to --bg-next on scroll into next section */
-.bg-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-next); /* Change 2: updated overlay color */
-  opacity: 0;
-  transition: opacity .5s ease;
-  z-index: -1;
-  pointer-events: none;
-}
-.bg-overlay.is-active { opacity: 1; }
 
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; height: auto; }
@@ -200,6 +189,7 @@ img { display: block; max-width: 100%; height: auto; }
   align-items: center;
   justify-content: flex-end;
   min-height: calc(100vh - var(--nav-h));
+  background: var(--bg-hero);
 }
 
 .text-hero {
@@ -579,8 +569,6 @@ img { display: block; max-width: 100%; height: auto; }
   </div>
 </div>
 
-<!-- Full-page color overlay -->
-<div class="bg-overlay" aria-hidden="true"></div>
 
 <!-- ================= NAVIGATION ================= -->
 <header class="div-nav-section">
@@ -736,23 +724,19 @@ toggle.addEventListener('click', function () {
   }, { passive: true });
 })();
 
-// Animate bg to --bg-next when projects section scrolls into view
+// Update nav background when in projects section
 (function () {
   var section = document.querySelector('.projects-section');
-  var overlay = document.querySelector('.bg-overlay');
-  if (!section || !overlay) { return; }
-  if (!('IntersectionObserver' in window)) { overlay.classList.add('is-active'); return; }
-
+  if (!section || !('IntersectionObserver' in window)) { return; }
   var header = document.querySelector('.div-nav-section');
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
-      overlay.classList.toggle('is-active', entry.isIntersecting);
       header.classList.toggle('nav-in-projects', entry.isIntersecting);
     });
   }, { rootMargin: '0px 0px -40% 0px', threshold: 0 });
-
   io.observe(section);
 })();
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
