@@ -699,7 +699,7 @@ img { display: block; max-width: 100%; height: auto; }
 
 // Project image reveal on scroll — clip-path expand + counter-scale
 (function () {
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  if (typeof gsap === 'undefined') return;
 
   var cards = document.querySelectorAll('.project-img, .project-img-placeholder');
   if (!cards.length) return;
@@ -708,7 +708,6 @@ img { display: block; max-width: 100%; height: auto; }
     var img = card.querySelector('img');
     if (!img) return;
 
-    // Set initial states
     gsap.set(card, { clipPath: 'inset(50% 0% 50% 0%)' });
     gsap.set(img,  { scale: 1.25, y: 40 });
 
@@ -716,14 +715,16 @@ img { display: block; max-width: 100%; height: auto; }
     tl.to(card, { clipPath: 'inset(0% 0% 0% 0%)' }, 0)
       .to(img,  { scale: 1, y: 0 }, 0);
 
-    ScrollTrigger.create({
-      trigger: card,
-      start: 'top 85%',
-      once: true,
-      onEnter: function () {
-        gsap.delayedCall(i * 0.15, function () { tl.play(); });
-      },
-    });
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          gsap.delayedCall(i * 0.15, function () { tl.play(); });
+          observer.unobserve(card);
+        }
+      });
+    }, { rootMargin: '0px 0px -15% 0px' });
+
+    observer.observe(card);
   });
 })();
 
