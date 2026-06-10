@@ -819,7 +819,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 
   var innerEls = items.map(function (el) {
     var clip = document.createElement('span');
-    clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:8px;';
+    clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding: 8px 0;';
     el.parentNode.insertBefore(clip, el);
     clip.appendChild(el);
     var inner = document.createElement('span');
