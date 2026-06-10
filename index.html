@@ -736,34 +736,6 @@ img { display: block; max-width: 100%; height: auto; }
   });
 })();
 
-// Project rows animate in on scroll
-(function () {
-  var rows = document.querySelectorAll('.project-row');
-  if (!rows.length) return;
-
-  rows.forEach(function (row) {
-    row.style.opacity   = '0';
-    row.style.transform = 'translateY(24px)';
-    row.style.transition = 'opacity 650ms ease, transform 650ms ease';
-  });
-
-  if (!('IntersectionObserver' in window)) {
-    rows.forEach(function (row) { row.style.opacity = '1'; row.style.transform = 'none'; });
-    return;
-  }
-
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity   = '1';
-        entry.target.style.transform = 'translateY(0)';
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15 });
-
-  rows.forEach(function (row) { io.observe(row); });
-})();
 
 // Mobile menu toggle
 var toggle = document.getElementById('navToggle');
