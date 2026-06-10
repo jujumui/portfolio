@@ -370,12 +370,15 @@ img { display: block; max-width: 100%; height: auto; }
   top: 0;
   z-index: 50;
   background: transparent;
-  transition: transform .35s ease, opacity .35s ease, box-shadow .35s ease;
+  transition: transform .35s ease, opacity .35s ease, background-color .35s ease;
   will-change: transform, opacity;
 }
 
 .div-nav-section.nav-solid {
-  box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  background: var(--bg-hero);
+}
+.div-nav-section.nav-solid.nav-in-projects {
+  background: var(--bg-next);
 }
 
 .div-nav-section.nav-hidden {
@@ -714,6 +717,7 @@ toggle.addEventListener('click', function () {
     var solid = y > 10;
     header.classList.toggle('nav-solid', solid);
     if (!solid) {
+      header.classList.remove('nav-in-projects');
       document.body.classList.remove('past-hero');
     }
     if      (y > lastY && y > navH) { header.classList.add('nav-hidden'); }
@@ -739,6 +743,7 @@ toggle.addEventListener('click', function () {
     entries.forEach(function (entry) {
       var pastHero = !entry.isIntersecting;
       document.body.classList.toggle('past-hero', pastHero);
+      header.classList.toggle('nav-in-projects', pastHero);
     });
   }, { threshold: 0.6 });
   io.observe(hero);
