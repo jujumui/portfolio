@@ -930,6 +930,70 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   }, { once: true });
 })();
 
+// Project image card hover — 3D tilt, image scale, blur siblings
+(function () {
+  var cards = gsap.utils.toArray('.project-img, .project-img-placeholder');
+  if (!cards.length) return;
+
+  cards.forEach(function (card) {
+    var img = card.querySelector('img');
+
+    card.addEventListener('mousemove', function (e) {
+      var rect = card.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width - 0.5;
+      var y = (e.clientY - rect.top) / rect.height - 0.5;
+
+      gsap.to(card, {
+        rotateY: x * 12,
+        rotateX: -y * 12,
+        transformPerspective: 800,
+        ease: 'power2.out',
+        duration: 0.4
+      });
+
+      gsap.to(img, {
+        scale: 1.05,
+        duration: 0.4,
+        ease: 'power2.out'
+      });
+    });
+
+    card.addEventListener('mouseenter', function () {
+      cards.forEach(function (c) {
+        if (c !== card) {
+          gsap.to(c, {
+            filter: 'blur(4px)',
+            opacity: 0.5,
+            duration: 0.4,
+            ease: 'power2.out'
+          });
+        }
+      });
+    });
+
+    card.addEventListener('mouseleave', function () {
+      gsap.to(card, {
+        rotateX: 0,
+        rotateY: 0,
+        z: 0,
+        duration: 0.6,
+        ease: 'expo.out'
+      });
+      gsap.to(img, {
+        scale: 1,
+        duration: 0.6,
+        ease: 'expo.out'
+      });
+      gsap.to(cards, {
+        filter: 'blur(0px)',
+        opacity: 1,
+        duration: 0.5,
+        ease: 'expo.out'
+      });
+    });
+  });
+})();
+
 // Project image card reveal — clip-path expand + img de-tilt on scroll
 (function () {
   var cards = Array.from(document.querySelectorAll('.project-img, .project-img-placeholder'));
