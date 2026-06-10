@@ -869,7 +869,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
           word.style.cssText = 'display:inline-block;white-space:nowrap;';
           part.split('').forEach(function (char) {
             var clip = document.createElement('span');
-            clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.25em 0.15em;margin:-0.25em -0.15em;';
+            clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.25em 0.3em;margin:-0.25em -0.3em;';
             var inner = document.createElement('span');
             inner.style.cssText = 'display:inline-block;';
             inner.textContent = char;
@@ -886,7 +886,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       word.style.cssText = 'display:inline-block;white-space:nowrap;';
       node.textContent.split('').forEach(function (char) {
         var clip = document.createElement('span');
-        clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.25em 0.15em;margin:-0.25em -0.15em;';
+        clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.25em 0.3em;margin:-0.25em -0.3em;';
         var inner = node.cloneNode(false);
         inner.style.display = 'inline-block';
         inner.textContent = char;
