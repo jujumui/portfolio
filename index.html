@@ -714,7 +714,9 @@ toggle.addEventListener('click', function () {
 
   function update() {
     var y = window.pageYOffset;
-    header.classList.toggle('nav-solid', y > 10);
+    var solid = y > 10;
+    header.classList.toggle('nav-solid', solid);
+    if (!solid) { header.classList.remove('nav-in-projects'); }
     if      (y > lastY && y > navH) { header.classList.add('nav-hidden'); }
     else if (y < lastY)              { header.classList.remove('nav-hidden'); }
     lastY   = y < 0 ? 0 : y;
