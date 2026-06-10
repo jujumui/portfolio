@@ -294,7 +294,6 @@ img { display: block; max-width: 100%; height: auto; }
   width: 500px;
   height: 312px;
   overflow: hidden;
-  transform-style: preserve-3d;
 }
 .project-img img {
   width: 100%;
@@ -312,7 +311,6 @@ img { display: block; max-width: 100%; height: auto; }
   width: 500px;
   height: 312px;
   overflow: hidden;
-  transform-style: preserve-3d;
 }
 .project-img-placeholder img {
   width: 100%;
@@ -709,30 +707,30 @@ img { display: block; max-width: 100%; height: auto; }
     if (!img) return;
     var delay = i * 0.15;
 
-    gsap.from(card, {
-      clipPath: 'inset(50% 0% 50% 0%)',
-      rotateX: 6,
-      transformPerspective: 1000,
-      duration: 1.2,
-      ease: 'expo.out',
-      delay: delay,
-      scrollTrigger: {
-        trigger: card,
-        start: 'top 85%',
-      },
-    });
+    gsap.fromTo(card,
+      { clipPath: 'inset(50% 0% 50% 0%)', rotateX: 6, transformPerspective: 1000 },
+      {
+        clipPath: 'inset(0% 0% 0% 0%)',
+        rotateX: 0,
+        transformPerspective: 1000,
+        duration: 1.2,
+        ease: 'expo.out',
+        delay: delay,
+        scrollTrigger: { trigger: card, start: 'top 85%' },
+      }
+    );
 
-    gsap.from(img, {
-      scale: 1.25,
-      y: 40,
-      duration: 1.2,
-      ease: 'expo.out',
-      delay: delay,
-      scrollTrigger: {
-        trigger: card,
-        start: 'top 85%',
-      },
-    });
+    gsap.fromTo(img,
+      { scale: 1.25, y: 40 },
+      {
+        scale: 1,
+        y: 0,
+        duration: 1.2,
+        ease: 'expo.out',
+        delay: delay,
+        scrollTrigger: { trigger: card, start: 'top 85%' },
+      }
+    );
   });
 })();
 
