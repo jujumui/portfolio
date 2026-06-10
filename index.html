@@ -680,7 +680,7 @@ img { display: block; max-width: 100%; height: auto; }
   // Animate bar to full width over 1s
   bar.animate(
     [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
-    { duration: 1000, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' }
+    { duration: 1000, easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)', fill: 'forwards' }
   ).onfinish = function () {
     loader.classList.add('done');
     document.body.classList.remove('is-loading');
