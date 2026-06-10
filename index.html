@@ -830,7 +830,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     return inner;
   });
 
-  gsap.set(innerEls, { yPercent: 110 });
+  gsap.set(innerEls, { yPercent: 150 });
 
   document.addEventListener('preloader:done', function () {
     gsap.to(innerEls, {
