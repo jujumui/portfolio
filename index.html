@@ -25,8 +25,8 @@
    DESIGN TOKENS
    ===================================================================== */
 :root {
-  --bg-hero:   #F5EFE1;   /* Change 1: solid hero bg (was gradient) */
-  --bg-next:   #E3E3E9;   /* Change 2: scroll-to color */
+  --bg-hero:   #F1E0CB;
+  --bg-next:   #F2ECE2;
   --ink-hero:  #222824;
   --ink-nav:   #1F2220;
   --ink-icon:  #363636;
@@ -37,32 +37,57 @@
 }
 
 /* =====================================================================
+   PRELOADER
+   ===================================================================== */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: #F1E0CB;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#preloader.done {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.preloader-track {
+  width: 280px;
+  height: 2px;
+  background: rgba(0,0,0,0.12);
+  position: relative;
+  overflow: hidden;
+}
+.preloader-bar {
+  position: absolute;
+  inset: 0;
+  background: #1F2220;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* =====================================================================
    RESET / BASE
    ===================================================================== */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: auto; }
 html, body { margin: 0; padding: 0; }
 body {
   font-family: var(--sans);
   color: var(--ink-nav);
-  /* Change 1: solid background instead of gradient */
-  background: var(--bg-hero);
+  background: var(--bg-next);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-
-/* Full-page color overlay — fades to --bg-next on scroll into next section */
-.bg-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-next); /* Change 2: updated overlay color */
-  opacity: 0;
-  transition: opacity .5s ease;
-  z-index: -1;
-  pointer-events: none;
+body.is-loading {
+  overflow: hidden;
 }
-.bg-overlay.is-active { opacity: 1; }
+
 
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; height: auto; }
@@ -164,13 +189,14 @@ img { display: block; max-width: 100%; height: auto; }
   align-items: center;
   justify-content: flex-end;
   min-height: calc(100vh - var(--nav-h));
+  background: var(--bg-hero);
 }
 
 .text-hero {
   position: absolute;
-  left: 64px;
+  left: 80px;
   top: 50%;
-  transform: translateY(calc(-50% - 76px));
+  transform: translateY(calc(-50% - 68px));
   width: 540px;
   max-width: 540px;
   z-index: 2;
@@ -203,8 +229,7 @@ img { display: block; max-width: 100%; height: auto; }
    PROJECTS SECTION
    ===================================================================== */
 .projects-section {
-  /* sits below hero; bg color is handled by the full-page .bg-overlay */
-  background: transparent;
+  background: #F5EFE1;
   padding-top: 80px;
   padding-bottom: 120px;
 }
@@ -224,9 +249,12 @@ img { display: block; max-width: 100%; height: auto; }
   z-index: 1;
 }
 .projects-heading img {
-  width: 433px;
+  width: 100%;
+  max-width: 460px;
   height: auto;
-}
+  position: relative;
+  top: -4px;
+  left: 32px;}
 
 /* White card containing all project rows */
 .projects-card {
@@ -234,8 +262,8 @@ img { display: block; max-width: 100%; height: auto; }
   flex-direction: column;
   gap: 72px;
   background: #ffffff;
-  border-radius: 8px;
-  padding: 80px;
+  border-radius: 24px;
+  padding: 64px;
   box-shadow: 0px 40px 90px rgba(14, 24, 58, 0.05);
   position: relative;
   z-index: 0;
@@ -251,32 +279,44 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* Project image */
 .project-img {
-  flex: 0 0 480px;
-  width: 480px;
-  height: 299px;
+  flex: 0 0 520px;
+  width: 520px;
+  height: 325px;
+  overflow: hidden;
+  border-radius: 16px;
+  perspective: 800px;
+  clip-path: inset(5% 65% 50% 5% round 16px);
 }
 .project-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  border-radius: 4px;
+  border-radius: 16px;
   filter: drop-shadow(0px 1px 5px rgba(14, 24, 58, 0.15)) drop-shadow(0px 20px 40px rgba(14, 24, 58, 0.15));
+  transform: scale(1.15);
+  will-change: transform;
 }
 
 /* Coming Soon placeholder */
 .project-img-placeholder {
-  flex: 0 0 480px;
-  width: 480px;
-  height: 299px;
+  flex: 0 0 520px;
+  width: 520px;
+  height: 325px;
+  overflow: hidden;
+  border-radius: 16px;
+  perspective: 800px;
+  clip-path: inset(5% 65% 50% 5% round 16px);
 }
 .project-img-placeholder img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  border-radius: 4px;
+  border-radius: 16px;
   filter: drop-shadow(0px 1px 5px rgba(14, 24, 58, 0.15)) drop-shadow(0px 20px 40px rgba(14, 24, 58, 0.15));
+  transform: scale(1.15);
+  will-change: transform;
 }
 
 /* Text side */
@@ -315,10 +355,10 @@ img { display: block; max-width: 100%; height: auto; }
   letter-spacing: 0.01em;
   color: #6B6860;
   text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: opacity .2s ease;
+  text-decoration-color: #6B6860;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
 }
-.project-link:hover { opacity: 0.6; }
 
 /* =====================================================================
    STICKY HEADER + SCROLL BEHAVIOR
@@ -370,19 +410,23 @@ img { display: block; max-width: 100%; height: auto; }
   }
 
   /* Projects: stack image over text on tablet */
-  .projects-heading { margin-bottom: 16px; }
-  .projects-heading img { width: 100%; max-width: 433px; }
-  .projects-card { padding: 40px 32px; gap: 48px; }
-  .project-row { flex-direction: column; gap: 24px; }
+  .projects-heading { margin-bottom: -24px; }
+  .projects-heading img { width: 100%; max-width: 420px; left: 0; padding-left: 12px; }
+  .text-hero h1 { font-size: 42px; line-height: 49px; }
+  .projects-card { padding: 56px 32px 40px; gap: 48px; }
+  .project-title { font-size: 40px; line-height: 40px; }
+  .project-row { flex-direction: column; gap: 32px; }
+  .project-text { gap: 12px; }
   .project-img,
   .project-img-placeholder {
-    flex: 0 0 auto;
-    width: 100%;
-    height: auto;
+    flex: none;
+    width: 480px;
+    height: 299px;
+    align-self: flex-start;
   }
   .project-img img,
-  .project-img-placeholder img { height: auto; }
-  .project-img-placeholder { height: auto; }
+  .project-img-placeholder img { height: 100%; }
+  .project-img-placeholder { height: 299px; }
 }
 
 /* =====================================================================
@@ -415,21 +459,116 @@ img { display: block; max-width: 100%; height: auto; }
   .art-hero { width: 100vw; max-width: 100vw; margin-left: -24px; margin-right: -24px; }
   .art-hero img { width: 95%; margin: 0 auto; }
   .text-hero { width: 100%; max-width: 100%; }
-  .text-hero h1 { font-size: 34px; }
+  .text-hero h1 { font-size: 34px; line-height: 40px; }
 
-  .project-title { font-size: 32px; }
+  .project-img,
+  .project-img-placeholder {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    height: auto;
+    align-self: auto;
+  }
+  .project-img img,
+  .project-img-placeholder img { height: auto; }
+  .project-img-placeholder { height: auto; }
+
+  .project-title { font-size: 34px; }
+  .project-text { gap: 12px; }
   .projects-section { padding-top: 56px; padding-bottom: 80px; }
   .projects-inner { padding-left: 12px; padding-right: 12px; }
   .projects-heading { margin-bottom: -32px; padding-left: 0; text-align: left; }
-  .projects-heading img { width: 320px; max-width: 320px; display: block; }
+  .projects-heading img { width: 320px; max-width: 320px; display: block; left: 0; padding-left: 12px; }
   .projects-card { padding: 56px 24px 48px; gap: 72px; }
 }
+
+/* =====================================================================
+   VIBES SOUND TOGGLE
+   ===================================================================== */
+.vibes-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  color: var(--ink-nav);
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1;
+  position: relative;
+  transition: opacity .2s ease;
+}
+.vibes-btn::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -4px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.vibes-btn:hover::after { transform: scaleX(1); }
+
+.vibes-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.vbar {
+  display: block;
+  width: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transform-origin: bottom;
+  will-change: transform;
+}
+.vbar-1 { height: 40%; }
+.vbar-2 { height: 100%; }
+.vbar-3 { height: 30%; }
+
+@keyframes vbar1 {
+  0%, 100% { transform: scaleY(1); }
+  50%       { transform: scaleY(2.5); }
+}
+@keyframes vbar2 {
+  0%, 100% { transform: scaleY(1); }
+  50%       { transform: scaleY(0.25); }
+}
+@keyframes vbar3 {
+  0%, 100% { transform: scaleY(1); }
+  50%       { transform: scaleY(2.8); }
+}
+
+.vibes-bars.playing .vbar-1 {
+  animation: vbar1 1s ease-in-out infinite;
+  animation-delay: 0s;
+}
+.vibes-bars.playing .vbar-2 {
+  animation: vbar2 1s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+.vibes-bars.playing .vbar-3 {
+  animation: vbar3 1s ease-in-out infinite;
+  animation-delay: 0.1s;
+}
+
 </style>
 </head>
-<body>
+<body class="is-loading">
 
-<!-- Full-page color overlay -->
-<div class="bg-overlay" aria-hidden="true"></div>
+<!-- Preloader -->
+<div id="preloader" aria-hidden="true">
+  <div class="preloader-track">
+    <div class="preloader-bar" id="preloaderBar"></div>
+  </div>
+</div>
+
 
 <!-- ================= NAVIGATION ================= -->
 <header class="div-nav-section">
@@ -438,7 +577,14 @@ img { display: block; max-width: 100%; height: auto; }
     <div class="nav-links" id="navLinks">
       <a href="#projects">Projects</a>
       <a href="#about">About</a>
-      <a href="#contact">Contact</a>
+      <button class="vibes-btn" id="vibesBtn" aria-label="Toggle ambient sound" aria-pressed="false">
+        <span class="vibes-bars" id="vibesBars">
+          <span class="vbar vbar-1"></span>
+          <span class="vbar vbar-2"></span>
+          <span class="vbar vbar-3"></span>
+        </span>
+        <span class="vibes-label">Vibes</span>
+      </button>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
       <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -464,7 +610,7 @@ img { display: block; max-width: 100%; height: auto; }
 
     <!-- Heading -->
     <div class="projects-heading">
-      <img src="images/select-projects-heading.png" alt="Select Projects" />
+      <img src="images/select-projects-heading-large.png" alt="Select Projects" />
     </div>
 
     <!-- White card -->
@@ -473,7 +619,7 @@ img { display: block; max-width: 100%; height: auto; }
       <!-- DoorDash -->
       <div class="project-row">
         <div class="project-img-placeholder">
-          <img src="images/faire.png" alt="DoorDash project — coming soon" />
+          <img src="images/home_project_DD.png" alt="DoorDash project" />
         </div>
         <div class="project-text">
           <h2 class="project-title">DoorDash</h2>
@@ -524,6 +670,30 @@ img { display: block; max-width: 100%; height: auto; }
 </section>
 
 <script>
+// Preloader
+(function () {
+  var bar = document.getElementById('preloaderBar');
+  var loader = document.getElementById('preloader');
+
+  // Animate bar to full width over 1s
+  bar.animate(
+    [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
+    { duration: 1000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
+  ).onfinish = function () {
+    loader.classList.add('done');
+    document.body.classList.remove('is-loading');
+    setTimeout(function () {
+      loader.remove();
+      document.dispatchEvent(new CustomEvent('preloader:done'));
+    }, 420);
+  };
+})();
+</script>
+
+<script>
+
+
+
 // Mobile menu toggle
 var toggle = document.getElementById('navToggle');
 var links  = document.getElementById('navLinks');
@@ -554,22 +724,327 @@ toggle.addEventListener('click', function () {
   }, { passive: true });
 })();
 
-// Animate bg to --bg-next when projects section scrolls into view
+// Update nav background when in projects section
 (function () {
   var section = document.querySelector('.projects-section');
-  var overlay = document.querySelector('.bg-overlay');
-  if (!section || !overlay) { return; }
-  if (!('IntersectionObserver' in window)) { overlay.classList.add('is-active'); return; }
-
+  if (!section || !('IntersectionObserver' in window)) { return; }
   var header = document.querySelector('.div-nav-section');
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
-      overlay.classList.toggle('is-active', entry.isIntersecting);
       header.classList.toggle('nav-in-projects', entry.isIntersecting);
     });
   }, { rootMargin: '0px 0px -40% 0px', threshold: 0 });
-
   io.observe(section);
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
+
+// Inertia scroll — wheel events ease to a target with momentum feel
+(function () {
+  var targetY = window.scrollY;
+
+  window.addEventListener('wheel', function (e) {
+    e.preventDefault();
+
+    var delta = e.deltaY;
+    if (e.deltaMode === 1) delta *= 40;        // Firefox line mode
+    if (e.deltaMode === 2) delta *= window.innerHeight; // page mode
+
+    targetY += delta;
+    targetY = Math.max(0, Math.min(targetY, document.documentElement.scrollHeight - window.innerHeight));
+
+    gsap.to(window, {
+      scrollTo: { y: targetY },
+      duration: 0.85,
+      ease: 'power4.out',
+      overwrite: true,
+    });
+  }, { passive: false });
+})();
+
+// Smooth scroll for nav anchor links
+document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+  link.addEventListener('click', function (e) {
+    var target = document.querySelector(link.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    gsap.to(window, {
+      scrollTo: { y: target, offsetY: 0 },
+      duration: 1,
+      ease: 'power3.out',
+    });
+  });
+});
+
+// Nav links reveal — same clip animation as H1, fires before it
+(function () {
+  var items = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
+  if (!items.length || typeof gsap === 'undefined') return;
+
+  var innerEls = items.map(function (el) {
+    var clip = document.createElement('span');
+    clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding: 8px 0;';
+    el.parentNode.insertBefore(clip, el);
+    clip.appendChild(el);
+    var inner = document.createElement('span');
+    inner.style.cssText = 'display:inline-block;';
+    inner.appendChild(el);
+    clip.appendChild(inner);
+    return inner;
+  });
+
+  gsap.set(innerEls, { yPercent: 150 });
+
+  document.addEventListener('preloader:done', function () {
+    gsap.to(innerEls, {
+      yPercent: 0,
+      duration: 1.1,
+      ease: 'expo.out',
+      stagger: 0.04,
+      delay: 0.15,
+      force3D: true,
+    });
+  }, { once: true });
+})();
+
+// H1 staggered word reveal
+(function () {
+  var h1 = document.querySelector('.text-hero h1');
+  if (!h1 || typeof gsap === 'undefined') return;
+
+  // Walk child nodes and build a flat list of word tokens,
+  // preserving .accent spans as single units.
+  var nodes = Array.from(h1.childNodes);
+  var wordEls = [];
+
+  // Clear h1 and rebuild with clip wrappers
+  h1.innerHTML = '';
+
+  nodes.forEach(function (node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      // Split text into words, then each word into letters
+      var parts = node.textContent.split(/(\s+)/);
+      parts.forEach(function (part) {
+        if (/^\s+$/.test(part)) {
+          h1.appendChild(document.createTextNode(part));
+        } else if (part.length) {
+          // Word wrapper keeps letters together for line-breaking
+          var word = document.createElement('span');
+          word.style.cssText = 'display:inline-block;white-space:nowrap;';
+          part.split('').forEach(function (char) {
+            var clip = document.createElement('span');
+            clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.25em 0.3em;margin:-0.25em -0.3em;';
+            var inner = document.createElement('span');
+            inner.style.cssText = 'display:inline-block;';
+            inner.textContent = char;
+            clip.appendChild(inner);
+            word.appendChild(clip);
+            wordEls.push(inner);
+          });
+          h1.appendChild(word);
+        }
+      });
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Split accent spans letter by letter, preserving the element style
+      var word = document.createElement('span');
+      word.style.cssText = 'display:inline-block;white-space:nowrap;';
+      node.textContent.split('').forEach(function (char) {
+        var clip = document.createElement('span');
+        clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.25em 0.3em;margin:-0.25em -0.3em;';
+        var inner = node.cloneNode(false);
+        inner.style.display = 'inline-block';
+        inner.textContent = char;
+        clip.appendChild(inner);
+        word.appendChild(clip);
+        wordEls.push(inner);
+      });
+      h1.appendChild(word);
+    }
+  });
+
+  // Force GPU compositing + hide immediately
+  wordEls.forEach(function (el) { el.style.willChange = 'transform'; });
+  gsap.set(wordEls, { yPercent: 110, opacity: 0 });
+
+  // Animate in after preloader exits
+  document.addEventListener('preloader:done', function () {
+    // Build per-word delays: each line starts at lineIndex * 0.045s,
+    // words within a line stagger at 0.035s each
+    var tops = wordEls.map(function (el) { return el.parentElement.offsetTop; });
+    var lineIndex = 0;
+    var wordInLine = 0;
+    var prevTop = tops[0];
+    var customDelays = tops.map(function (top, i) {
+      if (i > 0 && top !== prevTop) {
+        lineIndex++;
+        wordInLine = 0;
+        prevTop = top;
+      }
+      var d = lineIndex * 0.15 + wordInLine * 0.015;
+      wordInLine++;
+      return d;
+    });
+
+    gsap.to(wordEls, {
+      yPercent: 0,
+      duration: 1.1,
+      ease: 'expo.out',
+      stagger: function (i) { return customDelays[i]; },
+      delay: 0.4,
+      force3D: true,
+      onComplete: function () {
+        gsap.set(wordEls, { clearProps: 'transform,opacity' });
+        wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
+      },
+    });
+    // Subtle opacity fade
+    gsap.to(wordEls, {
+      opacity: 1,
+      duration: 0.25,
+      ease: 'power2.out',
+      stagger: function (i) { return customDelays[i]; },
+      delay: 0.4,
+    });
+  }, { once: true });
+})();
+
+// Project image card hover — 3D tilt, image scale, blur siblings
+// added animation effect to project image cards
+(function () {
+  var cards = gsap.utils.toArray('.project-img, .project-img-placeholder');
+  if (!cards.length) return;
+
+  cards.forEach(function (card) {
+    var img = card.querySelector('img');
+
+    card.addEventListener('mousemove', function (e) {
+      var rect = card.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width - 0.5;
+      var y = (e.clientY - rect.top) / rect.height - 0.5;
+
+      gsap.to(card, {
+        rotateY: x * 12,
+        rotateX: -y * 12,
+        transformPerspective: 800,
+        ease: 'power2.out',
+        duration: 0.4
+      });
+
+      gsap.to(img, {
+        scale: 1.05,
+        duration: 0.4,
+        ease: 'power2.out'
+      });
+    });
+
+    card.addEventListener('mouseleave', function () {
+      gsap.to(card, {
+        rotateX: 0,
+        rotateY: 0,
+        z: 0,
+        duration: 0.6,
+        ease: 'expo.out'
+      });
+      gsap.to(img, {
+        scale: 1,
+        duration: 0.6,
+        ease: 'expo.out'
+      });
+    });
+  });
+})();
+
+// Project image card reveal — clip-path expand + img de-tilt on scroll
+(function () {
+  var cards = Array.from(document.querySelectorAll('.project-img, .project-img-placeholder'));
+  if (!cards.length || typeof gsap === 'undefined') return;
+
+  cards.forEach(function (card) {
+    var img = card.querySelector('img');
+    if (!img) return;
+
+    var tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: card,
+        start: 'top 100%',
+        toggleActions: 'play none none reset',
+      }
+    });
+
+    tl.fromTo(card,
+      { clipPath: 'inset(5% 65% 50% 5% round 16px)' },
+      { clipPath: 'inset(0% 0% 0% 0% round 16px)', duration: 0.8, ease: 'expo.out', immediateRender: false }
+    ).fromTo(img,
+      { scale: 1.15, rotateX: 4, skewX: -1.5 },
+      { scale: 1, rotateX: 0, skewX: 0, duration: 0.7, ease: 'sine.out', immediateRender: false },
+      '<'
+    );
+  });
+})();
+
+// Vibes sound toggle
+(function () {
+  var btn   = document.getElementById('vibesBtn');
+  var bars  = document.getElementById('vibesBars');
+  if (!btn || !bars) return;
+
+  // Bloop helper
+  var audioCtx = null;
+  function bloop() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var now = audioCtx.currentTime;
+
+      function tone(freq, detune, vol, dur) {
+        var osc  = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.4, now + 0.04);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.85, now + dur);
+        osc.detune.setValueAtTime(detune, now);
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(vol, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+        osc.start(now);
+        osc.stop(now + dur);
+      }
+
+      tone(680, 0,   0.14, 0.22);  // fundamental
+      tone(680, 7,   0.08, 0.18);  // slightly detuned for richness
+      tone(1360, 0,  0.05, 0.12);  // octave up, shorter
+    } catch(e) {}
+  }
+
+  // Prime AudioContext on first click anywhere so hover bloop works immediately after
+  function primeAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    document.removeEventListener('click', primeAudio);
+    document.removeEventListener('touchstart', primeAudio);
+  }
+  document.addEventListener('click', primeAudio);
+  document.addEventListener('touchstart', primeAudio);
+
+  // Hover bloop
+
+  var audio = new Audio('audio/lofi.mp3');
+  audio.loop = true;
+
+  btn.addEventListener('click', function () {
+    var playing = bars.classList.toggle('playing');
+    btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+    if (playing) {
+      audio.play().catch(function () {});
+    } else {
+      audio.pause();
+    }
+  });
 })();
 </script>
 </body>
