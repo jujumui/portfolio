@@ -812,38 +812,31 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   });
 });
 
-// Nav links reveal — per-letter stagger
+// Nav links reveal — same clip animation as H1, fires before it
 (function () {
-  var navLinks = Array.from(document.querySelectorAll('.nav-links a'));
-  var vibesLabel = document.querySelector('.vibes-label');
-  var targets = vibesLabel ? navLinks.concat([vibesLabel]) : navLinks;
-  if (!targets.length || typeof gsap === 'undefined') return;
+  var items = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
+  if (!items.length || typeof gsap === 'undefined') return;
 
-  var allLetterEls = [];
-
-  targets.forEach(function (el) {
-    var text = el.textContent;
-    el.innerHTML = '';
-    text.split('').forEach(function (char) {
-      var clip = document.createElement('span');
-      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:8px 0;';
-      var inner = document.createElement('span');
-      inner.style.cssText = 'display:inline-block;';
-      inner.textContent = char;
-      clip.appendChild(inner);
-      el.appendChild(clip);
-      allLetterEls.push(inner);
-    });
+  var innerEls = items.map(function (el) {
+    var clip = document.createElement('span');
+    clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding: 8px 0;';
+    el.parentNode.insertBefore(clip, el);
+    clip.appendChild(el);
+    var inner = document.createElement('span');
+    inner.style.cssText = 'display:inline-block;';
+    inner.appendChild(el);
+    clip.appendChild(inner);
+    return inner;
   });
 
-  gsap.set(allLetterEls, { yPercent: 150 });
+  gsap.set(innerEls, { yPercent: 150 });
 
   document.addEventListener('preloader:done', function () {
-    gsap.to(allLetterEls, {
+    gsap.to(innerEls, {
       yPercent: 0,
       duration: 1.1,
       ease: 'expo.out',
-      stagger: 0.015,
+      stagger: 0.04,
       delay: 0.15,
       force3D: true,
     });
