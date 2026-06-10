@@ -867,7 +867,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
           h1.appendChild(document.createTextNode(part));
         } else if (part.length) {
           var clip = document.createElement('span');
-          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
+          clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em 0.2em;margin:-0.15em -0.2em;';
           var inner = document.createElement('span');
           inner.style.cssText = 'display:inline-block;';
           inner.textContent = part;
@@ -879,7 +879,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       // Wrap the whole element (e.g. .accent span) as one word unit
       var clip = document.createElement('span');
-      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
+      clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em 0.2em;margin:-0.15em -0.2em;';
       var inner = node.cloneNode(true);
       inner.style.display = 'inline-block';
       clip.appendChild(inner);
@@ -899,7 +899,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       duration: 1.1,
       ease: 'power4.out',
       stagger: 0.02,
-      delay: 0.3,
+      delay: 0.35,
       force3D: true,
       onComplete: function () {
         gsap.set(wordEls, { clearProps: 'transform' });
