@@ -894,11 +894,23 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 
   // Animate in after preloader exits
   document.addEventListener('preloader:done', function () {
+    // Build per-word delays: 0.035s stagger, plus 0.45s extra for first word of each new line
+    var tops = wordEls.map(function (el) { return el.parentElement.offsetTop; });
+    var extraDelay = 0;
+    var prevTop = tops[0];
+    var customDelays = tops.map(function (top, i) {
+      if (i > 0 && top !== prevTop) {
+        extraDelay += 0.45;
+        prevTop = top;
+      }
+      return i * 0.035 + extraDelay;
+    });
+
     gsap.to(wordEls, {
       yPercent: 0,
       duration: 1.1,
       ease: 'power4.out',
-      stagger: 0.035,
+      stagger: function (i) { return customDelays[i]; },
       delay: 0.4,
       force3D: true,
       onComplete: function () {
@@ -906,12 +918,12 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
         wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
       },
     });
-    // Subtle opacity fade over first ~30% of the animation
+    // Subtle opacity fade
     gsap.to(wordEls, {
       opacity: 1,
       duration: 0.25,
       ease: 'power2.out',
-      stagger: 0.035,
+      stagger: function (i) { return customDelays[i]; },
       delay: 0.4,
     });
   }, { once: true });
