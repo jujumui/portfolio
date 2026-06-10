@@ -830,9 +830,11 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     return inner;
   });
 
+  gsap.set(innerEls, { yPercent: 110 });
+
   document.addEventListener('preloader:done', function () {
-    gsap.from(innerEls, {
-      yPercent: 110,
+    gsap.to(innerEls, {
+      yPercent: 0,
       duration: 1.1,
       ease: 'power4.out',
       stagger: 0.04,
@@ -886,13 +888,14 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     }
   });
 
-  // Force GPU compositing
+  // Force GPU compositing + hide immediately
   wordEls.forEach(function (el) { el.style.willChange = 'transform'; });
+  gsap.set(wordEls, { yPercent: 110 });
 
   // Animate in after preloader exits
   document.addEventListener('preloader:done', function () {
-    gsap.from(wordEls, {
-      yPercent: 110,
+    gsap.to(wordEls, {
+      yPercent: 0,
       duration: 1.1,
       ease: 'power4.out',
       stagger: 0.02,
