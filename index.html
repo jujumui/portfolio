@@ -864,6 +864,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
         if (/^\s+$/.test(part)) {
           h1.appendChild(document.createTextNode(part));
         } else if (part.length) {
+          // Word wrapper keeps letters together for line-breaking
+          var word = document.createElement('span');
+          word.style.cssText = 'display:inline-block;white-space:nowrap;';
           part.split('').forEach(function (char) {
             var clip = document.createElement('span');
             clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
@@ -871,13 +874,16 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
             inner.style.cssText = 'display:inline-block;';
             inner.textContent = char;
             clip.appendChild(inner);
-            h1.appendChild(clip);
+            word.appendChild(clip);
             wordEls.push(inner);
           });
+          h1.appendChild(word);
         }
       });
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       // Split accent spans letter by letter, preserving the element style
+      var word = document.createElement('span');
+      word.style.cssText = 'display:inline-block;white-space:nowrap;';
       node.textContent.split('').forEach(function (char) {
         var clip = document.createElement('span');
         clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding:0.15em;margin:-0.15em;';
@@ -885,9 +891,10 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
         inner.style.display = 'inline-block';
         inner.textContent = char;
         clip.appendChild(inner);
-        h1.appendChild(clip);
+        word.appendChild(clip);
         wordEls.push(inner);
       });
+      h1.appendChild(word);
     }
   });
 
