@@ -684,7 +684,10 @@ img { display: block; max-width: 100%; height: auto; }
   ).onfinish = function () {
     loader.classList.add('done');
     document.body.classList.remove('is-loading');
-    setTimeout(function () { loader.remove(); }, 420);
+    setTimeout(function () {
+      loader.remove();
+      document.dispatchEvent(new CustomEvent('preloader:done'));
+    }, 420);
   };
 })();
 </script>
@@ -827,14 +830,16 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     return inner;
   });
 
-  gsap.from(innerEls, {
-    yPercent: 110,
-    duration: 1.1,
-    ease: 'power4.out',
-    stagger: 0.04,
-    delay: 0.6,
-    force3D: true,
-  });
+  document.addEventListener('preloader:done', function () {
+    gsap.from(innerEls, {
+      yPercent: 110,
+      duration: 1.1,
+      ease: 'power4.out',
+      stagger: 0.04,
+      delay: 0.1,
+      force3D: true,
+    });
+  }, { once: true });
 })();
 
 // H1 staggered word reveal
@@ -884,19 +889,21 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   // Force GPU compositing
   wordEls.forEach(function (el) { el.style.willChange = 'transform'; });
 
-  // Animate in
-  gsap.from(wordEls, {
-    yPercent: 110,
-    duration: 1.1,
-    ease: 'power4.out',
-    stagger: 0.02,
-    delay: 0.8,
-    force3D: true,
-    onComplete: function () {
-      gsap.set(wordEls, { clearProps: 'transform' });
-      wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
-    },
-  });
+  // Animate in after preloader exits
+  document.addEventListener('preloader:done', function () {
+    gsap.from(wordEls, {
+      yPercent: 110,
+      duration: 1.1,
+      ease: 'power4.out',
+      stagger: 0.02,
+      delay: 0.25,
+      force3D: true,
+      onComplete: function () {
+        gsap.set(wordEls, { clearProps: 'transform' });
+        wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
+      },
+    });
+  }, { once: true });
 })();
 
 // Vibes sound toggle
