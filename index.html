@@ -894,16 +894,21 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 
   // Animate in after preloader exits
   document.addEventListener('preloader:done', function () {
-    // Build per-word delays: 0.035s stagger, plus 0.45s extra for first word of each new line
+    // Build per-word delays: each line starts at lineIndex * 0.045s,
+    // words within a line stagger at 0.035s each
     var tops = wordEls.map(function (el) { return el.parentElement.offsetTop; });
-    var extraDelay = 0;
+    var lineIndex = 0;
+    var wordInLine = 0;
     var prevTop = tops[0];
     var customDelays = tops.map(function (top, i) {
       if (i > 0 && top !== prevTop) {
-        extraDelay += 0.45;
+        lineIndex++;
+        wordInLine = 0;
         prevTop = top;
       }
-      return i * 0.035 + extraDelay;
+      var d = lineIndex * 0.045 + wordInLine * 0.035;
+      wordInLine++;
+      return d;
     });
 
     gsap.to(wordEls, {
