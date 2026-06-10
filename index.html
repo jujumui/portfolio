@@ -183,13 +183,16 @@ img { display: block; max-width: 100%; height: auto; }
 /* =====================================================================
    HERO
    ===================================================================== */
+header, main {
+  background: var(--bg-hero);
+}
+
 .div-hero {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   min-height: calc(100vh - var(--nav-h));
-  background: var(--bg-hero);
 }
 
 .text-hero {
