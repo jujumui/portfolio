@@ -560,6 +560,158 @@ img { display: block; max-width: 100%; height: auto; }
   animation-delay: 0.1s;
 }
 
+/* =====================================================================
+   ABOUT SECTION
+   ===================================================================== */
+.about-section {
+  padding-top: 120px;
+  padding-bottom: 100px;
+}
+
+.about-inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 140px;
+}
+
+.about-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 64px;
+}
+
+.about-img {
+  flex: 0 0 427px;
+  width: 427px;
+  height: 569px;
+  border-radius: 24px;
+  overflow: hidden;
+  filter: drop-shadow(0px 1px 5px rgba(14, 24, 58, 0.15)) drop-shadow(0px 20px 40px rgba(14, 24, 58, 0.15));
+}
+
+.about-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+.about-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 460px;
+}
+
+.about-heading-img {
+  width: 100%;
+  height: auto;
+}
+
+.about-text p {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 24px;
+  color: #222824;
+}
+
+.about-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: baseline;
+  gap: 32px;
+}
+
+.contact-links a {
+  font-family: var(--serif);
+  font-size: 45px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #222824;
+  position: relative;
+}
+
+.contact-links a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -4px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.contact-links a:hover::after { transform: scaleX(1); }
+
+.contact-arrow {
+  font-size: 20px;
+  color: #222824;
+  line-height: 1;
+  user-select: none;
+}
+
+.about-copyright {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.flower-img {
+  width: 117px;
+  height: auto;
+}
+
+.about-copyright p {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 23px;
+  text-align: center;
+  color: #42413F;
+}
+
+/* About — responsive */
+@media (max-width: 991px) {
+  .about-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+  .about-img {
+    flex: none;
+    width: 100%;
+    max-width: 427px;
+    height: auto;
+    aspect-ratio: 427 / 569;
+  }
+  .about-text {
+    width: 100%;
+  }
+  .about-inner { gap: 80px; }
+  .contact-links { flex-wrap: wrap; gap: 20px 24px; }
+  .contact-links a { font-size: 36px; }
+}
+
+@media (max-width: 479px) {
+  .about-section { padding-top: 80px; }
+  .contact-links a { font-size: 28px; }
+}
+
 </style>
 </head>
 <body class="is-loading">
@@ -667,6 +819,39 @@ img { display: block; max-width: 100%; height: auto; }
       </div>
 
     </div><!-- /projects-card -->
+
+  </div>
+</section>
+
+<!-- ================= ABOUT SECTION ================= -->
+<section class="about-section" id="about" aria-label="About Julie">
+  <div class="about-inner">
+
+    <!-- Photo + bio -->
+    <div class="about-content">
+      <div class="about-img">
+        <img src="images/Img_Julie.png" alt="Julie Cheung" />
+      </div>
+      <div class="about-text">
+        <img src="images/about_julie.png" alt="About Julie" class="about-heading-img" />
+        <p>I'm a Product Designer based in the SF Bay Area with 15+ years of experience designing for various startups. I'm driven by curiosity to explore new ways of building, and especially thrive in collaborative environments where I can learn from and mentor others. Outside of work, you'll find me cycling, postcrossing, playing pickleball, or finding new ways to entertain my two toddlers.</p>
+      </div>
+    </div>
+
+    <!-- Contact + copyright -->
+    <div class="about-contact">
+      <div class="contact-links">
+        <a href="https://www.linkedin.com/in/juliecheungdesign" target="_blank" rel="noopener">Linkedin</a>
+        <span class="contact-arrow">↗</span>
+        <a href="mailto:jcheung530@gmail.com">Email</a>
+        <span class="contact-arrow">↗</span>
+        <a href="https://medium.com/@juliecheung" target="_blank" rel="noopener">Medium</a>
+      </div>
+      <div class="about-copyright">
+        <img src="images/flower.png" alt="" class="flower-img" />
+        <p>©️2026 Vibe coded by Julie</p>
+      </div>
+    </div>
 
   </div>
 </section>
