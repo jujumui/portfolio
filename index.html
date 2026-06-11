@@ -381,8 +381,11 @@ img { display: block; max-width: 100%; height: auto; }
 .div-nav-section.nav-solid {
   background: var(--bg-hero);
 }
-.div-nav-section.nav-solid.nav-in-projects {
+body.past-hero .div-nav-section.nav-solid {
   background: var(--bg-next);
+}
+body.past-projects .div-nav-section.nav-solid {
+  background: var(--bg-about);
 }
 
 .div-nav-section.nav-hidden {
@@ -910,8 +913,8 @@ toggle.addEventListener('click', function () {
     var solid = y > 10;
     header.classList.toggle('nav-solid', solid);
     if (!solid) {
-      header.classList.remove('nav-in-projects');
       document.body.classList.remove('past-hero');
+      document.body.classList.remove('past-projects');
     }
     if      (y > lastY && y > navH) { header.classList.add('nav-hidden'); }
     else if (y < lastY)              { header.classList.remove('nav-hidden'); }
@@ -934,9 +937,7 @@ toggle.addEventListener('click', function () {
   }
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
-      var pastHero = !entry.isIntersecting;
-      document.body.classList.toggle('past-hero', pastHero);
-      header.classList.toggle('nav-in-projects', pastHero);
+      document.body.classList.toggle('past-hero', !entry.isIntersecting);
     });
   }, { threshold: 0.6 });
   io.observe(hero);
