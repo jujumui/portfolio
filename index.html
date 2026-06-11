@@ -964,9 +964,17 @@ gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 // Inertia scroll — wheel events ease to a target with momentum feel
 (function () {
   var targetY = window.scrollY;
+  var isWheeling = false;
 
   window.addEventListener('wheel', function (e) {
     e.preventDefault();
+
+    // If not actively wheeling, sync targetY to actual scroll position
+    // (handles jumps from anchor clicks or programmatic scrolls)
+    if (!isWheeling) {
+      targetY = window.scrollY;
+    }
+    isWheeling = true;
 
     var delta = e.deltaY;
     if (e.deltaMode === 1) delta *= 40;        // Firefox line mode
@@ -980,6 +988,7 @@ gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
       duration: 0.85,
       ease: 'power4.out',
       overwrite: true,
+      onComplete: function () { isWheeling = false; },
     });
   }, { passive: false });
 })();
