@@ -27,6 +27,7 @@
 :root {
   --bg-hero:   #FBEFDE;
   --bg-next:   #F1E0CB;
+  --bg-about:  #E3E3E9;
   --ink-hero:  #222824;
   --ink-nav:   #1F2220;
   --ink-icon:  #363636;
@@ -87,6 +88,9 @@ body {
 }
 body.past-hero {
   background: var(--bg-next);
+}
+body.past-projects {
+  background: var(--bg-about);
 }
 body.is-loading {
   overflow: hidden;
@@ -586,12 +590,14 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 .about-img {
-  flex: 0 0 427px;
-  width: 427px;
+  flex: 0 0 400px;
+  width: 400px;
+  max-width: 400px;
   height: 569px;
   border-radius: 24px;
   overflow: hidden;
   filter: drop-shadow(0px 1px 5px rgba(14, 24, 58, 0.15)) drop-shadow(0px 20px 40px rgba(14, 24, 58, 0.15));
+  margin-left: -8px;
 }
 
 .about-img img {
@@ -625,6 +631,7 @@ img { display: block; max-width: 100%; height: auto; }
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 64px;
 }
 
@@ -668,6 +675,7 @@ img { display: block; max-width: 100%; height: auto; }
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  margin-top: 16px;
 }
 
 .flower-img {
@@ -678,7 +686,7 @@ img { display: block; max-width: 100%; height: auto; }
 .about-copyright p {
   margin: 0;
   font-family: var(--sans);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 23px;
   text-align: center;
   color: #42413F;
@@ -833,7 +841,7 @@ img { display: block; max-width: 100%; height: auto; }
       </div>
       <div class="about-text">
         <img src="images/about_julie.png" alt="About Julie" class="about-heading-img" />
-        <p>I'm a Product Designer based in the SF Bay Area with 15+ years of experience designing for various startups. I'm driven by curiosity to explore new ways of building, and especially thrive in collaborative environments where I can learn from and mentor others. Outside of work, you'll find me cycling, postcrossing, playing pickleball, or finding new ways to entertain my two toddlers.</p>
+        <p>I'm a Product Designer based in the SF Bay Area with 15+ years of experience designing for various startups.<br><br>I'm driven by curiosity to explore new ways of building, and especially thrive in collaborative environments where I can learn from and mentor others.<br><br>Outside of work, you'll find me cycling, postcrossing, playing pickleball, or finding new ways to entertain my two toddlers.</p>
       </div>
     </div>
 
@@ -931,6 +939,18 @@ toggle.addEventListener('click', function () {
     });
   }, { threshold: 0.6 });
   io.observe(hero);
+})();
+
+// Transition body bg to --bg-about when about section scrolls into view
+(function () {
+  var about = document.querySelector('.about-section');
+  if (!about || !('IntersectionObserver' in window)) { return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      document.body.classList.toggle('past-projects', entry.isIntersecting);
+    });
+  }, { threshold: 0.2 });
+  io.observe(about);
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
