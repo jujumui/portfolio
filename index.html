@@ -96,7 +96,6 @@ body.is-loading {
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; height: auto; }
 
-/* Centered content rail — 1136px max, with 24px L/R margin at narrower widths */
 .container {
   width: 100%;
   max-width: var(--content-width);
@@ -166,9 +165,6 @@ img { display: block; max-width: 100%; height: auto; }
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  /* sits above the mobile overlay */
-  position: relative;
-  z-index: 9100;
 }
 
 .nav-toggle .bars {
@@ -190,7 +186,7 @@ img { display: block; max-width: 100%; height: auto; }
 .nav-toggle .bars span:nth-child(2) { top: 7px; }
 .nav-toggle .bars span:nth-child(3) { top: 14px; }
 
-/* Back-arrow morph when overlay is open (mobile only) */
+/* Back-arrow morph when overlay is open */
 @media (max-width: 479px) {
   .nav-toggle[aria-expanded="true"] .bars span:nth-child(1) {
     top: 7px;
@@ -208,8 +204,6 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* =====================================================================
    MOBILE FULL-SCREEN NAV OVERLAY
-   Lives at <body> level so position:fixed is relative to the viewport,
-   not constrained by the sticky header’s will-change:transform layer.
    ===================================================================== */
 @keyframes mobileNavIn  { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes mobileNavOut { from { transform: translateX(0); } to { transform: translateX(100%); } }
@@ -257,6 +251,30 @@ img { display: block; max-width: 100%; height: auto; }
   transition: transform .25s ease;
 }
 .mobile-nav-overlay a:hover::after { transform: scaleX(1); }
+
+/* =====================================================================
+   STICKY HEADER
+   z-index 9500 keeps it above the overlay (9000) so the toggle button
+   (and its back-arrow morph) is always visible and tappable.
+   ===================================================================== */
+.div-nav-section {
+  position: sticky;
+  top: 0;
+  z-index: 9500;
+  background: transparent;
+  transition: transform .35s ease, opacity .35s ease, background-color .35s ease;
+  will-change: transform, opacity;
+}
+
+.div-nav-section.nav-solid {
+  background: #FDECDD;
+}
+
+.div-nav-section.nav-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* =====================================================================
    HERO
@@ -310,7 +328,6 @@ img { display: block; max-width: 100%; height: auto; }
   padding-bottom: 80px;
 }
 
-/* Inner wrapper respects the 1136px max-width + 24px L/R margin */
 .projects-inner {
   max-width: var(--content-width);
   margin: 0 auto;
@@ -318,7 +335,6 @@ img { display: block; max-width: 100%; height: auto; }
   padding-right: 24px;
 }
 
-/* "Select Projects" heading image */
 .projects-heading {
   margin-bottom: -32px;
   position: relative;
@@ -332,7 +348,6 @@ img { display: block; max-width: 100%; height: auto; }
   top: -4px;
   left: 32px;}
 
-/* White card containing all project rows */
 .projects-card {
   display: flex;
   flex-direction: column;
@@ -345,7 +360,6 @@ img { display: block; max-width: 100%; height: auto; }
   z-index: 0;
 }
 
-/* Individual project row */
 .project-row {
   display: flex;
   flex-direction: row;
@@ -353,7 +367,6 @@ img { display: block; max-width: 100%; height: auto; }
   gap: 48px;
 }
 
-/* Project image */
 .project-img {
   flex: 0 0 520px;
   width: 520px;
@@ -374,7 +387,6 @@ img { display: block; max-width: 100%; height: auto; }
   will-change: transform;
 }
 
-/* Coming Soon placeholder */
 .project-img-placeholder {
   flex: 0 0 520px;
   width: 520px;
@@ -395,7 +407,6 @@ img { display: block; max-width: 100%; height: auto; }
   will-change: transform;
 }
 
-/* Text side */
 .project-text {
   flex: 1 1 0;
   min-width: 0;
@@ -437,28 +448,6 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* =====================================================================
-   STICKY HEADER + SCROLL BEHAVIOR
-   ===================================================================== */
-.div-nav-section {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: transparent;
-  transition: transform .35s ease, opacity .35s ease, background-color .35s ease;
-  will-change: transform, opacity;
-}
-
-.div-nav-section.nav-solid {
-  background: #FDECDD;
-}
-
-.div-nav-section.nav-hidden {
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* =====================================================================
    TABLET (≤ 991px)
    ===================================================================== */
 @media (max-width: 991px) {
@@ -482,7 +471,6 @@ img { display: block; max-width: 100%; height: auto; }
     text-align: center;
   }
 
-  /* Projects: stack image over text on tablet */
   .projects-heading { margin-bottom: -24px; }
   .projects-heading img { width: 100%; max-width: 420px; left: 0; padding-left: 12px; }
   .text-hero h1 { font-size: 42px; line-height: 49px; }
@@ -645,7 +633,6 @@ img { display: block; max-width: 100%; height: auto; }
   gap: 40px;
 }
 
-/* ── Card Stack ── */
 .cards-column {
   position: relative;
   width: 580px;
@@ -772,8 +759,6 @@ img { display: block; max-width: 100%; height: auto; }
   position: relative;
 }
 
-
-
 .contact-arrow {
   width: 19px;
   height: 17px;
@@ -803,7 +788,6 @@ img { display: block; max-width: 100%; height: auto; }
   color: #42413F;
 }
 
-/* About — responsive */
 @media (max-width: 991px) {
   .about-content {
     flex-direction: column;
@@ -824,9 +808,7 @@ img { display: block; max-width: 100%; height: auto; }
     padding-top: 0;
     align-items: center;
   }
-  .about-text p {
-    width: 100%;
-  }
+  .about-text p { width: 100%; }
   .about-heading-img {
     width: 342px;
     max-width: 342px;
@@ -854,10 +836,7 @@ img { display: block; max-width: 100%; height: auto; }
   }
   .about-text { padding-left: 24px; padding-right: 24px; }
   .about-heading-img { width: 300px; max-width: 300px; align-self: flex-start; margin-left: 0; margin-right: auto; display: block; margin-top: -24px; }
-  .cards-column {
-    transform: none;
-    margin-bottom: 0;
-  }
+  .cards-column { transform: none; margin-bottom: 0; }
 }
 
 </style>
@@ -871,13 +850,13 @@ img { display: block; max-width: 100%; height: auto; }
   </div>
 </div>
 
-<!-- Mobile full-screen nav overlay (body-level so position:fixed hits the viewport) -->
+<!-- Mobile full-screen nav overlay (body-level, z-index 9000) -->
 <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
-  <a href="#projects" id="mobileNavProjects">Projects</a>
-  <a href="#about" id="mobileNavAbout">About</a>
+  <a href="#projects">Projects</a>
+  <a href="#about">About</a>
 </div>
 
-<!-- ================= NAVIGATION ================= -->
+<!-- ================= NAVIGATION (z-index 9500, above the overlay) ================= -->
 <header class="div-nav-section">
   <nav class="div-nav container" aria-label="Primary">
     <a class="logo" href="#">Julie Cheung</a>
@@ -914,16 +893,11 @@ img { display: block; max-width: 100%; height: auto; }
 <!-- ================= PROJECTS SECTION ================= -->
 <section class="projects-section" id="projects" aria-label="Select Projects">
   <div class="projects-inner">
-
-    <!-- Heading -->
     <div class="projects-heading">
       <img src="images/select-projects-heading-large.png" alt="Select Projects" />
     </div>
-
-    <!-- White card -->
     <div class="projects-card">
 
-      <!-- DoorDash -->
       <div class="project-row">
         <div class="project-img-placeholder">
           <img src="images/home_project_DD.png" alt="DoorDash project" />
@@ -935,7 +909,6 @@ img { display: block; max-width: 100%; height: auto; }
         </div>
       </div>
 
-      <!-- Faire -->
       <div class="project-row">
         <div class="project-img">
           <img src="images/home_project_faire.png" alt="Faire project screenshot" />
@@ -947,7 +920,6 @@ img { display: block; max-width: 100%; height: auto; }
         </div>
       </div>
 
-      <!-- BigCommerce -->
       <div class="project-row">
         <div class="project-img">
           <img src="images/home_project_bc.png" alt="BigCommerce project screenshot" />
@@ -959,7 +931,6 @@ img { display: block; max-width: 100%; height: auto; }
         </div>
       </div>
 
-      <!-- Trail575 -->
       <div class="project-row">
         <div class="project-img">
           <img src="images/trail575.png" alt="Trail575 project photo" />
@@ -971,16 +942,13 @@ img { display: block; max-width: 100%; height: auto; }
         </div>
       </div>
 
-    </div><!-- /projects-card -->
-
+    </div>
   </div>
 </section>
 
 <!-- ================= ABOUT SECTION ================= -->
 <section class="about-section" id="about" aria-label="About Julie">
   <div class="about-inner">
-
-    <!-- Photo cards + bio -->
     <div class="about-content">
       <div class="cards-column">
         <div class="photo-card card-1">
@@ -1002,7 +970,6 @@ img { display: block; max-width: 100%; height: auto; }
       </div>
     </div>
 
-    <!-- Contact + copyright -->
     <div class="about-contact">
       <div class="contact-links">
         <a href="https://www.linkedin.com/in/julescheung/" target="_blank" rel="noopener">Linkedin</a>
@@ -1016,16 +983,13 @@ img { display: block; max-width: 100%; height: auto; }
         <p>©️2026 Built by Julie Cheung</p>
       </div>
     </div>
-
   </div>
 </section>
 
 <script>
-// Preloader
 (function () {
   var bar = document.getElementById('preloaderBar');
   var loader = document.getElementById('preloader');
-
   bar.animate(
     [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
     { duration: 1000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
@@ -1041,7 +1005,7 @@ img { display: block; max-width: 100%; height: auto; }
 </script>
 
 <script>
-// Mobile nav overlay toggle
+// Mobile nav overlay
 (function () {
   var toggle  = document.getElementById('navToggle');
   var overlay = document.getElementById('mobileNavOverlay');
@@ -1079,7 +1043,6 @@ img { display: block; max-width: 100%; height: auto; }
     if (isOpen) { closeNav(); } else { openNav(); }
   });
 
-  // Close when a link inside the overlay is tapped
   overlay.querySelectorAll('a').forEach(function (a) {
     a.addEventListener('click', function () { closeNav(); });
   });
@@ -1094,11 +1057,10 @@ img { display: block; max-width: 100%; height: auto; }
 
   function update() {
     var y = window.pageYOffset;
-    var solid = y > 10;
-    header.classList.toggle('nav-solid', solid);
+    header.classList.toggle('nav-solid', y > 10);
     if      (y > lastY && y > navH) { header.classList.add('nav-hidden'); }
     else if (y < lastY)              { header.classList.remove('nav-hidden'); }
-    lastY   = y < 0 ? 0 : y;
+    lastY = y < 0 ? 0 : y;
     ticking = false;
   }
 
@@ -1118,30 +1080,20 @@ gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 (function () {
   var targetY = window.scrollY;
   var isWheeling = false;
-
   window.addEventListener('wheel', function (e) {
     e.preventDefault();
     if (!isWheeling) { targetY = window.scrollY; }
     isWheeling = true;
-
     var delta = e.deltaY;
     if (e.deltaMode === 1) delta *= 40;
     if (e.deltaMode === 2) delta *= window.innerHeight;
-
     targetY += delta;
     targetY = Math.max(0, Math.min(targetY, document.documentElement.scrollHeight - window.innerHeight));
-
-    gsap.to(window, {
-      scrollTo: { y: targetY },
-      duration: 0.65,
-      ease: 'power4.out',
-      overwrite: true,
-      onComplete: function () { isWheeling = false; },
-    });
+    gsap.to(window, { scrollTo: { y: targetY }, duration: 0.65, ease: 'power4.out', overwrite: true, onComplete: function () { isWheeling = false; } });
   }, { passive: false });
 })();
 
-// Smooth scroll for nav anchor links (desktop nav + mobile overlay)
+// Smooth scroll for anchor links (desktop nav + mobile overlay)
 document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   link.addEventListener('click', function (e) {
     var target = document.querySelector(link.getAttribute('href'));
@@ -1150,11 +1102,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     var distance = Math.abs(target.getBoundingClientRect().top);
     var duration = Math.min(Math.max(distance / 600, 1.2), 3.0);
     var offsetY = link.getAttribute('href') === '#about' ? 80 : 0;
-    gsap.to(window, {
-      scrollTo: { y: target, offsetY: offsetY },
-      duration: duration,
-      ease: 'sine.inOut',
-    });
+    gsap.to(window, { scrollTo: { y: target, offsetY: offsetY }, duration: duration, ease: 'sine.inOut' });
   });
 });
 
@@ -1162,7 +1110,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 (function () {
   var items = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
   if (!items.length || typeof gsap === 'undefined') return;
-
   var innerEls = items.map(function (el) {
     var clip = document.createElement('span');
     clip.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;padding: 8px 0;';
@@ -1174,18 +1121,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     clip.appendChild(inner);
     return inner;
   });
-
   gsap.set(innerEls, { yPercent: 150 });
-
   document.addEventListener('preloader:done', function () {
-    gsap.to(innerEls, {
-      yPercent: 0,
-      duration: 1.1,
-      ease: 'expo.out',
-      stagger: 0.04,
-      delay: 0.15,
-      force3D: true,
-    });
+    gsap.to(innerEls, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.04, delay: 0.15, force3D: true });
   }, { once: true });
 })();
 
@@ -1193,11 +1131,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 (function () {
   var h1 = document.querySelector('.text-hero h1');
   if (!h1 || typeof gsap === 'undefined') return;
-
   var nodes = Array.from(h1.childNodes);
   var wordEls = [];
   h1.innerHTML = '';
-
   nodes.forEach(function (node) {
     if (node.nodeType === Node.TEXT_NODE) {
       var parts = node.textContent.split(/(\s+)/);
@@ -1236,10 +1172,8 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       h1.appendChild(word);
     }
   });
-
   wordEls.forEach(function (el) { el.style.willChange = 'transform'; });
   gsap.set(wordEls, { yPercent: 110, opacity: 0 });
-
   document.addEventListener('preloader:done', function () {
     var tops = wordEls.map(function (el) { return el.parentElement.offsetTop; });
     var lineIndex = 0, wordInLine = 0, prevTop = tops[0];
@@ -1249,37 +1183,18 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       wordInLine++;
       return d;
     });
-
-    gsap.to(wordEls, {
-      yPercent: 0,
-      duration: 1.1,
-      ease: 'expo.out',
-      stagger: function (i) { return customDelays[i]; },
-      delay: 0.4,
-      force3D: true,
-      onComplete: function () {
-        gsap.set(wordEls, { clearProps: 'transform,opacity' });
-        wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
-      },
-    });
-    gsap.to(wordEls, {
-      opacity: 1,
-      duration: 0.25,
-      ease: 'power2.out',
-      stagger: function (i) { return customDelays[i]; },
-      delay: 0.4,
-    });
+    gsap.to(wordEls, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: function (i) { return customDelays[i]; }, delay: 0.4, force3D: true,
+      onComplete: function () { gsap.set(wordEls, { clearProps: 'transform,opacity' }); wordEls.forEach(function (el) { el.style.willChange = 'auto'; }); } });
+    gsap.to(wordEls, { opacity: 1, duration: 0.25, ease: 'power2.out', stagger: function (i) { return customDelays[i]; }, delay: 0.4 });
   }, { once: true });
 })();
 
-// Project image card hover — 3D tilt
+// Project image card hover
 (function () {
   var cards = gsap.utils.toArray('.project-img, .project-img-placeholder');
   if (!cards.length) return;
-
   cards.forEach(function (card) {
     var img = card.querySelector('img');
-
     card.addEventListener('mousemove', function (e) {
       var rect = card.getBoundingClientRect();
       var x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -1287,48 +1202,35 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       gsap.to(card, { rotateY: x * 12, rotateX: -y * 12, transformPerspective: 800, ease: 'power2.out', duration: 0.4 });
       gsap.to(img,  { scale: 1.05, duration: 0.4, ease: 'power2.out' });
     });
-
     card.addEventListener('mouseleave', function () {
       gsap.to(card, { rotateX: 0, rotateY: 0, z: 0, duration: 0.6, ease: 'expo.out' });
-      gsap.to(img,  { scale: 1,   duration: 0.6, ease: 'expo.out' });
+      gsap.to(img,  { scale: 1, duration: 0.6, ease: 'expo.out' });
     });
   });
 })();
 
-// Project image card reveal — clip-path expand on scroll
+// Project image card scroll reveal
 (function () {
   var cards = Array.from(document.querySelectorAll('.project-img, .project-img-placeholder'));
   if (!cards.length || typeof gsap === 'undefined') return;
-
   cards.forEach(function (card) {
     var img = card.querySelector('img');
     if (!img) return;
-
-    var tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: card,
-        start: 'top 100%',
-        toggleActions: 'play none none reset',
-      }
-    });
-
+    var tl = gsap.timeline({ scrollTrigger: { trigger: card, start: 'top 100%', toggleActions: 'play none none reset' } });
     tl.fromTo(card,
       { clipPath: 'inset(5% 65% 50% 5% round 16px)' },
       { clipPath: 'inset(0% 0% 0% 0% round 16px)', duration: 0.7, ease: 'expo.out', immediateRender: false }
     ).fromTo(img,
       { scale: 1.15, rotateX: 4, skewX: -1.5 },
-      { scale: 1,    rotateX: 0, skewX: 0,   duration: 0.7, ease: 'sine.out', immediateRender: false },
-      '<'
-    );
+      { scale: 1,    rotateX: 0, skewX: 0,   duration: 0.7, ease: 'sine.out', immediateRender: false }, '<');
   });
 })();
 
 // Vibes sound toggle
 (function () {
-  var btn   = document.getElementById('vibesBtn');
-  var bars  = document.getElementById('vibesBars');
+  var btn  = document.getElementById('vibesBtn');
+  var bars = document.getElementById('vibesBars');
   if (!btn || !bars) return;
-
   var audioCtx = null;
   function primeAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1337,10 +1239,8 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   }
   document.addEventListener('click', primeAudio);
   document.addEventListener('touchstart', primeAudio);
-
   var audio = new Audio('audio/lofi.mp3');
   audio.loop = true;
-
   btn.addEventListener('click', function () {
     var playing = bars.classList.toggle('playing');
     btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
@@ -1350,72 +1250,49 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 </script>
 
 <script>
-// Fan card stack — click to cycle, hover lift
+// Fan card stack
 (function () {
   var cards = Array.from(document.querySelectorAll('.photo-card'));
   if (!cards.length || typeof gsap === 'undefined') return;
-
   var col = document.querySelector('.cards-column');
-
   var positions = [
     { left: 100, top: 70, rotation: -23.34, zIndex: 1 },
     { left: 146, top: 55, rotation: -9.01,  zIndex: 2 },
     { left: 211, top: 40, rotation: 1,       zIndex: 3 },
   ];
-
   if (window.innerWidth <= 479) {
     var s = window.innerWidth / 580;
     col.style.transform = 'scale(' + s + ')';
     col.style.transformOrigin = 'top left';
     col.style.marginBottom = -(580 * (1 - s)) + 'px';
   }
-
-  var cardOrder = [0, 1, 2];
-  var animating = false;
-
+  var cardOrder = [0, 1, 2], animating = false;
   function applyPositions(animate) {
     cards.forEach(function (card, i) {
       var pos = positions[cardOrder[i]];
-      if (animate) {
-        gsap.to(card, { left: pos.left, top: pos.top, rotation: pos.rotation, duration: 0.75, ease: 'power2.inOut', overwrite: 'auto' });
-      } else {
-        gsap.set(card, { left: pos.left, top: pos.top, rotation: pos.rotation, zIndex: pos.zIndex, transformOrigin: 'center center' });
-      }
+      if (animate) { gsap.to(card,  { left: pos.left, top: pos.top, rotation: pos.rotation, duration: 0.75, ease: 'power2.inOut', overwrite: 'auto' }); }
+      else          { gsap.set(card, { left: pos.left, top: pos.top, rotation: pos.rotation, zIndex: pos.zIndex, transformOrigin: 'center center' }); }
     });
   }
-
   var midPos = positions[1];
   cards.forEach(function (card, i) {
     gsap.set(card, { left: midPos.left, top: midPos.top, rotation: midPos.rotation, scale: 0.85, zIndex: positions[cardOrder[i]].zIndex, opacity: 1, transformOrigin: 'center center' });
   });
-
   function resetCards() {
     cardOrder = [0, 1, 2];
-    cards.forEach(function (card, i) {
-      gsap.killTweensOf(card);
-      gsap.set(card, { left: midPos.left, top: midPos.top, rotation: midPos.rotation, scale: 0.85, zIndex: positions[cardOrder[i]].zIndex });
-    });
+    cards.forEach(function (card, i) { gsap.killTweensOf(card); gsap.set(card, { left: midPos.left, top: midPos.top, rotation: midPos.rotation, scale: 0.85, zIndex: positions[cardOrder[i]].zIndex }); });
   }
-
   function fanCards() {
     cards.forEach(function (card, i) {
-      var pos = positions[cardOrder[i]];
-      var delay = 0.1 + i * 0.05;
+      var pos = positions[cardOrder[i]], delay = 0.1 + i * 0.05;
       gsap.timeline({ delay: delay })
         .to(card, { left: pos.left, top: pos.top, rotation: pos.rotation, scale: 1.03, duration: 0.35, ease: 'quart.out' })
         .to(card, { scale: 1, duration: 0.75, ease: 'elastic.out(2, 0.4)' });
     });
   }
-
-  var fanned = false;
-  var nudged = false;
-  var anyClicked = false;
-  var nudgeTimers = [];
-
+  var fanned = false, nudged = false, anyClicked = false, nudgeTimers = [];
   function doNudge() {
-    var midIdx = cardOrder.indexOf(1);
-    var midCard = cards[midIdx];
-    var baseRot = positions[1].rotation;
+    var midIdx = cardOrder.indexOf(1), midCard = cards[midIdx], baseRot = positions[1].rotation;
     gsap.timeline()
       .to(midCard, { scale: 1.02, rotation: baseRot + 5, duration: 0.18, ease: 'power2.out' })
       .to(midCard, { rotation: baseRot - 5, duration: 0.08, ease: 'sine.inOut' })
@@ -1428,58 +1305,37 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       .to(midCard, { rotation: baseRot + 1, duration: 0.05, ease: 'sine.inOut' })
       .to(midCard, { scale: 1, rotation: baseRot, duration: 0.38, ease: 'power3.inOut' });
   }
-
   ScrollTrigger.create({
-    trigger: col,
-    start: 'top 90%',
+    trigger: col, start: 'top 90%',
     onEnter: function () {
       if (!fanned) {
-        fanned = true;
-        fanCards();
-        if (!nudged) {
-          nudgeTimers.push(setTimeout(function () {
-            if (!anyClicked) { nudged = true; doNudge(); }
-          }, 4000));
-        }
+        fanned = true; fanCards();
+        if (!nudged) { nudgeTimers.push(setTimeout(function () { if (!anyClicked) { nudged = true; doNudge(); } }, 4000)); }
       }
     }
   });
-
   ScrollTrigger.create({
-    trigger: col,
-    start: 'top bottom',
-    onLeaveBack: function () {
-      fanned = false;
-      nudgeTimers.forEach(function (t) { clearTimeout(t); }); nudgeTimers = [];
-      resetCards();
-    }
+    trigger: col, start: 'top bottom',
+    onLeaveBack: function () { fanned = false; nudgeTimers.forEach(function (t) { clearTimeout(t); }); nudgeTimers = []; resetCards(); }
   });
-
   cards.forEach(function (card, i) {
     card.addEventListener('click', function () {
-      if (animating) return;
-      if (cardOrder[i] === 2) return;
+      if (animating || cardOrder[i] === 2) return;
       anyClicked = true;
       nudgeTimers.forEach(function (t) { clearTimeout(t); }); nudgeTimers = [];
       animating = true;
-      var frontCardIndex = cardOrder.indexOf(2);
-      var clickedPos = cardOrder[i];
-      cardOrder[frontCardIndex] = clickedPos;
-      cardOrder[i] = 2;
+      var frontCardIndex = cardOrder.indexOf(2), clickedPos = cardOrder[i];
+      cardOrder[frontCardIndex] = clickedPos; cardOrder[i] = 2;
       cards.forEach(function (c, j) { c.style.zIndex = positions[cardOrder[j]].zIndex; });
       applyPositions(true);
       setTimeout(function () { animating = false; }, 600);
     });
-
     card.addEventListener('mouseenter', function () {
       if (animating) return;
-      var baseRotation = positions[cardOrder[i]].rotation;
-      gsap.to(card, { y: -16, scale: 1.07, rotation: baseRotation - 4, duration: 0.35, ease: 'back.out(2.5)', overwrite: 'auto' });
+      gsap.to(card, { y: -16, scale: 1.07, rotation: positions[cardOrder[i]].rotation - 4, duration: 0.35, ease: 'back.out(2.5)', overwrite: 'auto' });
     });
-
     card.addEventListener('mouseleave', function () {
-      var baseRotation = positions[cardOrder[i]].rotation;
-      gsap.to(card, { y: 0, scale: 1, rotation: baseRotation, duration: 0.7, ease: 'elastic.out(0.6, 0.5)', overwrite: 'auto' });
+      gsap.to(card, { y: 0, scale: 1, rotation: positions[cardOrder[i]].rotation, duration: 0.7, ease: 'elastic.out(0.6, 0.5)', overwrite: 'auto' });
     });
   });
 })();
@@ -1496,13 +1352,11 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       span.style.display = 'inline-block';
       link.appendChild(span);
     });
-
     link.addEventListener('mouseenter', function () {
       var chars = link.querySelectorAll('span');
       gsap.killTweensOf(chars);
       gsap.to(chars, { color: '#e0512f', duration: 0.15, stagger: 0.02, ease: 'power2.out' });
     });
-
     link.addEventListener('mouseleave', function () {
       var chars = link.querySelectorAll('span');
       gsap.killTweensOf(chars);
