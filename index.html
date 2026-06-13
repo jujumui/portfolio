@@ -179,6 +179,9 @@ img { display: block; max-width: 100%; height: auto; }
   width: 28px; height: 2px;
   background: var(--ink-icon);
   border-radius: 2px;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              top 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .nav-toggle .bars span:nth-child(1) { top: 0; }
 .nav-toggle .bars span:nth-child(2) { top: 7px; }
@@ -433,19 +436,57 @@ img { display: block; max-width: 100%; height: auto; }
    ===================================================================== */
 @media (max-width: 479px) {
   .div-nav { padding-top: 16px; padding-bottom: 16px; }
-  .nav-links { display: none; }
-  .nav-toggle { display: inline-flex; }
+
+  /* Hamburger toggle — sits above the overlay */
+  .nav-toggle {
+    display: inline-flex;
+    position: relative;
+    z-index: 200;
+  }
+
+  /* Full-screen slide-in overlay */
+  .nav-links {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    background: #F8EDDE;
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    transform: translateX(100%);
+    transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
 
   .nav-links.open {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    position: absolute;
-    top: 80px; left: 0; right: 0;
-    padding: 24px;
-    background: #FDECDD;
-    box-shadow: 0 12px 24px rgba(34, 40, 36, .08);
-    z-index: 20;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  /* Nav items — large serif, same size as project titles */
+  .nav-links a,
+  .nav-links .vibes-btn {
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--ink-nav);
+  }
+
+  /* Hamburger → back arrow morph */
+  .nav-toggle[aria-expanded="true"] .bars span:nth-child(1) {
+    top: 7px;
+    width: 14px;
+    transform: rotate(-45deg);
+    transform-origin: left center;
+  }
+  .nav-toggle[aria-expanded="true"] .bars span:nth-child(3) {
+    top: 7px;
+    width: 14px;
+    transform: rotate(45deg);
+    transform-origin: left center;
   }
 
   .div-hero {
@@ -985,6 +1026,18 @@ toggle.addEventListener('click', function () {
   var open = links.classList.toggle('open');
   toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  // Prevent body scroll while overlay is open
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+
+// Close overlay when a nav link is clicked
+links.querySelectorAll('a').forEach(function (a) {
+  a.addEventListener('click', function () {
+    links.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Open menu');
+    document.body.style.overflow = '';
+  });
 });
 
 // Hide nav on scroll-down, reveal on scroll-up
