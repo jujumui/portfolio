@@ -1422,7 +1422,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       if (!fanned) {
         fanned = true;
         fanCards();
-        if (window.innerWidth > 991 && !nudged) {
+        if (!nudged) {
           nudgeTimers.push(setTimeout(function () {
             if (!anyClicked) { nudged = true; doNudge(); }
           }, 4000));
