@@ -171,6 +171,12 @@ img { display: block; max-width: 100%; height: auto; }
 .nav-toggle .bars span:nth-child(3) { top: 14px; }
 
 @media (max-width: 479px) {
+  .nav-toggle .bars {
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-toggle[aria-expanded="true"] .bars {
+    transform: rotate(180deg);
+  }
   .nav-toggle[aria-expanded="true"] .bars span:nth-child(1) {
     top: 7px;
     transform: rotate(45deg);
