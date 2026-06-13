@@ -166,6 +166,9 @@ img { display: block; max-width: 100%; height: auto; }
   cursor: pointer;
   align-items: center;
   justify-content: center;
+  /* sits above the mobile overlay */
+  position: relative;
+  z-index: 9100;
 }
 
 .nav-toggle .bars {
@@ -186,6 +189,74 @@ img { display: block; max-width: 100%; height: auto; }
 .nav-toggle .bars span:nth-child(1) { top: 0; }
 .nav-toggle .bars span:nth-child(2) { top: 7px; }
 .nav-toggle .bars span:nth-child(3) { top: 14px; }
+
+/* Back-arrow morph when overlay is open (mobile only) */
+@media (max-width: 479px) {
+  .nav-toggle[aria-expanded="true"] .bars span:nth-child(1) {
+    top: 7px;
+    width: 14px;
+    transform: rotate(-45deg);
+    transform-origin: left center;
+  }
+  .nav-toggle[aria-expanded="true"] .bars span:nth-child(3) {
+    top: 7px;
+    width: 14px;
+    transform: rotate(45deg);
+    transform-origin: left center;
+  }
+}
+
+/* =====================================================================
+   MOBILE FULL-SCREEN NAV OVERLAY
+   Lives at <body> level so position:fixed is relative to the viewport,
+   not constrained by the sticky header’s will-change:transform layer.
+   ===================================================================== */
+@keyframes mobileNavIn  { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes mobileNavOut { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: #F8EDDE;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+.mobile-nav-overlay.is-open {
+  display: flex;
+  animation: mobileNavIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.mobile-nav-overlay.is-closing {
+  display: flex;
+  pointer-events: none;
+  animation: mobileNavOut 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.mobile-nav-overlay a {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--ink-nav);
+  position: relative;
+}
+
+.mobile-nav-overlay a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -4px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.mobile-nav-overlay a:hover::after { transform: scaleX(1); }
 
 /* =====================================================================
    HERO
@@ -436,58 +507,8 @@ img { display: block; max-width: 100%; height: auto; }
    ===================================================================== */
 @media (max-width: 479px) {
   .div-nav { padding-top: 16px; padding-bottom: 16px; }
-
-  /* Hamburger toggle — sits above the overlay */
-  .nav-toggle {
-    display: inline-flex;
-    position: relative;
-    z-index: 200;
-  }
-
-  /* Full-screen slide-in overlay */
-  .nav-links {
-    display: flex;
-    position: fixed;
-    inset: 0;
-    background: #F8EDDE;
-    z-index: 100;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    transform: translateX(100%);
-    transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
-    pointer-events: none;
-  }
-
-  .nav-links.open {
-    transform: translateX(0);
-    pointer-events: auto;
-  }
-
-  /* Nav items — large serif, same size as project titles */
-  .nav-links a,
-  .nav-links .vibes-btn {
-    font-family: var(--serif);
-    font-size: 34px;
-    font-weight: 400;
-    line-height: 1;
-    color: var(--ink-nav);
-  }
-
-  /* Hamburger → back arrow morph */
-  .nav-toggle[aria-expanded="true"] .bars span:nth-child(1) {
-    top: 7px;
-    width: 14px;
-    transform: rotate(-45deg);
-    transform-origin: left center;
-  }
-  .nav-toggle[aria-expanded="true"] .bars span:nth-child(3) {
-    top: 7px;
-    width: 14px;
-    transform: rotate(45deg);
-    transform-origin: left center;
-  }
+  .nav-links { display: none; }
+  .nav-toggle { display: inline-flex; }
 
   .div-hero {
     min-height: 0;
@@ -850,6 +871,11 @@ img { display: block; max-width: 100%; height: auto; }
   </div>
 </div>
 
+<!-- Mobile full-screen nav overlay (body-level so position:fixed hits the viewport) -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
+  <a href="#projects" id="mobileNavProjects">Projects</a>
+  <a href="#about" id="mobileNavAbout">About</a>
+</div>
 
 <!-- ================= NAVIGATION ================= -->
 <header class="div-nav-section">
@@ -867,7 +893,7 @@ img { display: block; max-width: 100%; height: auto; }
         <span class="vibes-label">Vibes</span>
       </button>
     </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavOverlay">
       <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
     </button>
   </nav>
@@ -1000,7 +1026,6 @@ img { display: block; max-width: 100%; height: auto; }
   var bar = document.getElementById('preloaderBar');
   var loader = document.getElementById('preloader');
 
-  // Animate bar to full width over 1s
   bar.animate(
     [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
     { duration: 1000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
@@ -1016,29 +1041,49 @@ img { display: block; max-width: 100%; height: auto; }
 </script>
 
 <script>
+// Mobile nav overlay toggle
+(function () {
+  var toggle  = document.getElementById('navToggle');
+  var overlay = document.getElementById('mobileNavOverlay');
+  var isOpen  = false;
+  var closeTimer = null;
 
+  function openNav() {
+    if (isOpen) return;
+    isOpen = true;
+    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+    overlay.classList.remove('is-closing');
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Close menu');
+    document.body.style.overflow = 'hidden';
+  }
 
-
-// Mobile menu toggle
-var toggle = document.getElementById('navToggle');
-var links  = document.getElementById('navLinks');
-toggle.addEventListener('click', function () {
-  var open = links.classList.toggle('open');
-  toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-  toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-  // Prevent body scroll while overlay is open
-  document.body.style.overflow = open ? 'hidden' : '';
-});
-
-// Close overlay when a nav link is clicked
-links.querySelectorAll('a').forEach(function (a) {
-  a.addEventListener('click', function () {
-    links.classList.remove('open');
+  function closeNav() {
+    if (!isOpen) return;
+    isOpen = false;
+    overlay.classList.remove('is-open');
+    overlay.classList.add('is-closing');
+    overlay.setAttribute('aria-hidden', 'true');
     toggle.setAttribute('aria-expanded', 'false');
     toggle.setAttribute('aria-label', 'Open menu');
     document.body.style.overflow = '';
+    closeTimer = setTimeout(function () {
+      overlay.classList.remove('is-closing');
+      closeTimer = null;
+    }, 400);
+  }
+
+  toggle.addEventListener('click', function () {
+    if (isOpen) { closeNav(); } else { openNav(); }
   });
-});
+
+  // Close when a link inside the overlay is tapped
+  overlay.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () { closeNav(); });
+  });
+})();
 
 // Hide nav on scroll-down, reveal on scroll-up
 (function () {
@@ -1051,7 +1096,6 @@ links.querySelectorAll('a').forEach(function (a) {
     var y = window.pageYOffset;
     var solid = y > 10;
     header.classList.toggle('nav-solid', solid);
-    if (!solid) { /* no-op */ }
     if      (y > lastY && y > navH) { header.classList.add('nav-hidden'); }
     else if (y < lastY)              { header.classList.remove('nav-hidden'); }
     lastY   = y < 0 ? 0 : y;
@@ -1062,32 +1106,27 @@ links.querySelectorAll('a').forEach(function (a) {
     if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
   }, { passive: true });
 })();
-
 </script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 
-// Inertia scroll — wheel events ease to a target with momentum feel
+// Inertia scroll
 (function () {
   var targetY = window.scrollY;
   var isWheeling = false;
 
   window.addEventListener('wheel', function (e) {
     e.preventDefault();
-
-    // If not actively wheeling, sync targetY to actual scroll position
-    // (handles jumps from anchor clicks or programmatic scrolls)
-    if (!isWheeling) {
-      targetY = window.scrollY;
-    }
+    if (!isWheeling) { targetY = window.scrollY; }
     isWheeling = true;
 
     var delta = e.deltaY;
-    if (e.deltaMode === 1) delta *= 40;        // Firefox line mode
-    if (e.deltaMode === 2) delta *= window.innerHeight; // page mode
+    if (e.deltaMode === 1) delta *= 40;
+    if (e.deltaMode === 2) delta *= window.innerHeight;
 
     targetY += delta;
     targetY = Math.max(0, Math.min(targetY, document.documentElement.scrollHeight - window.innerHeight));
@@ -1102,7 +1141,7 @@ gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
   }, { passive: false });
 })();
 
-// Smooth scroll for nav anchor links
+// Smooth scroll for nav anchor links (desktop nav + mobile overlay)
 document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   link.addEventListener('click', function (e) {
     var target = document.querySelector(link.getAttribute('href'));
@@ -1119,7 +1158,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   });
 });
 
-// Nav links reveal — same clip animation as H1, fires before it
+// Nav links reveal
 (function () {
   var items = Array.from(document.querySelectorAll('.nav-links a, .nav-links .vibes-btn'));
   if (!items.length || typeof gsap === 'undefined') return;
@@ -1155,23 +1194,17 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   var h1 = document.querySelector('.text-hero h1');
   if (!h1 || typeof gsap === 'undefined') return;
 
-  // Walk child nodes and build a flat list of word tokens,
-  // preserving .accent spans as single units.
   var nodes = Array.from(h1.childNodes);
   var wordEls = [];
-
-  // Clear h1 and rebuild with clip wrappers
   h1.innerHTML = '';
 
   nodes.forEach(function (node) {
     if (node.nodeType === Node.TEXT_NODE) {
-      // Split text into words, then each word into letters
       var parts = node.textContent.split(/(\s+)/);
       parts.forEach(function (part) {
         if (/^\s+$/.test(part)) {
           h1.appendChild(document.createTextNode(part));
         } else if (part.length) {
-          // Word wrapper keeps letters together for line-breaking
           var word = document.createElement('span');
           word.style.cssText = 'display:inline-block;white-space:nowrap;';
           part.split('').forEach(function (char) {
@@ -1188,7 +1221,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
         }
       });
     } else if (node.nodeType === Node.ELEMENT_NODE) {
-      // Split accent spans letter by letter, preserving the element style
       var word = document.createElement('span');
       word.style.cssText = 'display:inline-block;white-space:nowrap;';
       node.textContent.split('').forEach(function (char) {
@@ -1205,24 +1237,14 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     }
   });
 
-  // Force GPU compositing + hide immediately
   wordEls.forEach(function (el) { el.style.willChange = 'transform'; });
   gsap.set(wordEls, { yPercent: 110, opacity: 0 });
 
-  // Animate in after preloader exits
   document.addEventListener('preloader:done', function () {
-    // Build per-word delays: each line starts at lineIndex * 0.045s,
-    // words within a line stagger at 0.035s each
     var tops = wordEls.map(function (el) { return el.parentElement.offsetTop; });
-    var lineIndex = 0;
-    var wordInLine = 0;
-    var prevTop = tops[0];
+    var lineIndex = 0, wordInLine = 0, prevTop = tops[0];
     var customDelays = tops.map(function (top, i) {
-      if (i > 0 && top !== prevTop) {
-        lineIndex++;
-        wordInLine = 0;
-        prevTop = top;
-      }
+      if (i > 0 && top !== prevTop) { lineIndex++; wordInLine = 0; prevTop = top; }
       var d = lineIndex * 0.15 + wordInLine * 0.015;
       wordInLine++;
       return d;
@@ -1240,7 +1262,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
         wordEls.forEach(function (el) { el.style.willChange = 'auto'; });
       },
     });
-    // Subtle opacity fade
     gsap.to(wordEls, {
       opacity: 1,
       duration: 0.25,
@@ -1251,8 +1272,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   }, { once: true });
 })();
 
-// Project image card hover — 3D tilt, image scale, blur siblings
-// added animation effect to project image cards
+// Project image card hover — 3D tilt
 (function () {
   var cards = gsap.utils.toArray('.project-img, .project-img-placeholder');
   if (!cards.length) return;
@@ -1264,40 +1284,18 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       var rect = card.getBoundingClientRect();
       var x = (e.clientX - rect.left) / rect.width - 0.5;
       var y = (e.clientY - rect.top) / rect.height - 0.5;
-
-      gsap.to(card, {
-        rotateY: x * 12,
-        rotateX: -y * 12,
-        transformPerspective: 800,
-        ease: 'power2.out',
-        duration: 0.4
-      });
-
-      gsap.to(img, {
-        scale: 1.05,
-        duration: 0.4,
-        ease: 'power2.out'
-      });
+      gsap.to(card, { rotateY: x * 12, rotateX: -y * 12, transformPerspective: 800, ease: 'power2.out', duration: 0.4 });
+      gsap.to(img,  { scale: 1.05, duration: 0.4, ease: 'power2.out' });
     });
 
     card.addEventListener('mouseleave', function () {
-      gsap.to(card, {
-        rotateX: 0,
-        rotateY: 0,
-        z: 0,
-        duration: 0.6,
-        ease: 'expo.out'
-      });
-      gsap.to(img, {
-        scale: 1,
-        duration: 0.6,
-        ease: 'expo.out'
-      });
+      gsap.to(card, { rotateX: 0, rotateY: 0, z: 0, duration: 0.6, ease: 'expo.out' });
+      gsap.to(img,  { scale: 1,   duration: 0.6, ease: 'expo.out' });
     });
   });
 })();
 
-// Project image card reveal — clip-path expand + img de-tilt on scroll
+// Project image card reveal — clip-path expand on scroll
 (function () {
   var cards = Array.from(document.querySelectorAll('.project-img, .project-img-placeholder'));
   if (!cards.length || typeof gsap === 'undefined') return;
@@ -1319,7 +1317,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       { clipPath: 'inset(0% 0% 0% 0% round 16px)', duration: 0.7, ease: 'expo.out', immediateRender: false }
     ).fromTo(img,
       { scale: 1.15, rotateX: 4, skewX: -1.5 },
-      { scale: 1, rotateX: 0, skewX: 0, duration: 0.7, ease: 'sine.out', immediateRender: false },
+      { scale: 1,    rotateX: 0, skewX: 0,   duration: 0.7, ease: 'sine.out', immediateRender: false },
       '<'
     );
   });
@@ -1331,37 +1329,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   var bars  = document.getElementById('vibesBars');
   if (!btn || !bars) return;
 
-  // Bloop helper
   var audioCtx = null;
-  function bloop() {
-    try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      var now = audioCtx.currentTime;
-
-      function tone(freq, detune, vol, dur) {
-        var osc  = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now);
-        osc.frequency.exponentialRampToValueAtTime(freq * 1.4, now + 0.04);
-        osc.frequency.exponentialRampToValueAtTime(freq * 0.85, now + dur);
-        osc.detune.setValueAtTime(detune, now);
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(vol, now + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-        osc.start(now);
-        osc.stop(now + dur);
-      }
-
-      tone(680, 0,   0.14, 0.22);  // fundamental
-      tone(680, 7,   0.08, 0.18);  // slightly detuned for richness
-      tone(1360, 0,  0.05, 0.12);  // octave up, shorter
-    } catch(e) {}
-  }
-
-  // Prime AudioContext on first click anywhere so hover bloop works immediately after
   function primeAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     document.removeEventListener('click', primeAudio);
@@ -1370,19 +1338,13 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   document.addEventListener('click', primeAudio);
   document.addEventListener('touchstart', primeAudio);
 
-  // Hover bloop
-
   var audio = new Audio('audio/lofi.mp3');
   audio.loop = true;
 
   btn.addEventListener('click', function () {
     var playing = bars.classList.toggle('playing');
     btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
-    if (playing) {
-      audio.play().catch(function () {});
-    } else {
-      audio.pause();
-    }
+    if (playing) { audio.play().catch(function () {}); } else { audio.pause(); }
   });
 })();
 </script>
@@ -1401,7 +1363,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     { left: 211, top: 40, rotation: 1,       zIndex: 3 },
   ];
 
-  // On mobile, scale the whole column to fill full viewport width edge-to-edge
   if (window.innerWidth <= 479) {
     var s = window.innerWidth / 580;
     col.style.transform = 'scale(' + s + ')';
@@ -1522,8 +1483,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     });
   });
 })();
-
-
 
 // Contact links — character stagger color sweep
 (function () {
