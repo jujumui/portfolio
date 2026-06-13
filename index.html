@@ -163,7 +163,8 @@ img { display: block; max-width: 100%; height: auto; }
   border-radius: 2px;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
               top 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-              width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+              width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.2s ease;
 }
 .nav-toggle .bars span:nth-child(1) { top: 0; }
 .nav-toggle .bars span:nth-child(2) { top: 7px; }
@@ -171,14 +172,17 @@ img { display: block; max-width: 100%; height: auto; }
 
 @media (max-width: 479px) {
   .nav-toggle[aria-expanded="true"] .bars span:nth-child(1) {
-    top: 7px; width: 14px;
-    transform: rotate(-45deg);
-    transform-origin: left center;
+    top: 7px;
+    transform: rotate(45deg);
+    transform-origin: center;
+  }
+  .nav-toggle[aria-expanded="true"] .bars span:nth-child(2) {
+    opacity: 0;
   }
   .nav-toggle[aria-expanded="true"] .bars span:nth-child(3) {
-    top: 7px; width: 14px;
-    transform: rotate(45deg);
-    transform-origin: left center;
+    top: 7px;
+    transform: rotate(-45deg);
+    transform-origin: center;
   }
 }
 
