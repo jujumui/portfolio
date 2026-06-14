@@ -203,7 +203,6 @@ img { display: block; max-width: 100%; height: auto; }
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: #FDECDD;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -626,6 +625,7 @@ img { display: block; max-width: 100%; height: auto; }
     toggle.setAttribute('aria-expanded', 'true');
     toggle.setAttribute('aria-label', 'Close menu');
     if (window._setNavBg) window._setNavBg(true); else header.classList.add('nav-solid');
+    if (window._getNavBgColor) overlay.style.backgroundColor = window._getNavBgColor();
     document.body.style.overflow = 'hidden';
   }
 
@@ -689,6 +689,11 @@ img { display: block; max-width: 100%; height: auto; }
 
   // expose for mobile overlay use
   window._setNavBg = setNavBg;
+  window._getNavBgColor = function() {
+    var maxScroll = document.body.scrollHeight - window.innerHeight;
+    var t = maxScroll > 0 ? window.pageYOffset / maxScroll : 0;
+    return lerpColor(t);
+  };
 })();
 </script>
 
