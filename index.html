@@ -1125,9 +1125,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     });
   });
 
-  pwClose.addEventListener('click', function () {
-    closeOverlay(pwOverlay, function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
-  });
+  pwClose.addEventListener('click', function () { closeOverlay(pwOverlay); });
   csClose.addEventListener('click', function () { closeOverlay(csOverlay); });
 
   // Escape key
