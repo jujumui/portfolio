@@ -472,6 +472,40 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* =====================================================================
+   EMAIL COPY TOOLTIP (desktop + tablet only)
+   ===================================================================== */
+.email-tooltip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  bottom: calc(100% + 24px);
+  width: 115px;
+  height: 34px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+  background: #5F963C;
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+.email-tooltip.visible { opacity: 1; }
+
+@media (max-width: 479px) {
+  .email-tooltip { display: none; }
+}
+
+/* =====================================================================
    CASE STUDY PASSWORD OVERLAY
    ===================================================================== */
 .pw-overlay,
@@ -718,7 +752,7 @@ img { display: block; max-width: 100%; height: auto; }
       <div class="contact-links">
         <a href="https://www.linkedin.com/in/julescheung/" target="_blank" rel="noopener">Linkedin</a>
         <img src="images/Img_Dots.png" alt="" class="contact-arrow" />
-        <a href="mailto:jcheung530@gmail.com">Email</a>
+        <a href="mailto:jcheung530@gmail.com" id="emailLink">Email</a>
         <img src="images/Img_Dots.png" alt="" class="contact-arrow" />
         <a href="https://medium.com/@whyjules" target="_blank" rel="noopener">Medium</a>
       </div>
@@ -1147,6 +1181,35 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       pwInput.value = '';
       pwInput.focus();
     }
+  });
+})();
+</script>
+
+<script>
+// Email copy to clipboard (desktop + tablet only)
+(function () {
+  var link = document.getElementById('emailLink');
+  if (!link) return;
+
+  var tooltip = document.createElement('span');
+  tooltip.className = 'email-tooltip';
+  tooltip.textContent = 'Copied!';
+  link.style.position = 'relative';
+  link.appendChild(tooltip);
+
+  var hideTimer = null;
+
+  link.addEventListener('click', function (e) {
+    // Only intercept on non-mobile (>479px)
+    if (window.innerWidth <= 479) return;
+    e.preventDefault();
+    navigator.clipboard.writeText('jcheung530@gmail.com').then(function () {
+      tooltip.classList.add('visible');
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(function () {
+        tooltip.classList.remove('visible');
+      }, 2000);
+    });
   });
 })();
 </script>
