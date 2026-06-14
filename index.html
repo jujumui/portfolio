@@ -1095,10 +1095,19 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 // Contact links color sweep
 (function () {
   document.querySelectorAll('.contact-links a').forEach(function (link) {
+    // Save and remove any non-text child nodes (e.g. tooltip) before splitting
+    var saved = [];
+    Array.from(link.childNodes).forEach(function (n) { if (n.nodeType !== Node.TEXT_NODE) saved.push(n); });
+    saved.forEach(function (n) { link.removeChild(n); });
+
     var text = link.textContent; link.textContent = '';
     text.split('').forEach(function (ch) { var s=document.createElement('span'); s.textContent=ch; s.style.display='inline-block'; link.appendChild(s); });
-    link.addEventListener('mouseenter', function () { var c=link.querySelectorAll('span'); gsap.killTweensOf(c); gsap.to(c,{color:'#e0512f',duration:0.15,stagger:0.02,ease:'power2.out'}); });
-    link.addEventListener('mouseleave', function () { var c=link.querySelectorAll('span'); gsap.killTweensOf(c); gsap.to(c,{color:'#222824',duration:0.15,stagger:0.02,ease:'power2.out'}); });
+
+    // Re-append saved nodes (tooltip etc.)
+    saved.forEach(function (n) { link.appendChild(n); });
+
+    link.addEventListener('mouseenter', function () { var c=link.querySelectorAll(':scope > span'); gsap.killTweensOf(c); gsap.to(c,{color:'#e0512f',duration:0.15,stagger:0.02,ease:'power2.out'}); });
+    link.addEventListener('mouseleave', function () { var c=link.querySelectorAll(':scope > span'); gsap.killTweensOf(c); gsap.to(c,{color:'#222824',duration:0.15,stagger:0.02,ease:'power2.out'}); });
   });
 })();
 </script>
