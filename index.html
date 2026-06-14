@@ -542,7 +542,7 @@ img { display: block; max-width: 100%; height: auto; }
   color: var(--ink-nav);
   background: rgba(255,255,255,0.6);
   border: none;
-  border-radius: 4px;
+  border-radius: 16px;
   outline: none;
 }
 .pw-input::placeholder { color: #aaa; }
@@ -557,22 +557,28 @@ img { display: block; max-width: 100%; height: auto; }
   color: #fff;
   background: var(--ink-nav);
   border: none;
-  border-radius: 4px;
+  border-radius: 16px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  transition: color 0.45s ease;
 }
 .pw-submit::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.22) 50%, transparent 60%);
-  transform: translateX(-150%);
-  transition: none;
+  background: #3a4a3e;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
 }
 .pw-submit:hover::after {
-  transform: translateX(150%);
-  transition: transform 1.4s ease;
+  transform: scaleY(1);
+}
+.pw-submit span {
+  position: relative;
+  z-index: 1;
 }
 
 .pw-error {
@@ -626,7 +632,7 @@ img { display: block; max-width: 100%; height: auto; }
     <h2 class="pw-heading">Magic word?</h2>
     <form class="pw-form" id="pwForm" novalidate>
       <input class="pw-input" id="pwInput" type="password" placeholder="Password" autocomplete="current-password" spellcheck="false" />
-      <button class="pw-submit" type="submit">Abracadabra!</button>
+      <button class="pw-submit" type="submit"><span>Abracadabra!</span></button>
     </form>
     <p class="pw-error" id="pwError" aria-live="polite"></p>
   </div>
