@@ -470,6 +470,122 @@ img { display: block; max-width: 100%; height: auto; }
   .about-heading-img { width: 300px; max-width: 300px; align-self: flex-start; margin-left: 0; margin-right: auto; display: block; margin-top: -24px; }
   .cards-column { transform: none; margin-bottom: 0; }
 }
+
+/* =====================================================================
+   CASE STUDY PASSWORD OVERLAY
+   ===================================================================== */
+.pw-overlay,
+.coming-soon-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9800;
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pw-overlay.is-visible,
+.coming-soon-overlay.is-visible {
+  display: flex;
+  opacity: 0;
+}
+.pw-overlay.is-open,
+.coming-soon-overlay.is-open {
+  opacity: 1;
+}
+
+.pw-close {
+  position: absolute;
+  top: 32px; right: 36px;
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; cursor: pointer;
+  color: var(--ink-nav);
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+.pw-close:hover { opacity: 1; }
+
+.pw-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 560px;
+  margin: auto;
+  padding: 0 32px;
+}
+
+.pw-heading {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 52px;
+  line-height: 1.1;
+  color: var(--ink-nav);
+  margin: 0;
+}
+
+.pw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pw-input {
+  width: 100%;
+  height: 64px;
+  padding: 0 20px;
+  font-family: var(--sans);
+  font-size: 17px;
+  color: var(--ink-nav);
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.pw-input::placeholder { color: #aaa; }
+.pw-input:focus { border-color: rgba(0,0,0,0.3); }
+
+.pw-submit {
+  width: 100%;
+  height: 64px;
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 400;
+  color: #fff;
+  background: var(--ink-nav);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.pw-submit:hover { opacity: 0.85; }
+
+.pw-error {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: #c0392b;
+  margin: 0;
+  min-height: 20px;
+}
+
+/* Coming soon */
+.coming-soon-overlay {
+  align-items: center;
+  justify-content: center;
+}
+.cs-text {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 52px;
+  color: var(--ink-nav);
+  margin: 0;
+}
+
+@media (max-width: 479px) {
+  .pw-heading, .cs-text { font-size: 34px; }
+  .pw-close { top: 20px; right: 20px; }
+}
 </style>
 </head>
 <body class="is-loading">
@@ -485,6 +601,29 @@ img { display: block; max-width: 100%; height: auto; }
   <a href="#bigcommerce">BigCommerce</a>
   <a href="#trail575">Trail575</a>
   <a href="#about">About</a>
+</div>
+
+<!-- Case study password overlay -->
+<div class="pw-overlay" id="pwOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Password protected content">
+  <button class="pw-close" id="pwClose" aria-label="Close">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+  </button>
+  <div class="pw-inner">
+    <h2 class="pw-heading">What's the magic word?</h2>
+    <form class="pw-form" id="pwForm" novalidate>
+      <input class="pw-input" id="pwInput" type="password" placeholder="Password" autocomplete="current-password" spellcheck="false" />
+      <button class="pw-submit" type="submit">Abracadabra!</button>
+    </form>
+    <p class="pw-error" id="pwError" aria-live="polite"></p>
+  </div>
+</div>
+
+<!-- Coming soon screen -->
+<div class="coming-soon-overlay" id="comingSoonOverlay" aria-hidden="true">
+  <button class="pw-close" id="csClose" aria-label="Close">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+  </button>
+  <p class="cs-text">Coming soon</p>
 </div>
 
 <!-- NAVIGATION (z-index 9500, above overlay) -->
@@ -911,6 +1050,88 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     text.split('').forEach(function (ch) { var s=document.createElement('span'); s.textContent=ch; s.style.display='inline-block'; link.appendChild(s); });
     link.addEventListener('mouseenter', function () { var c=link.querySelectorAll('span'); gsap.killTweensOf(c); gsap.to(c,{color:'#e0512f',duration:0.15,stagger:0.02,ease:'power2.out'}); });
     link.addEventListener('mouseleave', function () { var c=link.querySelectorAll('span'); gsap.killTweensOf(c); gsap.to(c,{color:'#222824',duration:0.15,stagger:0.02,ease:'power2.out'}); });
+  });
+})();
+</script>
+
+<script>
+// Case study password overlay
+(function () {
+  var pwOverlay  = document.getElementById('pwOverlay');
+  var csOverlay  = document.getElementById('comingSoonOverlay');
+  var pwForm     = document.getElementById('pwForm');
+  var pwInput    = document.getElementById('pwInput');
+  var pwError    = document.getElementById('pwError');
+  var pwClose    = document.getElementById('pwClose');
+  var csClose    = document.getElementById('csClose');
+  var PASSWORD   = 'woof';
+
+  function getBgColor() {
+    if (window._getNavBgColor) return window._getNavBgColor();
+    return '#FDECDD';
+  }
+
+  function openOverlay(el) {
+    el.style.backgroundColor = getBgColor();
+    el.style.display = 'flex';
+    el.setAttribute('aria-hidden', 'false');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        el.classList.add('is-visible', 'is-open');
+      });
+    });
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeOverlay(el, cb) {
+    el.classList.remove('is-open');
+    el.setAttribute('aria-hidden', 'true');
+    el.addEventListener('transitionend', function done() {
+      el.removeEventListener('transitionend', done);
+      el.classList.remove('is-visible');
+      el.style.display = 'none';
+      if (cb) cb();
+    }, { once: true });
+    document.body.style.overflow = '';
+  }
+
+  // Intercept all case study links
+  document.querySelectorAll('.project-link').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      pwInput.value = '';
+      pwError.textContent = '';
+      openOverlay(pwOverlay);
+      setTimeout(function () { pwInput.focus(); }, 50);
+    });
+  });
+
+  pwClose.addEventListener('click', function () { closeOverlay(pwOverlay); });
+  csClose.addEventListener('click', function () { closeOverlay(csOverlay); });
+
+  // Close on backdrop click
+  pwOverlay.addEventListener('click', function (e) { if (e.target === pwOverlay) closeOverlay(pwOverlay); });
+  csOverlay.addEventListener('click', function (e) { if (e.target === csOverlay) closeOverlay(csOverlay); });
+
+  // Escape key
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (pwOverlay.classList.contains('is-open')) closeOverlay(pwOverlay);
+    if (csOverlay.classList.contains('is-open')) closeOverlay(csOverlay);
+  });
+
+  pwForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (pwInput.value.trim().toLowerCase() === PASSWORD) {
+      closeOverlay(pwOverlay, function () {
+        csOverlay.style.backgroundColor = getBgColor();
+        openOverlay(csOverlay);
+      });
+    } else {
+      pwError.textContent = 'Hmm, that\'s not it. Try again.';
+      pwInput.value = '';
+      pwInput.focus();
+    }
   });
 })();
 </script>
