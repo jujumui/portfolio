@@ -801,13 +801,26 @@ img { display: block; max-width: 100%; height: auto; }
   var loader = document.getElementById('preloader');
   var track  = document.getElementById('preloaderTrack');
   var content = loader.querySelector('.preloader-content');
-  var glyphs = ['✦', '·', '✧', '*', '⋆', '˚'];
+  var charIndex = 0;
+  var fullText = 'Sprinkling magic fairy dust';
+  var label = loader.querySelector('.preloader-label');
+  label.textContent = '';
 
+  function typeNext() {
+    if (charIndex <= fullText.length) {
+      label.textContent = fullText.slice(0, charIndex);
+      charIndex++;
+      setTimeout(typeNext, 2000 / fullText.length);
+    }
+  }
+  typeNext();
+
+  // Spawn sparkles at random intervals while loading
+  var glyphs = ['✦', '·', '✧', '*', '⋆', '˚'];
   function spawnSparkle() {
     var el = document.createElement('span');
     el.className = 'sparkle';
     el.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
-    // spread across the width of the track, drift slightly sideways
     var tx = (Math.random() - 0.5) * 280;
     var x  = (Math.random() - 0.5) * 280;
     var dur = (0.8 + Math.random() * 0.7).toFixed(2) + 's';
@@ -815,8 +828,6 @@ img { display: block; max-width: 100%; height: auto; }
     content.appendChild(el);
     el.addEventListener('animationend', function () { el.remove(); });
   }
-
-  // Spawn sparkles at random intervals while loading
   var sparkleInterval = setInterval(spawnSparkle, 120);
 
   bar.animate(
