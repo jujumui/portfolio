@@ -78,13 +78,13 @@
   margin: 0;
   font-family: var(--serif);
   font-weight: 400;
-  font-size: 22px;
+  font-size: 24px;
   letter-spacing: 0.01em;
   color: rgb(34, 40, 36);
 }
 .preloader-track {
-  width: 420px;
-  height: 3px;
+  width: 300px;
+  height: 2px;
   background: rgba(0,0,0,0.12);
   position: relative;
   overflow: hidden;
@@ -832,7 +832,7 @@ img { display: block; max-width: 100%; height: auto; }
 
   bar.animate(
     [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
-    { duration: 3000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
+    { duration: 3000, easing: 'cubic-bezier(0.4, 0, 0.8, 1)', fill: 'forwards' }
   ).onfinish = function () {
     clearInterval(sparkleInterval);
     loader.classList.add('done');
