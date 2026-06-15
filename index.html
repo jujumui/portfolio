@@ -53,6 +53,19 @@
   pointer-events: none;
   transition: opacity 0.4s ease;
 }
+.preloader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.preloader-label {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 16px;
+  color: rgb(34, 40, 36);
+}
 .preloader-track {
   width: 280px;
   height: 2px;
@@ -624,7 +637,10 @@ img { display: block; max-width: 100%; height: auto; }
 <body class="is-loading">
 
 <div id="preloader" aria-hidden="true">
-  <div class="preloader-track"><div class="preloader-bar" id="preloaderBar"></div></div>
+  <div class="preloader-content">
+    <p class="preloader-label">Sprinkling magic fairy dust ✨</p>
+    <div class="preloader-track"><div class="preloader-bar" id="preloaderBar"></div></div>
+  </div>
 </div>
 
 <!-- Mobile full-screen nav overlay (body-level, z-index 9000) -->
