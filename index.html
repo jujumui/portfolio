@@ -61,19 +61,6 @@
   gap: 16px;
   position: relative;
 }
-.sparkle {
-  position: absolute;
-  pointer-events: none;
-  font-size: 10px;
-  color: rgb(34, 40, 36);
-  opacity: 0;
-  animation: sparkleDrift var(--dur, 1.2s) ease-out var(--delay, 0s) forwards;
-}
-@keyframes sparkleDrift {
-  0%   { opacity: 0;   transform: translate(var(--tx), 0px) scale(0.6); }
-  20%  { opacity: 0.7; }
-  100% { opacity: 0;   transform: translate(var(--tx), -60px) scale(1); }
-}
 .preloader-label {
   margin: 0;
   font-family: var(--serif);
@@ -799,8 +786,6 @@ img { display: block; max-width: 100%; height: auto; }
 (function () {
   var bar    = document.getElementById('preloaderBar');
   var loader = document.getElementById('preloader');
-  var track  = document.getElementById('preloaderTrack');
-  var content = loader.querySelector('.preloader-content');
   var charIndex = 0;
   var fullText = 'Something lovely is on its way';
   var label = loader.querySelector('.preloader-label');
@@ -815,26 +800,10 @@ img { display: block; max-width: 100%; height: auto; }
   }
   typeNext();
 
-  // Spawn sparkles at random intervals while loading
-  var glyphs = ['✦', '·', '✧', '*', '⋆', '˚'];
-  function spawnSparkle() {
-    var el = document.createElement('span');
-    el.className = 'sparkle';
-    el.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
-    var tx = (Math.random() - 0.5) * 280;
-    var x  = (Math.random() - 0.5) * 280;
-    var dur = (0.8 + Math.random() * 0.7).toFixed(2) + 's';
-    el.style.cssText = '--tx:' + tx + 'px; --dur:' + dur + '; left: calc(50% + ' + x + 'px); bottom: 20px; font-size:' + (8 + Math.random() * 8).toFixed(0) + 'px;';
-    content.appendChild(el);
-    el.addEventListener('animationend', function () { el.remove(); });
-  }
-  var sparkleInterval = setInterval(spawnSparkle, 120);
-
   bar.animate(
     [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
     { duration: 3000, easing: 'cubic-bezier(0.4, 0, 0.8, 1)', fill: 'forwards' }
   ).onfinish = function () {
-    clearInterval(sparkleInterval);
     loader.classList.add('done');
     document.body.classList.remove('is-loading');
     setTimeout(function () { loader.remove(); document.dispatchEvent(new CustomEvent('preloader:done')); }, 420);
