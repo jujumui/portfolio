@@ -790,20 +790,6 @@ img { display: block; max-width: 100%; height: auto; }
 (function () {
   var bar    = document.getElementById('preloaderBar');
   var loader = document.getElementById('preloader');
-  var charIndex = 0;
-  var fullText = 'Something lovely is brewing...';
-  var label = loader.querySelector('.preloader-label');
-  label.textContent = '';
-
-  function typeNext() {
-    if (charIndex <= fullText.length) {
-      label.textContent = fullText.slice(0, charIndex);
-      charIndex++;
-      setTimeout(typeNext, 75);
-    }
-  }
-  typeNext();
-
   bar.animate(
     [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
     { duration: 3000, easing: 'cubic-bezier(0.25, 0.1, 0.6, 1)', fill: 'forwards' }
