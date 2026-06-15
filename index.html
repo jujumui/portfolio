@@ -832,7 +832,7 @@ img { display: block; max-width: 100%; height: auto; }
 
   bar.animate(
     [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
-    { duration: 2000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
+    { duration: 3000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
   ).onfinish = function () {
     clearInterval(sparkleInterval);
     loader.classList.add('done');
