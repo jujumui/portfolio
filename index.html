@@ -46,7 +46,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-bottom: 6vh;
+  padding-bottom: calc(6vh + 8px);
   overflow: hidden;
 }
 #preloader.done {
@@ -821,7 +821,7 @@ img { display: block; max-width: 100%; height: auto; }
 
   bar.animate(
     [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
-    { duration: 1500, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
+    { duration: 2000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
   ).onfinish = function () {
     clearInterval(sparkleInterval);
     loader.classList.add('done');
