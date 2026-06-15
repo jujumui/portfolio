@@ -70,7 +70,7 @@
   color: rgb(34, 40, 36);
 }
 .preloader-track {
-  width: 300px;
+  width: 200px;
   height: 3px;
   background: rgba(0,0,0,0.12);
   position: relative;
@@ -792,7 +792,7 @@ img { display: block; max-width: 100%; height: auto; }
   var loader = document.getElementById('preloader');
   bar.animate(
     [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
-    { duration: 3000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
+    { duration: 1800, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
   ).onfinish = function () {
     loader.classList.add('done');
     document.body.classList.remove('is-loading');
