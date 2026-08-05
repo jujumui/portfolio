@@ -273,6 +273,7 @@ img { display: block; max-width: 100%; height: auto; }
 }
 .div-nav-section.nav-solid  { /* bg set dynamically via JS to match body gradient */ }
 .div-nav-section.nav-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+.div-nav-section.cs-no-transition { transition: none !important; will-change: transform, opacity; }
 
 /* =====================================================================
    HERO
@@ -362,7 +363,7 @@ img { display: block; max-width: 100%; height: auto; }
 .project-link  { font-family: var(--sans);  font-weight: 400; font-size: 16px; line-height: 1.6; letter-spacing: 0.01em; color: #6B6860;
   text-decoration: underline; text-decoration-color: #6B6860; text-decoration-thickness: 1px; text-underline-offset: 6px;
   display: inline-flex; align-items: center; gap: 6px; }
-.lock-icon { flex-shrink: 0; position: relative; top: 1px; }
+.lock-icon { flex-shrink: 0; position: relative; top: 0px; }
 
 /* =====================================================================
    TABLET (≤ 991px)
@@ -644,6 +645,1373 @@ img { display: block; max-width: 100%; height: auto; }
   .pw-heading, .cs-text { font-size: 34px; }
   .pw-close { top: 20px; right: 20px; }
 }
+
+/* =====================================================================
+   CASE STUDY OVERLAYS
+   ===================================================================== */
+.project-img[data-casestudy],
+.project-img-placeholder[data-casestudy] { cursor: pointer; }
+
+#cs-tint {
+  position: fixed;
+  inset: 0;
+  z-index: 9600;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(to bottom, #E9CFBB, #F2DFD0);
+}
+#cs-peek {
+  position: fixed;
+  z-index: 9700;
+  bottom: 0;
+  height: 120px;
+  border-radius: 24px 24px 0 0;
+  background: #FFFFFF;
+  box-shadow: 0 -6px 24px rgba(0,0,0,0.10), 0 -1px 6px rgba(0,0,0,0.06);
+  cursor: pointer;
+  overflow: hidden;
+  align-items: center;
+  color: #1A1A1A;
+  transition: background 0.2s ease;
+}
+#cs-peek:hover { background: #F5F5F5; }
+.cs-peek-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 36px;
+}
+.cs-peek-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cs-peek-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.45;
+  font-weight: 500;
+}
+.cs-peek-title {
+  font-size: 17px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.cs-overlay {
+  position: fixed;
+  z-index: 10000;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 24px 80px var(--cs-shadow, rgba(0,0,0,0.22)), 0 4px 20px var(--cs-shadow-sm, rgba(0,0,0,0.12));
+  will-change: transform;
+  scrollbar-gutter: stable;
+}
+
+.cs-nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 28px 28px 0;
+  pointer-events: none;
+}
+
+.cs-close-btn {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  pointer-events: all;
+  flex-shrink: 0;
+  transition: background 0.2s ease, transform 0.3s cubic-bezier(0.33,1,0.68,1);
+}
+.cs-close-btn:hover { background: rgba(255,255,255,0.28); transform: rotate(90deg); }
+
+.cs-next-btn {
+  padding: 12px 18px;
+  border-radius: 40px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 400;
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+.cs-next-btn:hover { background: rgba(255,255,255,0.28); }
+
+.cs-hero-img {
+  width: 100%;
+  height: 95vh;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.cs-hero-img img,
+.cs-hero-img video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: brightness(1.08) contrast(1.05) saturate(1.15);
+}
+.cs-hero-img::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.38), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+.cs-overlay .cs-hero-img {
+  margin-top: -76px;
+}
+#cs-faire .cs-hero-img video {
+  object-position: bottom;
+}
+#cs-dd .cs-hero-img::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(29,15,0,0.94), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+#cs-dd .cs-hero-caption {
+  position: absolute;
+  bottom: 80px;
+  left: 72px;
+  right: 56px;
+  z-index: 2;
+  pointer-events: none;
+}
+#cs-dd .cs-hero-title {
+  font-family: var(--serif);
+  font-size: 70px;
+  line-height: 1;
+  color: #faf7f2;
+  font-weight: 400;
+  margin: 0;
+  max-width: 900px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.15);
+}
+#cs-dd .cs-hero-line {
+  display: block;
+}
+#cs-dd .cs-hero-subtitle {
+  font-family: var(--sans);
+  font-size: 19px;
+  line-height: 1.6;
+  color: #faf7f2;
+  font-weight: 400;
+  margin: 16px 0 0;
+  padding-left: 4px;
+  max-width: 700px;
+}
+#cs-faire .cs-hero-img::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(29,15,0,0.94), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+#cs-faire .cs-hero-caption {
+  position: absolute;
+  bottom: 80px;
+  left: 72px;
+  right: 56px;
+  z-index: 2;
+  pointer-events: none;
+}
+#cs-faire .cs-hero-title {
+  font-family: var(--serif);
+  font-size: 70px;
+  line-height: 1;
+  color: #faf7f2;
+  font-weight: 400;
+  margin: 0;
+  max-width: 900px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.15);
+}
+#cs-faire .cs-hero-line {
+  display: block;
+}
+#cs-faire .cs-hero-subtitle {
+  font-family: var(--sans);
+  font-size: 19px;
+  line-height: 1.6;
+  color: #faf7f2;
+  font-weight: 400;
+  margin: 16px 0 0;
+  padding-left: 4px;
+  max-width: 700px;
+}
+#cs-bc .cs-hero-img,
+#cs-faire .cs-hero-img,
+#cs-trail .cs-hero-img,
+#cs-dd .cs-hero-img {
+  background: linear-gradient(160deg, #252525 0%, #141414 100%);
+}
+#cs-dd .dd-page {
+  background: #fffefd;
+}
+#cs-dd .dd-intro {
+  padding: 190px 80px 180px;
+  max-width: 1088px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+#cs-dd .dd-intro-text {
+  font-family: var(--serif);
+  font-size: 41px;
+  line-height: 1.15;
+  color: #222;
+  margin: 0 auto;
+  max-width: 645px;
+}
+#cs-dd .dd-phones {
+  display: flex;
+  justify-content: center;
+  padding: 0 40px 200px;
+}
+#cs-dd .dd-phones img {
+  width: 744px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+#cs-bc .cs-hero-img video,
+#cs-faire .cs-hero-img video,
+#cs-trail .cs-hero-img video,
+#cs-dd .cs-hero-img video {
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#cs-bc.cs-peeking .cs-hero-img video,
+#cs-faire.cs-peeking .cs-hero-img video,
+#cs-trail.cs-peeking .cs-hero-img video,
+#cs-dd.cs-peeking .cs-hero-img video {
+  opacity: 0;
+}
+#cs-bc.cs-peeking .cs-hero-img::before,
+#cs-bc.cs-peeking .cs-hero-img::after,
+#cs-faire.cs-peeking .cs-hero-img::before,
+#cs-faire.cs-peeking .cs-hero-img::after,
+#cs-trail.cs-peeking .cs-hero-img::before,
+#cs-trail.cs-peeking .cs-hero-img::after,
+#cs-dd.cs-peeking .cs-hero-img::before,
+#cs-dd.cs-peeking .cs-hero-img::after {
+  opacity: 0;
+}
+#cs-bc .cs-hero-img::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(29,15,0,0.94), transparent);
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#cs-bc .cs-hero-caption {
+  position: absolute;
+  bottom: 80px;
+  left: 72px;
+  right: 56px;
+  z-index: 2;
+  pointer-events: none;
+}
+#cs-bc .cs-hero-title {
+  font-family: var(--serif);
+  font-size: 70px;
+  line-height: 1;
+  color: #faf7f2;
+  font-weight: 400;
+  margin: 0;
+  max-width: 900px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.15);
+}
+#cs-bc .cs-hero-line {
+  display: block;
+}
+#cs-bc .cs-hero-subtitle {
+  font-family: var(--sans);
+  font-size: 19px;
+  line-height: 1.6;
+  color: #faf7f2;
+  font-weight: 400;
+  margin: 16px 0 0;
+  padding-left: 4px;
+  max-width: 700px;
+}
+
+/* ── BigCommerce body layout ───────────────────────────── */
+#cs-bc .bc-page {
+  background: #fffefd;
+}
+#cs-bc .bc-container {
+  max-width: 1088px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+#cs-bc .bc-pullquote-section {
+  padding: 190px 80px 150px;
+}
+#cs-bc .bc-pullquote {
+  max-width: 645px;
+  margin: 0 auto;
+  font-family: var(--serif);
+  font-size: 41px;
+  line-height: 1.15;
+  color: #222;
+}
+#cs-bc .bc-pullquote p { margin: 0; }
+#cs-bc .bc-pullquote p + p { margin-top: 1.2em; }
+
+#cs-bc .bc-gray-band {
+  background: linear-gradient(to bottom, #F0F2F8, #E5E8F2);
+}
+#cs-bc .bc-gray-band .bc-container {
+  padding: 140px 0 140px;
+}
+#cs-bc .bc-screenshot-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+  filter: drop-shadow(0 8px 16px rgba(29,22,22,0.1));
+}
+#cs-bc .bc-screenshot-wrap--before .bc-screenshot {
+  margin-bottom: -1px;
+}
+#cs-bc .bc-screenshot {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+#cs-bc .bc-img-caption {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.4;
+  color: #7E7E7E;
+  text-align: right;
+  margin: 24px 0 120px;
+}
+#cs-bc .bc-img-caption:last-child { margin-bottom: 0; }
+
+#cs-bc .bc-text-section {
+  padding: 160px 80px 130px;
+}
+#cs-bc .bc-text-section--milestones {
+  padding: 140px 80px 150px;
+}
+#cs-bc .bc-text-block {
+  max-width: 645px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+#cs-bc .bc-section-heading {
+  font-family: var(--sans);
+  font-size: 35px;
+  font-weight: 500;
+  line-height: 1.15;
+  color: #222;
+  margin: 0 0 -8px -2px;
+}
+#cs-bc .bc-section-body p {
+  font-family: var(--sans);
+  font-size: 18px;
+  line-height: 1.5;
+  color: #222;
+  margin: 0;
+}
+#cs-bc .bc-section-body p + p { margin-top: 24px; }
+
+#cs-bc .bc-sprint-section {
+  padding: 0;
+}
+#cs-bc .bc-sprint-img-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+  filter: drop-shadow(0 8px 16px rgba(29,22,22,0.1));
+  margin-bottom: 24px;
+}
+#cs-bc .bc-sprint-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+#cs-bc .bc-grid-caption {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.4;
+  color: #818080;
+  text-align: right;
+  margin: 0;
+}
+
+#cs-bc .bc-milestones-band .bc-container {
+  padding: 100px 0 100px;
+}
+#cs-bc .bc-milestone-row {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding-top: 130px;
+}
+#cs-bc .bc-milestone-row:first-child {
+  padding-top: 0;
+}
+#cs-bc .bc-milestone-label {
+  width: 201px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-bottom: 8px;
+  padding-right: 16px;
+  box-sizing: border-box;
+}
+#cs-bc .bc-milestone-num {
+  display: block;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #222;
+}
+#cs-bc .bc-milestone-desc {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.4;
+  color: #222;
+  margin: 0;
+}
+#cs-bc .bc-milestone-img {
+  flex: 1;
+  height: 525px;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px 0 rgba(29,22,22,0.1);
+}
+#cs-bc .bc-milestone-video {
+  flex: 1;
+  height: 525px;
+  object-fit: cover;
+  display: block;
+  box-shadow: 0 8px 16px 0 rgba(29,22,22,0.1);
+}
+
+#cs-bc .bc-outro-section {
+  padding-top: 170px;
+  padding-bottom: 270px;
+}
+/* ── end BC body ─────────────────────────────────────────── */
+
+/* ── Trail575 body layout ─────────────────────────────── */
+#cs-trail .trail-page { background: #fffefd; }
+#cs-trail .trail-container { max-width: 1088px; margin: 0 auto; box-sizing: border-box; }
+#cs-trail .trail-text-block { max-width: 645px; margin: 0 auto; }
+#cs-trail .trail-intro { padding: 190px 0 140px; }
+#cs-trail .trail-pullquote { font-family: var(--serif); font-size: 42px; line-height: 1.15; color: #222; margin: 0; }
+#cs-trail .trail-pullquote + .trail-pullquote { margin-top: 1.2em; }
+#cs-trail .trail-body { margin-top: 24px; }
+#cs-trail .trail-body p { font-family: var(--sans); font-size: 18px; line-height: 1.5; color: #222; margin: 0; }
+#cs-trail .trail-body p + p { margin-top: 24px; }
+#cs-trail .trail-carousel { width: 100%; }
+#cs-trail .trail-carousel-slides { position: relative; width: 100%; aspect-ratio: 3/2; overflow: hidden; background: #111; }
+#cs-trail .trail-carousel-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+#cs-trail .trail-carousel-indicators { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 5px; z-index: 2; }
+#cs-trail .trail-indicator { width: 32px; height: 3px; flex: none; background: rgba(255,255,255,0.32); border-radius: 3px; overflow: hidden; cursor: pointer; }
+#cs-trail .trail-indicator-fill { height: 100%; width: 100%; background: rgba(255,255,255,0.9); border-radius: 3px; transform: scaleX(0); transform-origin: left center; }
+@keyframes trail-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+#cs-trail .trail-takeaways { padding: 160px 0 0; }
+#cs-trail .trail-section-serif { font-family: var(--serif); font-size: 42px; line-height: 1.15; color: #222; margin: 0 0 48px; }
+#cs-trail .trail-takeaway { margin-top: 100px; }
+#cs-trail .trail-section-serif + .trail-takeaway { margin-top: 0; }
+#cs-trail .trail-takeaway-h { font-family: var(--sans); font-size: 27px; font-weight: 500; line-height: 1.15; color: #222; margin: 0 0 16px; }
+#cs-trail .trail-takeaway-p { font-family: var(--sans); font-size: 18px; line-height: 1.5; color: #222; margin: 0; }
+#cs-trail .trail-takeaway-p + .trail-takeaway-p { margin-top: 24px; }
+#cs-trail .trail-split-wrap { margin-top: 80px; }
+#cs-trail .trail-full-img + .trail-text-block,
+#cs-trail .trail-split-wrap + .trail-text-block { margin-top: 180px; }
+#cs-trail .trail-split { display: flex; height: 386px; }
+#cs-trail .trail-split-img { flex: 1; object-fit: cover; display: block; height: 100%; }
+#cs-trail .trail-split-img:first-child { border-right: 2px solid #f8efe6; }
+#cs-trail .trail-caption { font-family: var(--sans); font-size: 14px; line-height: 1.4; color: #6d6d6d; text-align: right; margin: 24px 0 0; }
+#cs-trail .trail-takeaway-3 { margin-top: 0; }
+#cs-trail .trail-full-img { display: block; width: 100%; height: auto; margin-top: 64px; }
+#cs-trail .trail-full-img--shadow { width: 523px; height: auto; margin-left: auto; margin-right: auto; filter: drop-shadow(0 8px 24px rgba(29,22,22,0.22)); }
+#cs-trail .trail-outro { padding: 220px 0 270px; }
+/* ── end Trail575 body ─────────────────────────────── */
+
+#cs-trail .cs-hero-img::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(29,15,0,0.94), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+#cs-trail .cs-hero-caption {
+  position: absolute;
+  bottom: 80px;
+  left: 72px;
+  right: 56px;
+  z-index: 2;
+  pointer-events: none;
+}
+#cs-trail .cs-hero-title {
+  font-family: var(--serif);
+  font-size: 70px;
+  line-height: 1;
+  color: #faf7f2;
+  font-weight: 400;
+  margin: 0;
+  max-width: 1000px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.15);
+}
+#cs-trail .cs-hero-line {
+  display: block;
+}
+#cs-trail .cs-hero-subtitle {
+  font-family: var(--sans);
+  font-size: 19px;
+  line-height: 1.6;
+  color: #faf7f2;
+  font-weight: 400;
+  margin: 16px 0 0;
+  padding-left: 4px;
+  max-width: 800px;
+}
+.cs-overlay .cs-nav-bar .cs-close-btn,
+.cs-overlay .cs-nav-bar .cs-next-btn {
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.18);
+  transition: color 0.25s ease, background 0.2s ease, transform 0.3s cubic-bezier(0.33,1,0.68,1);
+}
+.cs-overlay .cs-nav-bar.nav-past-hero .cs-close-btn,
+.cs-overlay .cs-nav-bar.nav-past-hero .cs-next-btn {
+  color: inherit;
+  background: rgba(0,0,0,0.06);
+}
+.cs-overlay .cs-nav-bar.nav-past-hero .cs-close-btn:hover,
+.cs-overlay .cs-nav-bar.nav-past-hero .cs-next-btn:hover {
+  background: rgba(0,0,0,0.12);
+}
+.cs-overlay.cs-peeking {
+  cursor: pointer;
+  scrollbar-gutter: auto;
+}
+.cs-overlay.cs-peeking .cs-nav-bar {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.cs-peek-title {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: 46px;
+  line-height: 1.1;
+  font-weight: 400;
+  color: #fff;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  z-index: 10002;
+  pointer-events: none;
+  display: none;
+}
+
+.cs-body {
+  padding: 56px 80px 100px;
+  max-width: 850px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.cs-body h1 {
+  font-family: var(--serif);
+  font-size: 72px;
+  font-weight: 400;
+  margin: 0 0 10px;
+  line-height: 1;
+}
+.cs-role {
+  font-family: var(--sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin: 0 0 52px !important;
+}
+.cs-section { margin-top: 72px; }
+.cs-section h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.1;
+  margin: 0 0 20px;
+}
+.cs-body p {
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.8;
+  margin: 0 0 20px;
+  color: rgb(107, 104, 96);
+}
+.cs-divider {
+  width: 48px; height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+  margin: 60px 0;
+}
+
+.cs-next-footer {
+  margin-top: 80px;
+  height: 260px;
+  border-radius: 20px 20px 0 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transform: scale(0.97) translateY(12px);
+  opacity: 0.5;
+  transition: transform 0.5s cubic-bezier(0.33,1,0.68,1), opacity 0.4s ease;
+}
+.cs-next-footer.is-peeking {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+.cs-next-footer-eyebrow {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+.cs-next-footer-title {
+  font-family: var(--serif);
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 1;
+}
+.cs-next-footer-caret {
+  opacity: 0.45;
+  font-family: var(--sans);
+  font-size: 20px;
+  margin-top: 4px;
+}
+
+@media (max-width: 991px) {
+  .cs-body { padding: 48px 40px 100px; }
+  .cs-body h1 { font-size: 56px; }
+  .cs-section h2 { font-size: 30px; }
+}
+@media (max-width: 479px) {
+  .cs-body { padding: 36px 20px 80px; }
+  .cs-body h1 { font-size: 40px; }
+  .cs-section h2 { font-size: 26px; }
+  .cs-body p { font-size: 16px; }
+  .cs-next-footer-title { font-size: 40px; }
+  .cs-nav-bar { padding: 18px 16px 0; }
+  .cs-next-footer { height: 200px; }
+}
+
+/* hero title 1px nudge — all case studies */
+#cs-dd .cs-hero-title,
+#cs-faire .cs-hero-title,
+#cs-bc .cs-hero-title,
+#cs-trail .cs-hero-title { margin-top: 1px; }
+
+/* =====================================================================
+   FAIRE CASE STUDY — CUSTOM LAYOUT
+   ===================================================================== */
+#cs-faire .cs-body {
+  max-width: 1136px;
+  padding: 0 24px 140px;
+}
+
+/* Boost specificity to (1,1,0) so all faire <p> styles beat .cs-body p (0,1,1) */
+#cs-faire .faire-intro-text {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 42px;
+  line-height: 1.2;
+  color: #222;
+  max-width: 645px;
+  margin: 1px auto 0;
+}
+#cs-faire .faire-section-body {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.5;
+  color: #222;
+  margin: 0;
+}
+#cs-faire .faire-quote-text {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 31px;
+  line-height: 1.3;
+  color: #222;
+  margin: 0;
+}
+#cs-faire .faire-quote-attr {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.3;
+  color: #222;
+  margin: 0;
+}
+#cs-faire .faire-card-num {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #222;
+  margin: 0;
+}
+#cs-faire .faire-card-body {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #222;
+  margin: 0;
+}
+
+/* Layout-only classes (no <p> conflict) */
+.faire-intro { padding: 190px 0 0; }
+.faire-mosaic { position: relative; width: 100%; height: 600px; margin: 150px 0; overflow: visible; }
+.faire-mosaic-main { position: absolute; width: 696px; height: 446px; left: calc(50% - 348px); top: 50px; border-radius: 24px; overflow: hidden; }
+.faire-mosaic-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.faire-mosaic-sm { position: absolute; border-radius: 32px; overflow: hidden; box-shadow: 0px 6px 13px 0px rgba(65,52,46,0.15); z-index: 1; }
+.faire-mosaic-sm img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.faire-mosaic-sm-1 { width: 146px; height: 150px; left: calc(50% + 266px); top: 0; }
+.faire-mosaic-sm-2 { width: 196px; height: 196px; left: calc(50% - 446px); top: 128px; }
+.faire-mosaic-sm-3 { width: 188px; height: 188px; left: calc(50% + 96px); top: 402px; }
+.faire-mosaic-sm-1 img { transform: scale(1.2); }
+.faire-mosaic-sm-2 img { object-position: 40% 100%; transform: scale(1.1); }
+.faire-section { padding: 0 0 140px; }
+.faire-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 645px;
+  margin: 0 auto;
+}
+.faire-section-title {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 35px;
+  line-height: 1.15;
+  color: #222;
+  margin: 0 0 -8px -2px;
+}
+.faire-quote-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  margin-top: 80px;
+}
+.faire-img-block {
+  flex: 0 0 718px;
+  height: 428px;
+  border-radius: 16px;
+  background: #EFE8E5;
+  overflow: hidden;
+}
+.faire-img-block img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.faire-quote-block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 16px;
+}
+.faire-full-band {
+  background: #EBECEF;
+  min-height: 900px;
+  padding: 56px 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.faire-pink-band {
+  background: #FFFEFD;
+  padding: 170px 24px 280px;
+  box-sizing: border-box;
+}
+.faire-band-inner {
+  max-width: 1136px;
+  padding: 0 24px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.faire-band-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+.faire-band-windows-col {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  flex: 1;
+  min-width: 0;
+}
+.faire-band-text {
+  width: 315px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 24px;
+  padding-bottom: 24px;
+  box-sizing: border-box;
+}
+.faire-band-text-sticky {
+  will-change: transform;
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.faire-band-window {
+  width: 757px;
+  height: calc(100vh - 160px);
+  min-height: 775px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  will-change: height;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+.faire-band-bar {
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 16px;
+  background: rgba(255, 255, 255, 0.27);
+  border-radius: 8px 8px 0 0;
+}
+.faire-band-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.faire-band-dot-r { background: #ff5f57; }
+.faire-band-dot-y { background: #febc2e; }
+.faire-band-dot-g { background: #28c840; }
+.faire-band-screen {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+.faire-band-screen img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.faire-band-windows-col .faire-band-window:first-child .faire-band-screen img {
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.fbc-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.fbc-wrap.fbc-hovering { cursor: none; }
+.fbc-after {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.fbc-before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+  clip-path: inset(0 0 0 50%);
+  transition: clip-path 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fbc-label {
+  position: absolute;
+  bottom: 24px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: #fff;
+  background: linear-gradient(to bottom, #44444A, #333339);
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.28);
+  pointer-events: none;
+  z-index: 4;
+  transition: opacity 0.08s ease;
+}
+.fbc-label-before { left: 24px; }
+.fbc-label-after  { right: 24px; }
+.fbc-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: #2a2a2a;
+  pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 0 12px rgba(0,0,0,0.35);
+  transition: left 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fbc-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: grab;
+  transition: left 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fbc-handle:active { cursor: grabbing; }
+.faire-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-top: 0;
+}
+.faire-card {
+  position: relative;
+  height: 630px;
+  background: linear-gradient(to bottom, #F7F2EE, #F5F0E9);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.faire-card-text {
+  position: absolute;
+  bottom: 56px;
+  left: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 300px;
+  box-sizing: border-box;
+}
+.faire-card-media {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  bottom: 16px;
+  width: 643px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.faire-card-media video,
+.faire-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.faire-card-1 .faire-card-media video {
+  object-position: center 30%;
+  transform: scale(1.2);
+}
+.faire-card-2 .faire-card-media {
+  width: 645px;
+}
+.faire-card-2 .faire-card-pointer,
+.faire-card-2 .faire-card-pointer-2,
+.faire-card-2 .faire-card-pointer-3,
+.faire-card-2 .faire-card-pointer-4 {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+}
+.faire-card-2 .faire-card-pointer   { width: 64px; height: 38px; }
+.faire-card-2 .faire-card-pointer-2 { width: 73px; height: 38px; }
+.faire-card-2 .faire-card-pointer-3 { width: 57px; height: 39px; }
+.faire-card-2 .faire-card-pointer-4 { width: 78px; height: 39px; }
+.faire-card-2 .faire-card-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid #E6DDD0;
+  border-radius: 16px;
+  pointer-events: none;
+  z-index: 10;
+}
+.faire-card-2 .faire-card-media img:not(.faire-card-overlay):not(.faire-card-pointer):not(.faire-card-pointer-2):not(.faire-card-pointer-3):not(.faire-card-pointer-4) {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+}
+.faire-card-2 .faire-card-overlay {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 421px;
+  height: 266px;
+  object-fit: cover;
+  display: block;
+  border-radius: 13px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+  pointer-events: none;
+}
+.faire-card-media-gradient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.faire-card-quote {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 68%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: right;
+}
+.faire-card-quote p {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #EFE7DE;
+  margin: 0;
+}
+.faire-card-cursors { position: absolute; inset: 0; pointer-events: none; }
+.faire-cursor { position: absolute; width: 48px; height: auto; pointer-events: none; }
+.faire-card-images {
+  position: absolute;
+  left: 47px;
+  top: 56px;
+  width: 691px;
+  height: 518px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 6px;
+}
+.faire-card-images img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  box-shadow: 0px 1px 5px rgba(29,22,22,0.1), 0px 15px 32px rgba(29,22,22,0.12);
+}
+@media (max-width: 991px) {
+  #cs-faire .cs-body { padding: 0 24px 80px; }
+  #cs-faire .faire-intro-text { font-size: 32px; margin-left: 0; max-width: 100%; }
+  .faire-img-block { flex: 0 0 auto; width: 100%; height: 280px; }
+  .faire-quote-row { flex-direction: column; align-items: flex-start; }
+  .faire-card { height: auto; min-height: 400px; display: flex; flex-direction: column; }
+  .faire-card-media { position: relative; width: calc(100% - 32px); height: 300px; right: auto; top: auto; bottom: auto; margin: 16px 16px 0; }
+  .faire-card-text { position: relative; bottom: auto; left: auto; max-width: 100%; padding: 24px 32px 36px; }
+  .faire-card-images { position: relative; left: auto; top: auto; width: 100%; height: 260px; padding: 24px 24px 0; box-sizing: border-box; }
+  .faire-card-2 .faire-card-media { width: calc(100% - 32px); }
+  .faire-card-2 .faire-card-media img:not(.faire-card-overlay):not(.faire-card-pointer):not(.faire-card-pointer-2):not(.faire-card-pointer-3):not(.faire-card-pointer-4) { object-fit: cover; width: 100%; height: 100%; }
+  .faire-card-overlay { width: 52%; height: auto; bottom: 12px; right: 12px; border-radius: 8px; }
+  .faire-card-pointer, .faire-card-pointer-2, .faire-card-pointer-3, .faire-card-pointer-4 { width: 44px; height: auto; }
+}
+@media (max-width: 479px) {
+  .faire-intro { padding: 48px 0; }
+  #cs-faire .faire-intro-text { font-size: 26px; }
+  .faire-section { padding: 48px 0; }
+  .faire-text-col { max-width: 100%; }
+  .faire-section-title { font-size: 20px; }
+  #cs-faire .faire-section-body { font-size: 16px; }
+  #cs-faire .faire-quote-text { font-size: 24px; }
+  #cs-faire .cs-body { padding: 0 20px 80px; }
+  .faire-card-media { height: 220px; margin: 12px 12px 16px; }
+  .faire-card-images { height: 200px; }
+  .faire-card-overlay { display: none; }
+  .faire-card-pointer, .faire-card-pointer-2, .faire-card-pointer-3, .faire-card-pointer-4 { display: none; }
+  .faire-band-window { height: calc(100vh - 120px); }
+}
+
+/* ── Page lock ──────────────────────────────────────── */
+#cs-faire-lock-ui {
+  position: relative;
+  z-index: 5;
+  margin-top: -420px;
+}
+#cs-faire-lock-gradient {
+  height: 300px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,254,253,0)    0%,
+    rgba(255,254,253,0.08) 12%,
+    rgba(255,254,253,0.30) 28%,
+    rgba(255,254,253,0.65) 48%,
+    rgba(255,254,253,0.90) 66%,
+    rgba(255,254,253,0.99) 78%,
+    #fffefd                100%
+  );
+  pointer-events: none;
+}
+#cs-faire-lock-modal {
+  margin: -20px auto 0;
+  width: 868px;
+  background: #262626;
+  border-radius: 12px;
+  padding: 32px 56px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+  z-index: 6;
+  box-shadow: 0 2px 8px rgba(29,22,22,0.18);
+}
+#cs-faire-lock-spacer {
+  height: 80px;
+  background: #fffefd;
+}
+#cs-dd-lock-ui {
+  position: relative;
+  z-index: 5;
+  margin-top: -560px;
+}
+#cs-dd-lock-gradient {
+  height: 300px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,254,253,0)    0%,
+    rgba(255,254,253,0.08) 12%,
+    rgba(255,254,253,0.30) 28%,
+    rgba(255,254,253,0.65) 48%,
+    rgba(255,254,253,0.90) 66%,
+    rgba(255,254,253,0.99) 78%,
+    #fffefd                100%
+  );
+  pointer-events: none;
+}
+#cs-dd-lock-modal {
+  margin: -20px auto 0;
+  width: 868px;
+  background: #262626;
+  border-radius: 12px;
+  padding: 32px 56px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+  z-index: 6;
+  box-shadow: 0 2px 8px rgba(29,22,22,0.18);
+}
+#cs-dd-lock-spacer {
+  height: 80px;
+  background: #fffefd;
+}
+#cs-bc-lock-ui {
+  position: relative;
+  z-index: 5;
+  margin-top: -380px;
+}
+#cs-bc-lock-gradient {
+  height: 300px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,254,253,0)    0%,
+    rgba(255,254,253,0.08) 12%,
+    rgba(255,254,253,0.30) 28%,
+    rgba(255,254,253,0.65) 48%,
+    rgba(255,254,253,0.90) 66%,
+    rgba(255,254,253,0.99) 78%,
+    #fffefd                100%
+  );
+  pointer-events: none;
+}
+#cs-bc-lock-modal {
+  margin: -20px auto 0;
+  width: 868px;
+  background: #262626;
+  border-radius: 12px;
+  padding: 32px 56px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+  z-index: 6;
+  box-shadow: 0 2px 8px rgba(29,22,22,0.18);
+}
+#cs-bc-lock-spacer {
+  height: 80px;
+  background: #fffefd;
+}
+#cs-trail-lock-ui {
+  position: relative;
+  z-index: 5;
+  margin-top: -280px;
+}
+#cs-trail-lock-gradient {
+  height: 300px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,254,253,0)    0%,
+    rgba(255,254,253,0.08) 12%,
+    rgba(255,254,253,0.30) 28%,
+    rgba(255,254,253,0.65) 48%,
+    rgba(255,254,253,0.90) 66%,
+    rgba(255,254,253,0.99) 78%,
+    #fffefd                100%
+  );
+  pointer-events: none;
+}
+#cs-trail-lock-modal {
+  margin: -20px auto 0;
+  width: 868px;
+  background: #262626;
+  border-radius: 12px;
+  padding: 32px 56px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+  z-index: 6;
+  box-shadow: 0 2px 8px rgba(29,22,22,0.18);
+}
+#cs-trail-lock-spacer {
+  height: 80px;
+  background: #fffefd;
+}
+.cs-lock-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.cs-lock-emoji { font-size: 32px; line-height: 1; }
+.cs-lock-title {
+  font-family: var(--serif);
+  font-size: 40px;
+  line-height: 1.15;
+  color: #fff;
+  margin: 0;
+  text-align: center;
+}
+.cs-lock-row { display: flex; gap: 12px; align-items: center; }
+.cs-lock-input {
+  width: 280px;
+  height: 48px;
+  border-radius: 6px;
+  border: none;
+  padding: 0 16px;
+  font-family: var(--sans);
+  font-size: 16px;
+  outline: none;
+  background: #fff;
+  color: #222;
+  box-sizing: border-box;
+}
+.cs-lock-input::placeholder { color: #aaa; }
+.cs-lock-btn {
+  height: 48px;
+  padding: 0 20px;
+  border-radius: 6px;
+  border: none;
+  background: #e5604e;
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+.cs-lock-btn:hover { background: #d45540; }
+@keyframes cs-lock-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.cs-lock-input.cs-lock-error {
+  animation: cs-lock-shake 0.4s ease;
+  outline: 2px solid #e5604e;
+  outline-offset: 1px;
+}
+@media (max-width: 960px) {
+  #cs-faire-lock-modal,
+  #cs-bc-lock-modal,
+  #cs-trail-lock-modal,
+  #cs-dd-lock-modal {
+    width: calc(100% - 48px);
+    padding: 28px 32px 36px;
+  }
+}
+@media (max-width: 600px) {
+  #cs-faire-lock-modal,
+  #cs-bc-lock-modal,
+  #cs-trail-lock-modal,
+  #cs-dd-lock-modal {
+    width: calc(100% - 32px);
+    padding: 24px 20px 28px;
+    gap: 20px;
+  }
+  .cs-lock-title { font-size: 28px; }
+  .cs-lock-row { flex-direction: column; width: 100%; }
+  .cs-lock-input { width: 100%; }
+  .cs-lock-btn { width: 100%; justify-content: center; }
+}
 </style>
 <script>
 window['_fs_host'] = 'fullstory.com';
@@ -679,10 +2047,10 @@ f="XMLHttpRequest",g._w={},g._w[f]=m[f],g._w[s]=m[s],m[s]&&(m[s]=function(){retu
 
 <!-- Mobile full-screen nav overlay (body-level, z-index 9000) -->
 <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
-  <a href="#doordash" class="mobile-project-link">DoorDash</a>
-  <a href="#faire" class="mobile-project-link">Faire</a>
-  <a href="#bigcommerce" class="mobile-project-link">BigCommerce</a>
-  <a href="#trail575" class="mobile-project-link">Trail575</a>
+  <a href="#doordash" class="mobile-project-link" data-casestudy="dd">DoorDash</a>
+  <a href="#faire" class="mobile-project-link" data-casestudy="faire">Faire</a>
+  <a href="#bigcommerce" class="mobile-project-link" data-casestudy="bc">BigCommerce</a>
+  <a href="#trail575" class="mobile-project-link" data-casestudy="trail">Trail575</a>
   <a href="#about">About</a>
 </div>
 
@@ -737,7 +2105,7 @@ f="XMLHttpRequest",g._w={},g._w[f]=m[f],g._w[s]=m[s],m[s]&&(m[s]=function(){retu
       <h1>Julie brings 15 years of experience turning complexity into <span class="accent">thoughtful</span> and <span class="accent">intuitive</span> design</h1>
     </div>
     <div class="art-hero">
-      <img src="images/Art_Hero_Big.png" alt="Illustration of Julie holding flowers, standing on a path among trees" />
+      <img src="images/Hero/Art_Hero_Big.png" alt="Illustration of Julie holding flowers, standing on a path among trees" />
     </div>
   </section>
 </main>
@@ -745,39 +2113,39 @@ f="XMLHttpRequest",g._w={},g._w[f]=m[f],g._w[s]=m[s],m[s]&&(m[s]=function(){retu
 <section class="projects-section" id="projects" aria-label="Select Projects">
   <div class="projects-inner">
     <div class="projects-heading">
-      <img src="images/select-projects-heading-large.png" alt="Select Projects" />
+      <img src="images/Projects/select-projects-heading-large.png" alt="Select Projects" />
     </div>
     <div class="projects-card">
       <div class="project-row" id="doordash">
-        <div class="project-img-placeholder"><img src="images/home_project_DD.png" alt="DoorDash project" /></div>
+        <div class="project-img-placeholder" data-casestudy="dd"><img src="images/Projects/home_project_DD.png" alt="DoorDash project" /></div>
         <div class="project-text">
           <h2 class="project-title">DoorDash</h2>
           <p class="project-desc">On the Digital Commerce Platform (new bets) team, I launched multiple 0→1 products to build new lines of business.</p>
-          <a class="project-link" href="#"><svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Read case study</a>
+          <a class="project-link" href="#" data-casestudy="dd">Read more</a>
         </div>
       </div>
       <div class="project-row" id="faire">
-        <div class="project-img"><img src="images/home_project_faire-1.png" alt="Faire project screenshot" /></div>
+        <div class="project-img" data-casestudy="faire"><img src="images/Projects/home_project_faire-1.png" alt="Faire project screenshot" /></div>
         <div class="project-text">
           <h2 class="project-title">Faire</h2>
           <p class="project-desc">On the Faire Direct team, I owned design vision and strategy, and launched various experiments to help brands deepen retailer partnerships.</p>
-          <a class="project-link" href="#"><svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Read case study</a>
+          <a class="project-link" href="#" data-casestudy="faire">Read more</a>
         </div>
       </div>
       <div class="project-row" id="bigcommerce">
-        <div class="project-img"><img src="images/home_project_bigc-2.png" alt="BigCommerce project screenshot" /></div>
+        <div class="project-img" data-casestudy="bc"><img src="images/Projects/home_project_bigc-2.png" alt="BigCommerce project screenshot" /></div>
         <div class="project-text">
           <h2 class="project-title">BigCommerce</h2>
           <p class="project-desc">On the Merchandising team, I drove design strategy and launched Page Builder, a 0→1 product that empowers brands to design eCommerce stores without code.</p>
-          <a class="project-link" href="#"><svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Read case study</a>
+          <a class="project-link" href="#" data-casestudy="bc">Read more</a>
         </div>
       </div>
       <div class="project-row" id="trail575">
-        <div class="project-img"><img src="images/trail575.png" alt="Trail575 project photo" /></div>
+        <div class="project-img" data-casestudy="trail"><img src="images/Projects/trail575.png" alt="Trail575 project photo" /></div>
         <div class="project-text">
           <h2 class="project-title">Trail575</h2>
           <p class="project-desc">I founded Trail575, an artisanal DTC candle brand built from the ground up. Handled everything from brand identity and packaging design to sales and fulfillment.</p>
-          <a class="project-link" href="#"><svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Read case study</a>
+          <a class="project-link" href="#" data-casestudy="trail">Read more</a>
         </div>
       </div>
     </div>
@@ -788,25 +2156,25 @@ f="XMLHttpRequest",g._w={},g._w[f]=m[f],g._w[s]=m[s],m[s]&&(m[s]=function(){retu
   <div class="about-inner">
     <div class="about-content">
       <div class="cards-column">
-        <div class="photo-card card-1"><img src="images/img-3.jpg" alt="Julie photo 3"><span class="card-label">Exploring glaciers in Fairbanks, Alaska</span></div>
-        <div class="photo-card card-2"><img src="images/img-2.jpg" alt="Julie photo 2"><span class="card-label">Biking the Shimanami Kaido, Japan</span></div>
-        <div class="photo-card card-3"><img src="images/img-1.png" alt="Julie photo 1"><span class="card-label">Sunshine in Barcelona ☀️</span></div>
+        <div class="photo-card card-1"><img src="images/About/img-3.jpg" alt="Julie photo 3"><span class="card-label">Exploring glaciers in Fairbanks, Alaska</span></div>
+        <div class="photo-card card-2"><img src="images/About/img-2.jpg" alt="Julie photo 2"><span class="card-label">Biking the Shimanami Kaido, Japan</span></div>
+        <div class="photo-card card-3"><img src="images/About/img-1.png" alt="Julie photo 1"><span class="card-label">Sunshine in Barcelona ☀️</span></div>
       </div>
       <div class="about-text">
-        <img src="images/about_julie.png" alt="About Julie" class="about-heading-img" />
+        <img src="images/About/about_julie.png" alt="About Julie" class="about-heading-img" />
         <p>I'm a Product Designer based in the SF Bay Area with 15+ years of experience designing in fast-paced startup environments.<br><br>I'm happiest when I'm building something new, and especially love being part of collaborative teams where there's always something to learn (and share).<br><br>When I'm not designing, you'll find me chasing some form of activity, whether that's watercolor painting, outdoor cycling, postcrossing, or pickleball. Art, in particular, is my way of slowing down and finding a little quiet in the everyday chaos.</p>
       </div>
     </div>
     <div class="about-contact">
       <div class="contact-links">
         <a href="https://www.linkedin.com/in/julescheung/" target="_blank" rel="noopener">Linkedin</a>
-        <img src="images/Img_Dots.png" alt="" class="contact-arrow" />
+        <img src="images/About/Img_Dots.png" alt="" class="contact-arrow" />
         <a href="mailto:jcheung530@gmail.com" id="emailLink">Email</a>
-        <img src="images/Img_Dots.png" alt="" class="contact-arrow" />
+        <img src="images/About/Img_Dots.png" alt="" class="contact-arrow" />
         <a href="https://medium.com/@whyjules" target="_blank" rel="noopener">Medium</a>
       </div>
       <div class="about-copyright">
-        <img src="images/flower.png" alt="" class="flower-img" />
+        <img src="images/About/flower.png" alt="" class="flower-img" />
         <p>©️2026 Built by Julie Cheung</p>
       </div>
     </div>
@@ -872,12 +2240,15 @@ f="XMLHttpRequest",g._w={},g._w[f]=m[f],g._w[s]=m[s],m[s]&&(m[s]=function(){retu
     a.addEventListener('click', function (e) {
       if (a.classList.contains('mobile-project-link')) {
         e.preventDefault();
+        var csId = a.dataset.casestudy;
         closeNav();
-        // small delay so nav close animation starts before overlay opens
         setTimeout(function () {
-          var pwOverlay = document.getElementById('pwOverlay');
-          if (pwOverlay && window._openPwOverlay) window._openPwOverlay();
-        }, 80);
+          if (csId && window._openCS) { window._openCS('cs-' + csId); }
+          else {
+            var pwOverlay = document.getElementById('pwOverlay');
+            if (pwOverlay && window._openPwOverlay) window._openPwOverlay();
+          }
+        }, 400);
       } else {
         closeNav();
       }
@@ -917,6 +2288,7 @@ f="XMLHttpRequest",g._w={},g._w[f]=m[f],g._w[s]=m[s],m[s]&&(m[s]=function(){retu
   }
 
   function update() {
+    if (window._csIsOpen) { ticking = false; return; }
     var y = window.pageYOffset;
     setNavBg(y > 10);
     if      (y > lastY && y > navH) { header.classList.add('nav-hidden'); }
@@ -924,7 +2296,13 @@ f="XMLHttpRequest",g._w={},g._w[f]=m[f],g._w[s]=m[s],m[s]&&(m[s]=function(){retu
     lastY = y < 0 ? 0 : y;
     ticking = false;
   }
+
   window.addEventListener('scroll', function () { if (!ticking) { window.requestAnimationFrame(update); ticking = true; } }, { passive: true });
+
+  window._collapseNav = function () {
+    header.classList.add('nav-hidden');
+    lastY = window.pageYOffset;
+  };
 
   // expose for mobile overlay use
   window._setNavBg = setNavBg;
@@ -936,6 +2314,7 @@ f="XMLHttpRequest",g._w={},g._w[f]=m[f],g._w[s]=m[s],m[s]&&(m[s]=function(){retu
 })();
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -946,6 +2325,7 @@ gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 (function () {
   var targetY = window.scrollY, isWheeling = false;
   window.addEventListener('wheel', function (e) {
+    if (window._csIsOpen) return; // let the case study overlay scroll naturally
     e.preventDefault();
     if (!isWheeling) { targetY = window.scrollY; }
     isWheeling = true;
@@ -1213,7 +2593,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   window._openPwOverlay = openPwOverlay;
 
   // Intercept all case study links
-  document.querySelectorAll('.project-link').forEach(function (a) {
+  document.querySelectorAll('.project-link:not([data-casestudy])').forEach(function (a) {
     a.addEventListener('click', function (e) {
       e.preventDefault();
       openPwOverlay();
@@ -1246,6 +2626,989 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 })();
 </script>
 
+<div id="cs-tint"></div>
+<div id="cs-peek" style="display:none;">
+  <div class="cs-peek-inner">
+    <div class="cs-peek-text">
+      <span class="cs-peek-label">Next</span>
+      <span class="cs-peek-title" id="cs-peek-title"></span>
+    </div>
+    <svg class="cs-peek-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </div>
+</div>
+
+<!-- =====================================================================
+     CASE STUDY: DOORDASH
+     ===================================================================== -->
+<div class="cs-overlay" id="cs-dd" style="display:none; background:#FFFEFD; color:#1C2B3A;">
+  <div class="cs-nav-bar">
+    <button class="cs-close-btn" data-close="cs-dd" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+    </button>
+  </div>
+  <div class="cs-hero-img">
+    <video autoplay muted loop playsinline>
+      <source src="https://videos.pexels.com/video-files/5657158/5657158-uhd_2732_1440_30fps.mp4" type="video/mp4" />
+    </video>
+    <div class="cs-hero-caption">
+      <div class="cs-hero-title">
+        <span class="cs-hero-line">Designing rewards that</span>
+        <span class="cs-hero-line">keep diners coming back</span>
+      </div>
+      <div class="cs-hero-subtitle">At DoorDash (2024–2026), I led 0→1 design for OmniChannel Loyalty, a core product in a new commerce suite that scaled to $179K MRR, +50% YoY</div>
+    </div>
+  </div>
+  <!-- Teaser: always visible -->
+  <div class="dd-page" style="padding-bottom:1px;">
+    <div class="dd-intro">
+      <p class="dd-intro-text">DoorDash connects millions of customers with local merchants across delivery, pickup, and in-store channels.<br><br>As part of the Omnichannel Loyalty &amp; CRM team, I built and designed programs that help merchants recognize, reward, and re-engage their customers—driving retention across every touchpoint.</p>
+    </div>
+    <div class="dd-phones">
+      <img src="images/doordash/DD-1.png" alt="" />
+    </div>
+  </div>
+
+  <!-- Lock UI -->
+  <div id="cs-dd-lock-ui">
+    <div id="cs-dd-lock-gradient"></div>
+    <div id="cs-dd-lock-modal">
+      <div class="cs-lock-heading">
+        <span class="cs-lock-emoji">🔒</span>
+        <span class="cs-lock-title">Password required</span>
+      </div>
+      <div class="cs-lock-row">
+        <input id="cs-dd-pw-input" class="cs-lock-input" type="password" autocomplete="off" placeholder="Enter password" />
+        <button id="cs-dd-pw-btn" class="cs-lock-btn">View case study</button>
+      </div>
+    </div>
+    <div id="cs-dd-lock-spacer"></div>
+  </div>
+
+  <!-- Protected: display:none when locked -->
+  <div id="cs-dd-protected"></div>
+
+</div>
+
+<!-- =====================================================================
+     CASE STUDY: FAIRE
+     ===================================================================== -->
+<div class="cs-overlay" id="cs-faire" style="display:none; background:#FFFEFD; color:#2D1A40;">
+  <div class="cs-nav-bar">
+    <button class="cs-close-btn" data-close="cs-faire" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+    </button>
+  </div>
+  <div class="cs-hero-img">
+    <video autoplay muted loop playsinline>
+      <source src="Videos/faire.mp4" type="video/mp4" />
+    </video>
+    <div class="cs-hero-caption">
+      <div class="cs-hero-title">
+        <span class="cs-hero-line">Scaling brand growth</span>
+        <span class="cs-hero-line">with Faire Direct</span>
+      </div>
+      <div class="cs-hero-subtitle">At Faire (2021–2023), I led Faire Direct design end-to-end, from foundational research to launching experiments that grew retailer sign-ups per brand 3x</div>
+    </div>
+  </div>
+  <div class="cs-body" style="padding-bottom:1px;">
+
+    <div class="faire-intro">
+      <p class="faire-intro-text">Faire is an online wholesale marketplace connecting independent brands with retailers worldwide <span style="font-size:33px">🌎</span><br><br>Through Faire Direct, brands get the tools to find, convert, and manage their own retailer relationships directly on the platform—all at 0% commission.</p>
+    </div>
+
+    <div class="faire-mosaic">
+      <div class="faire-mosaic-main">
+        <img src="images/faire/intro-main.png" alt="" />
+      </div>
+      <div class="faire-mosaic-sm faire-mosaic-sm-1">
+        <img src="images/faire/intro-sm-1.png" alt="" />
+      </div>
+      <div class="faire-mosaic-sm faire-mosaic-sm-2">
+        <img src="images/faire/intro-sm-2.jpg" alt="" />
+      </div>
+      <div class="faire-mosaic-sm faire-mosaic-sm-3">
+        <img src="images/faire/intro-sm-3.png" alt="" />
+      </div>
+    </div>
+
+    <div class="faire-section">
+      <div class="faire-text-col">
+        <h3 class="faire-section-title">The grind of wholesale growth</h3>
+        <p class="faire-section-body">Scaling into retail is critical for brands, but finding the right boutique partners remains a massive bottleneck. Brands spend hours manually vetting and reaching out to shops with zero guarantee of success.</p>
+        <p class="faire-section-body">To address this gap, I co-led a global research initiative to identify where the conversion funnel was breaking. Partnering closely with PM, UXR, and CD during a vision sprint, we translated these insights into a comprehensive strategy deck and a data-driven roadmap that ultimately shaped the long-term direction of Faire Direct.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="cs-faire-protected">
+    <div class="cs-body">
+
+    <div class="faire-cards">
+      <div class="faire-card faire-card-1">
+        <div class="faire-card-media">
+          <video muted loop playsinline>
+            <source src="videos/faire-1.mp4" type="video/mp4" />
+          </video>
+          <div class="faire-card-media-gradient" style="background: linear-gradient(to bottom, rgba(54,27,0,0.8), rgba(102,102,102,0) 58%);"></div>
+          <div class="faire-card-quote">
+            <p>"I'll spend 1-2 hours just copying and pasting the same message to a bunch of shops on Instagram...it's exhausting"</p>
+            <p>— This Little Piggie Co.</p>
+          </div>
+        </div>
+        <div class="faire-card-text">
+          <p class="faire-card-num">1&nbsp;&nbsp;&nbsp;Foundational research</p>
+          <p class="faire-card-body">Alongside my UXR, PM, and CD partners, I co-led a global research initiative spanning 30 deep-dive interviews across four countries and a 500-respondent survey.</p>
+          <p class="faire-card-body">The resulting insights shifted the organization's perspective on how brands build and cultivate retailer relationships.</p>
+        </div>
+      </div>
+      <div class="faire-card faire-card-2">
+        <div class="faire-card-media">
+          <img src="images/faire/Fig-canvas.png" alt="" />
+          <img class="faire-card-overlay" src="images/faire/Fig-video.png" alt="" />
+          <img class="faire-card-pointer" src="images/faire/Pointer - blue.png" alt="" style="top: 38%; left: 42%;" />
+          <img class="faire-card-pointer-2" src="images/faire/Pointer - green.png" alt="" style="top: 60%; left: 55%;" />
+          <img class="faire-card-pointer-3" src="images/faire/Pointer - orange.png" alt="" style="top: 40%; left: 68%;" />
+          <img class="faire-card-pointer-4" src="images/faire/Pointer - pink.png" alt="" style="top: 45%; left: 25%;" />
+        </div>
+        <div class="faire-card-text">
+          <p class="faire-card-num">2&nbsp;&nbsp;&nbsp;Visioning sprint</p>
+          <p class="faire-card-body">To unify Faire Direct's disparate tools under a shared narrative, I led a 3-day vision sprint with my PM, CD, and cross-functional stakeholders.</p>
+          <p class="faire-card-body">Together, we reimagined how the platform could help brands scale, generating the foundational concepts that drove our 2025 vision deck.</p>
+        </div>
+      </div>
+      <div class="faire-card faire-card-3">
+        <div class="faire-card-media">
+          <img src="images/faire/FD deck.png" alt="" />
+        </div>
+        <div class="faire-card-text">
+          <p class="faire-card-num">3&nbsp;&nbsp;&nbsp;Faire Direct 2025 vision deck</p>
+          <p class="faire-card-body">Synthesizing the sprint's concepts, I created the 2025 Faire Direct vision deck in close collaboration with my PM and CD partners.</p>
+          <p class="faire-card-body">This narrative leveraged brand archetypes to establish a cohesive identity and vision for Faire Direct. Shared org-wide, it successfully aligned leadership on our subsequent roadmap of strategic bets.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faire-section" style="margin-top: 170px; padding: 0;">
+      <div class="faire-text-col">
+        <h3 class="faire-section-title">Growth bets for Faire Direct</h3>
+        <p class="faire-section-body">Pulling together our research and vision for Faire Direct, we set out to map out every surface area that could drive brand adoption. Our insights pinpointed three critical questions brands ask before adopting: <em>What is it? Why should I use it? and How do I get started?</em></p>
+        <p class="faire-section-body">Answering these on the landing page was just one piece of a broader push—alongside it, we redesigned the Widget to drive retailer awareness and rebuilt Rewards to sharpen incentives.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="faire-full-band">
+    <div class="faire-band-inner">
+      <div class="faire-band-row">
+        <div class="faire-band-text">
+          <p class="faire-card-num">4&nbsp;&nbsp;&nbsp;Faire Direct onboarding</p>
+          <p class="faire-card-body">Our first experiment targeted the Faire Direct landing page. I redesigned it to drive adoption by enhancing clarity, comprehension, and action.</p>
+          <p class="faire-card-body">The new page highlights value props that resonated more strongly with brands. The experiment resulted in a +15% increase in new retailer signups and +11% increase in brand adoption.</p>
+        </div>
+        <div class="faire-band-window">
+          <div class="faire-band-bar">
+            <span class="faire-band-dot faire-band-dot-r"></span>
+            <span class="faire-band-dot faire-band-dot-y"></span>
+            <span class="faire-band-dot faire-band-dot-g"></span>
+          </div>
+          <div class="faire-band-screen">
+            <div class="fbc-wrap">
+              <img class="fbc-after" src="images/faire/FD-1a.png" alt="" />
+              <img class="fbc-before" src="images/faire/FD-1b.png" alt="" />
+              <div class="fbc-line"></div>
+              <div class="fbc-handle">
+                <svg width="30" height="12" viewBox="0 0 30 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 1L1 6L9 11" stroke="#222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M21 1L29 6L21 11" stroke="#222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="fbc-label fbc-label-before">Before</span>
+              <span class="fbc-label fbc-label-after">After</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faire-full-band" style="background: #EBECEF;">
+    <div class="faire-band-inner">
+      <div class="faire-band-row">
+        <div class="faire-band-text faire-band-text-sticky">
+          <p class="faire-card-num">5&nbsp;&nbsp;&nbsp;Faire Direct widget</p>
+          <p class="faire-card-body">To drive Faire Direct adoption and retailer first orders, I redesigned the widget and its landing page—a cleaner look paired with content that speaks to what retailers actually care about.</p>
+          <p class="faire-card-body">The result blew past expectations: +214% retailer signups per brand and +29% widget adoption.</p>
+        </div>
+        <div class="faire-band-windows-col">
+          <div class="faire-band-window">
+            <div class="faire-band-bar">
+              <span class="faire-band-dot faire-band-dot-r"></span>
+              <span class="faire-band-dot faire-band-dot-y"></span>
+              <span class="faire-band-dot faire-band-dot-g"></span>
+            </div>
+            <div class="faire-band-screen">
+              <div class="fbc-wrap">
+                <img class="fbc-after" src="images/faire/FD-2a.png?v=2" alt="" />
+                <img class="fbc-before" src="images/faire/FD-2b.png?v=2" alt="" />
+                <div class="fbc-line"></div>
+                <div class="fbc-handle">
+                  <svg width="30" height="12" viewBox="0 0 30 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 1L1 6L9 11" stroke="#222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 1L29 6L21 11" stroke="#222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="fbc-label fbc-label-before">Before</span>
+                <span class="fbc-label fbc-label-after">After</span>
+              </div>
+            </div>
+          </div>
+          <div class="faire-band-window" style="height: auto; min-height: 0;">
+            <div class="faire-band-bar">
+              <span class="faire-band-dot faire-band-dot-r"></span>
+              <span class="faire-band-dot faire-band-dot-y"></span>
+              <span class="faire-band-dot faire-band-dot-g"></span>
+            </div>
+            <div class="faire-band-screen" style="flex: none;">
+              <div class="fbc-wrap" style="height: auto;">
+                <img class="fbc-after" src="images/faire/FD-3a.png?v=2" alt="" />
+                <img class="fbc-before" src="images/faire/FD-3b.png?v=2" alt="" />
+                <div class="fbc-line"></div>
+                <div class="fbc-handle">
+                  <svg width="30" height="12" viewBox="0 0 30 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 1L1 6L9 11" stroke="#222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 1L29 6L21 11" stroke="#222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="fbc-label fbc-label-before">Before</span>
+                <span class="fbc-label fbc-label-after">After</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faire-full-band" style="background: #EBECEF;">
+    <div class="faire-band-inner">
+      <div class="faire-band-row">
+        <div class="faire-band-text">
+          <p class="faire-card-num">6&nbsp;&nbsp;&nbsp;Faire Direct Rewards</p>
+          <p class="faire-card-body">Faire Direct Rewards gamifies growth on Faire—brands earn tiered perks for inviting new retailers onto the platform.</p>
+          <p class="faire-card-body">To validate the program's ROI, I redesigned the onboarding experience for a new European pilot cohort, simplifying content to improve comprehension and drive adoption.</p>
+        </div>
+        <div class="faire-band-window">
+          <div class="faire-band-bar">
+            <span class="faire-band-dot faire-band-dot-r"></span>
+            <span class="faire-band-dot faire-band-dot-y"></span>
+            <span class="faire-band-dot faire-band-dot-g"></span>
+          </div>
+          <div class="faire-band-screen">
+            <div class="fbc-wrap">
+              <img class="fbc-after" src="images/faire/FD-4a.png" alt="" />
+              <img class="fbc-before" src="images/faire/FD-4b.png" alt="" />
+              <div class="fbc-line"></div>
+              <div class="fbc-handle">
+                <svg width="30" height="12" viewBox="0 0 30 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 1L1 6L9 11" stroke="#222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M21 1L29 6L21 11" stroke="#222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="fbc-label fbc-label-before">Before</span>
+              <span class="fbc-label fbc-label-after">After</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="faire-pink-band">
+      <p class="faire-intro-text">Our experiments turned Faire Direct into a steady driver of new retailer signups.<br><br>This directly boosted the bottom line and accelerated our flywheel—more retailers bring more demand, making the platform more valuable for every brand ❤️</p>
+    </div>
+  </div>
+
+  <div id="cs-faire-lock-ui">
+    <div id="cs-faire-lock-gradient"></div>
+    <div id="cs-faire-lock-modal">
+      <div class="cs-lock-heading">
+        <span class="cs-lock-emoji">🔒</span>
+        <span class="cs-lock-title">Password required</span>
+      </div>
+      <div class="cs-lock-row">
+        <input id="cs-faire-pw-input" class="cs-lock-input" type="password" autocomplete="off" />
+        <button id="cs-faire-pw-btn" class="cs-lock-btn">View case study</button>
+      </div>
+    </div>
+    <div id="cs-faire-lock-spacer"></div>
+  </div>
+
+</div>
+
+<!-- =====================================================================
+     CASE STUDY: BIGCOMMERCE
+     ===================================================================== -->
+<div class="cs-overlay" id="cs-bc" style="display:none; background:#FFFEFD; color:#0F1D36;">
+  <div class="cs-nav-bar">
+    <button class="cs-close-btn" data-close="cs-bc" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+    </button>
+  </div>
+  <div class="cs-hero-img">
+    <video autoplay muted loop playsinline>
+      <source src="Videos/bigc.mp4" type="video/mp4" />
+    </video>
+    <div class="cs-hero-caption">
+      <div class="cs-hero-title">
+        <span class="cs-hero-line">Simplifying storefront design for merchants</span>
+      </div>
+      <div class="cs-hero-subtitle">At Bigcommerce (2018–2020), I led 0→1 design for Page Builder, empowering merchants to design eCommerce storefronts without code</div>
+    </div>
+  </div>
+  <!-- Teaser: always visible in locked and unlocked states -->
+  <div class="bc-page" style="padding-bottom:1px;">
+
+    <!-- Intro pullquote -->
+    <div class="bc-pullquote-section bc-container">
+      <div class="bc-pullquote">
+        <p>BigCommerce is an eCommerce platform powering over 40,000+ storefronts worldwide 🌎</p>
+        <p>Our team set out to build a modern, intuitive visual page composer—transforming store customization into a seamless drag-and-drop experience.</p>
+      </div>
+    </div>
+
+    <!-- Before / After screenshots -->
+    <div class="bc-gray-band">
+      <div class="bc-container">
+        <div class="bc-screenshot-wrap bc-screenshot-wrap--before">
+          <video class="bc-screenshot" src="images/bigc/bc-theme-1.mp4" autoplay muted loop playsinline></video>
+        </div>
+        <p class="bc-img-caption">(Before)&nbsp;&nbsp;The legacy store designer was slow, complex, and unintuitive</p>
+        <div class="bc-screenshot-wrap">
+          <video class="bc-screenshot" src="images/bigc/bigc-home.mp4" autoplay muted loop playsinline></video>
+        </div>
+        <p class="bc-img-caption">(After)&nbsp;&nbsp;A modern, drag-and-drop Page Builder designed for seamless content creation</p>
+      </div>
+    </div>
+
+    <!-- Early beginnings (teaser) -->
+    <div class="bc-text-section">
+      <div class="bc-container">
+        <div class="bc-text-block">
+          <h2 class="bc-section-heading">Early beginnings</h2>
+          <div class="bc-section-body">
+            <p>Replacing our legacy designer with a modern visual composer seemed straightforward until early research revealed a major blind spot: we didn't fully understand how users interacted with the existing product.</p>
+            <p>To bridge this gap, I led foundational research featuring in-depth user interviews and competitive market analysis. Those insights were then translated into a 4-day vision sprint, steering the team to explore distinct interaction models and align on key release goals.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Lock UI: visible when locked, hidden when unlocked -->
+  <div id="cs-bc-lock-ui">
+    <div id="cs-bc-lock-gradient"></div>
+    <div id="cs-bc-lock-modal">
+      <div class="cs-lock-heading">
+        <span class="cs-lock-emoji">🔒</span>
+        <span class="cs-lock-title">Password required</span>
+      </div>
+      <div class="cs-lock-row">
+        <input id="cs-bc-pw-input" class="cs-lock-input" type="password" autocomplete="off" />
+        <button id="cs-bc-pw-btn" class="cs-lock-btn">View case study</button>
+      </div>
+    </div>
+    <div id="cs-bc-lock-spacer"></div>
+  </div>
+
+  <!-- Protected: hidden when locked, visible when unlocked -->
+  <div id="cs-bc-protected">
+    <div class="bc-page">
+
+      <!-- Vision sprint image -->
+      <div class="bc-sprint-section bc-container">
+        <div class="bc-sprint-img-wrap">
+          <img class="bc-sprint-img" src="images/bigc/sprint.png" alt="Vision sprint" />
+        </div>
+        <p class="bc-grid-caption">I led a 4-day vision sprint with PM/Eng partners to map product milestones</p>
+      </div>
+
+      <!-- Release milestones intro -->
+      <div class="bc-text-section bc-text-section--milestones">
+        <div class="bc-container">
+          <div class="bc-text-block">
+            <h2 class="bc-section-heading">Release milestones</h2>
+            <div class="bc-section-body">
+              <p>With our vision and release timeline set, we structured Page Builder's development across four major milestones. Our goal was to build a flexible tool that felt intuitive for both first-time merchants and advanced power users.</p>
+              <p>Rather than treating these milestones as rigid deadlines, we used each as an iterative checkpoint. Real merchant usage directly guided our design decisions—allowing us to refine save and publish flows, sharpen widget behavior, and prioritize highly requested features like inline editing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Milestone rows -->
+      <div class="bc-gray-band bc-milestones-band">
+        <div class="bc-container">
+
+          <div class="bc-milestone-row">
+            <div class="bc-milestone-label">
+              <span class="bc-milestone-num">Milestone 1</span>
+              <p class="bc-milestone-desc">Shipped the first internal release of Page Builder, empowering merchants to build, save, and publish custom pages using foundational widgets.</p>
+            </div>
+            <video class="bc-milestone-img" src="images/bigc/bigc-m1.mp4" autoplay muted loop playsinline></video>
+          </div>
+
+          <div class="bc-milestone-row">
+            <div class="bc-milestone-label">
+              <span class="bc-milestone-num">Milestone 2</span>
+              <p class="bc-milestone-desc">Validated core workflows through a closed merchant alpha on sandbox stores, while shipping more complex components like the 'Product list' widget.</p>
+            </div>
+            <video class="bc-milestone-img" src="images/bigc/bigc-m2.mp4" autoplay muted loop playsinline></video>
+          </div>
+
+          <div class="bc-milestone-row">
+            <div class="bc-milestone-label">
+              <span class="bc-milestone-num">Milestone 3</span>
+              <p class="bc-milestone-desc">Validated live store workflows through a closed merchant beta, using early feedback to polish the UI and simplify widget configurations.</p>
+            </div>
+            <video class="bc-milestone-img" src="images/bigc/bigc-m3.mp4" autoplay muted loop playsinline></video>
+          </div>
+
+          <div class="bc-milestone-row">
+            <div class="bc-milestone-label">
+              <span class="bc-milestone-num">Milestone 4</span>
+              <p class="bc-milestone-desc">Scaled early access to select merchants and shipped high-value feature updates, including inline rich-text editing, a carousel widget, and improved navigation.</p>
+            </div>
+            <video class="bc-milestone-img" src="images/bigc/bigc-m4.mp4" autoplay muted loop playsinline></video>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Closing pullquote -->
+      <div class="bc-pullquote-section bc-outro-section bc-container">
+        <div class="bc-pullquote">
+          <p>Page Builder was launched to early access users in March 2020, followed by a full public rollout in June.</p>
+          <p>Early data showed that ~70% of merchants who published a widget went on to convert to paid plans—a strong signal for trial-to-paid conversion.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- =====================================================================
+     CASE STUDY: TRAIL575
+     ===================================================================== -->
+<div class="cs-overlay" id="cs-trail" style="display:none; background:#FFFEFD; color:#1A0A04;">
+  <div class="cs-nav-bar">
+    <button class="cs-close-btn" data-close="cs-trail" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+    </button>
+  </div>
+  <div class="cs-hero-img">
+    <video autoplay muted loop playsinline>
+      <source src="videos/trail.mp4" type="video/mp4" />
+    </video>
+    <div class="cs-hero-caption">
+      <div class="cs-hero-title">
+        <span class="cs-hero-line">Building a candle brand</span>
+        <span class="cs-hero-line">rooted in the outdoors</span>
+      </div>
+      <div class="cs-hero-subtitle">At Trail575 (2020–2025), I built an outdoor-inspired DTC candle brand from concept to market—leading brand design, small-batch production, and operations</div>
+    </div>
+  </div>
+  <!-- Teaser: always visible in locked and unlocked states -->
+  <div class="trail-page" style="padding-bottom:1px;">
+
+    <!-- Intro -->
+    <div class="trail-intro trail-container">
+      <div class="trail-text-block">
+        <p class="trail-pullquote">Trail575 creates outdoor-inspired candles that bring the sensory experience of nature into the home</p>
+        <div class="trail-body">
+          <p>Like many people stuck indoors during the 2020 lockdowns, I missed being out on the trail and under open skies. That frustration sparked a question: Could a hand-poured candle recreate the sensory experience of the outdoors at home? That idea became Trail575.</p>
+          <p>Over the next six months, I ran extensive fragrance and packaging iterations while setting up the business operations from scratch. In July 2020, I soft-launched on LinkedIn, quickly building momentum across both direct-to-consumer and wholesale channels.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo carousel -->
+    <div class="trail-container">
+      <div class="trail-carousel">
+        <div class="trail-carousel-slides">
+          <img class="trail-carousel-img" src="images/trail575/trail1.jpg" alt="" />
+          <img class="trail-carousel-img" src="images/trail575/trail2.png" alt="" />
+          <img class="trail-carousel-img" src="images/trail575/trail3.png" alt="" />
+          <img class="trail-carousel-img" src="images/trail575/trail4.png" alt="" />
+          <div class="trail-carousel-indicators">
+            <div class="trail-indicator"><div class="trail-indicator-fill"></div></div>
+            <div class="trail-indicator"><div class="trail-indicator-fill"></div></div>
+            <div class="trail-indicator"><div class="trail-indicator-fill"></div></div>
+            <div class="trail-indicator"><div class="trail-indicator-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Takeaways heading + first takeaway (teaser) -->
+    <div class="trail-takeaways trail-container">
+      <div class="trail-text-block">
+        <p class="trail-section-serif">My three key takeaways</p>
+        <div class="trail-takeaway">
+          <h3 class="trail-takeaway-h">1. A great product isn't enough</h3>
+          <p class="trail-takeaway-p">You can build a stellar product, but without a plan to reach new audiences, you're stuck selling to your own network—a strategy that quickly hits a ceiling. While our LinkedIn soft launch gave us great early momentum, sustainable growth demands a real marketing strategy and budget...skills that were admittedly way outside my wheelhouse.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Lock UI: visible when locked, hidden when unlocked -->
+  <div id="cs-trail-lock-ui">
+    <div id="cs-trail-lock-gradient"></div>
+    <div id="cs-trail-lock-modal">
+      <div class="cs-lock-heading">
+        <span class="cs-lock-emoji">🔒</span>
+        <span class="cs-lock-title">Password required</span>
+      </div>
+      <div class="cs-lock-row">
+        <input id="cs-trail-pw-input" class="cs-lock-input" type="password" autocomplete="off" />
+        <button id="cs-trail-pw-btn" class="cs-lock-btn">View case study</button>
+      </div>
+    </div>
+    <div id="cs-trail-lock-spacer"></div>
+  </div>
+
+  <!-- Protected: hidden when locked, visible when unlocked -->
+  <div id="cs-trail-protected">
+    <div class="trail-page">
+
+      <div class="trail-takeaways trail-container" style="padding-top:0;">
+
+        <!-- Image under takeaway 1 -->
+        <img class="trail-full-img trail-full-img--shadow" src="images/trail575/trail-l.png" alt="" />
+
+        <div class="trail-text-block">
+          <div class="trail-takeaway">
+            <h3 class="trail-takeaway-h">2. Wholesale is the ultimate growth lever</h3>
+            <p class="trail-takeaway-p">I was used to making candles in large batches for individual online sales, but corporate wholesale took demand to an entirely different level. Securing bulk gift box partnerships with clients like Zendesk and Affirm allowed me to lock in massive, guaranteed volume in a single order. It expanded my distribution globally and proved that a handcrafted brand can handle scale.</p>
+          </div>
+        </div>
+
+        <!-- Split images -->
+        <div class="trail-split-wrap">
+          <div class="trail-split">
+            <img class="trail-split-img" src="images/trail575/trail5a.jpg" alt="" />
+            <img class="trail-split-img" src="images/trail575/trail5b.png" alt="" />
+          </div>
+          <p class="trail-caption">Corporate gift boxes unlocked a new level of scale</p>
+        </div>
+
+        <!-- Takeaway 3 -->
+        <div class="trail-text-block trail-takeaway-3">
+          <h3 class="trail-takeaway-h">3. Building a business is a double-edged sword</h3>
+          <p class="trail-takeaway-p">Running a brand is deeply rewarding, but it completely blurs the line between work and life. For me, it meant thinking about candles from the moment I woke up until late into the night.</p>
+          <p class="trail-takeaway-p">The silver lining? When you're passionate, it rarely feels like traditional work. The most rewarding moments came from craft fairs—connecting with customers in person, seeing them love the product, and getting raw, firsthand feedback.</p>
+        </div>
+
+        <!-- Full-width closing image -->
+        <img class="trail-full-img" src="images/trail575/trail6.jpg" alt="" />
+
+      </div>
+
+      <!-- Outro -->
+      <div class="trail-outro trail-container">
+        <div class="trail-text-block">
+          <p class="trail-pullquote">Over five years, I grew a handcrafted candle brand from single DTC sales to global B2B partnerships with companies like Zendesk and Affirm.</p>
+          <p class="trail-pullquote">Though it initially started as a passion project, it became my masterclass in sales, marketing, and the real grind of entrepreneurship.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div id="cs-bc-peek-title" class="cs-peek-title">Next: BigCommerce Page Builder</div>
+<div id="cs-faire-peek-title" class="cs-peek-title">Next: Faire Direct</div>
+<div id="cs-trail-peek-title" class="cs-peek-title">Next: Trail575 candles</div>
+<div id="cs-dd-peek-title" class="cs-peek-title">Next: DoorDash loyalty</div>
+
+<script>
+// Slow down Trail575 hero video
+(function () {
+  var v = document.querySelector('#cs-trail .cs-hero-img video');
+  if (v) v.playbackRate = 1.0;
+})();
+
+// Trail575 photo carousel
+(function () {
+  if (typeof gsap === 'undefined') return;
+  var root = document.getElementById('cs-trail');
+  if (!root) return;
+  var slides = root.querySelectorAll('.trail-carousel-img');
+  var indicators = root.querySelectorAll('.trail-indicator');
+  var fills = root.querySelectorAll('.trail-indicator-fill');
+  if (!slides.length) return;
+
+  var current = 0;
+  var DURATION = 2.8;
+  var FADE = 0.6;
+  var timer;
+
+  function startIndicator(idx) {
+    indicators.forEach(function (ind, i) {
+      ind.classList.remove('trail-ind-active', 'trail-ind-done');
+      fills[i].style.animation = 'none';
+      fills[i].style.transform = i < idx ? 'scaleX(1)' : 'scaleX(0)';
+    });
+    void fills[idx].offsetWidth;
+    fills[idx].style.transform = '';
+    fills[idx].style.animation = 'trail-fill ' + DURATION + 's linear forwards';
+  }
+
+  function goTo(idx) {
+    clearTimeout(timer);
+    var prev = slides[current];
+    var next = slides[idx];
+
+    // Clean crossfade — new fades in on top, old stays fully opaque until covered
+    gsap.set(next, { opacity: 0, filter: 'blur(0px)', scale: 1, x: 0, zIndex: 2 });
+    gsap.set(prev, { opacity: 1, zIndex: 1 });
+    gsap.to(next, {
+      opacity: 1, duration: FADE, ease: 'power1.inOut',
+      onComplete: function () {
+        gsap.set(prev, { opacity: 0, zIndex: 1 });
+        gsap.set(next, { zIndex: 1 });
+      }
+    });
+
+    startIndicator(idx);
+    current = idx;
+    timer = setTimeout(function () {
+      goTo((current + 1) % slides.length);
+    }, DURATION * 1000);
+  }
+
+  indicators.forEach(function (ind, i) {
+    ind.addEventListener('click', function () { goTo(i); });
+  });
+
+  // Initialize
+  slides.forEach(function (s, i) { gsap.set(s, { opacity: i === 0 ? 1 : 0, zIndex: 1, scale: 1, x: 0, filter: 'none' }); });
+  startIndicator(0);
+  timer = setTimeout(function () { goTo(1 % slides.length); }, DURATION * 1000);
+})();
+</script>
+
+<script>
+// Faire quote video — play only when fully visible within the overlay
+(function () {
+  var video = document.getElementById('faire-quote-video');
+  if (!video) return;
+  var observer = new IntersectionObserver(function (entries) {
+    entries[0].intersectionRatio >= 0.95 ? video.play() : video.pause();
+  }, { root: document.getElementById('cs-faire'), threshold: [0, 0.95, 1.0] });
+  observer.observe(video);
+})();
+
+// Faire card 2 — blue pointer, left-to-right row-by-row path
+(function () {
+  var card = document.querySelector('#cs-faire .faire-card-2');
+  var pointer = card ? card.querySelector('.faire-card-pointer') : null;
+  if (!pointer || typeof gsap === 'undefined') return;
+
+  var waypoints = [
+    { left: '14%', top: '22%' },
+    { left: '40%', top: '20%' },
+    { left: '62%', top: '24%' },
+    { left: '16%', top: '52%' },
+    { left: '44%', top: '50%' },
+    { left: '20%', top: '76%' },
+    { left: '42%', top: '74%' },
+  ];
+
+  var index = 0;
+
+  function moveNext() {
+    var wp = waypoints[index % waypoints.length];
+    index++;
+    var duration = gsap.utils.random(0.9, 1.6);
+    var pause = gsap.utils.random(1.5, 3.0);
+    var curLeft = parseFloat(pointer.style.left) || 42;
+    var curTop  = parseFloat(pointer.style.top)  || 38;
+    var midLeft = (curLeft + parseFloat(wp.left)) / 2 + gsap.utils.random(-3, 3);
+    var midTop  = (curTop  + parseFloat(wp.top))  / 2 + gsap.utils.random(-3, 3);
+    gsap.to(pointer, {
+      left: midLeft + '%', top: midTop + '%',
+      duration: duration * 0.45, ease: 'power1.in',
+      onComplete: function () {
+        gsap.to(pointer, {
+          left: wp.left, top: wp.top,
+          duration: duration * 0.55, ease: 'power2.out',
+          onComplete: function () { setTimeout(moveNext, pause * 1000); }
+        });
+      }
+    });
+  }
+
+  gsap.to(pointer, { opacity: 1, duration: 0.3 });
+  setTimeout(moveNext, 100);
+})();
+
+// Faire card 2 — green pointer, offset timing and different path
+(function () {
+  var card = document.querySelector('#cs-faire .faire-card-2');
+  var pointer = card ? card.querySelector('.faire-card-pointer-2') : null;
+  if (!pointer || typeof gsap === 'undefined') return;
+
+  var waypoints = [
+    { left: '55%', top: '60%' },
+    { left: '30%', top: '65%' },
+    { left: '58%', top: '35%' },
+    { left: '20%', top: '30%' },
+    { left: '48%', top: '18%' },
+  ];
+
+  var index = 0;
+
+  function moveNext() {
+    var wp = waypoints[index % waypoints.length];
+    index++;
+    var duration = gsap.utils.random(1.1, 1.9);
+    var pause = gsap.utils.random(1.8, 3.5);
+    var curLeft = parseFloat(pointer.style.left) || 55;
+    var curTop  = parseFloat(pointer.style.top)  || 60;
+    var midLeft = (curLeft + parseFloat(wp.left)) / 2 + gsap.utils.random(-3, 3);
+    var midTop  = (curTop  + parseFloat(wp.top))  / 2 + gsap.utils.random(-3, 3);
+    gsap.to(pointer, {
+      left: midLeft + '%', top: midTop + '%',
+      duration: duration * 0.45, ease: 'power1.in',
+      onComplete: function () {
+        gsap.to(pointer, {
+          left: wp.left, top: wp.top,
+          duration: duration * 0.55, ease: 'power2.out',
+          onComplete: function () { setTimeout(moveNext, pause * 1000); }
+        });
+      }
+    });
+  }
+
+  gsap.to(pointer, { opacity: 1, duration: 0.3 });
+  setTimeout(moveNext, 100);
+})();
+
+// Faire card 2 — orange pointer, fast with fewer stops
+(function () {
+  var card = document.querySelector('#cs-faire .faire-card-2');
+  var pointer = card ? card.querySelector('.faire-card-pointer-3') : null;
+  if (!pointer || typeof gsap === 'undefined') return;
+  var waypoints = [
+    { left: '10%', top: '20%' },
+    { left: '28%', top: '16%' },
+    { left: '48%', top: '22%' },
+    { left: '66%', top: '17%' },
+  ];
+  var index = 0;
+  function moveNext() {
+    var wp = waypoints[index % waypoints.length]; index++;
+    var duration = gsap.utils.random(1.2, 2.0);
+    var pause = gsap.utils.random(1.5, 2.8);
+    var curLeft = parseFloat(pointer.style.left) || 68;
+    var curTop  = parseFloat(pointer.style.top)  || 40;
+    var midLeft = (curLeft + parseFloat(wp.left)) / 2 + gsap.utils.random(-3, 3);
+    var midTop  = (curTop  + parseFloat(wp.top))  / 2 + gsap.utils.random(-3, 3);
+    gsap.to(pointer, { left: midLeft + '%', top: midTop + '%', duration: duration * 0.45, ease: 'power1.in',
+      onComplete: function () {
+        gsap.to(pointer, { left: wp.left, top: wp.top, duration: duration * 0.55, ease: 'power2.out',
+          onComplete: function () { setTimeout(moveNext, pause * 1000); }
+        });
+      }
+    });
+  }
+  gsap.to(pointer, { opacity: 1, duration: 0.3 });
+  setTimeout(moveNext, 100);
+})();
+
+// Faire card 2 — pink pointer, moderate speed
+(function () {
+  var card = document.querySelector('#cs-faire .faire-card-2');
+  var pointer = card ? card.querySelector('.faire-card-pointer-4') : null;
+  if (!pointer || typeof gsap === 'undefined') return;
+  var waypoints = [
+    { left: '48%', top: '68%' },
+    { left: '70%', top: '74%' },
+    { left: '15%', top: '70%' },
+    { left: '55%', top: '46%' },
+    { left: '28%', top: '22%' },
+  ];
+  var index = 0;
+  function moveNext() {
+    var wp = waypoints[index % waypoints.length]; index++;
+    var duration = gsap.utils.random(1.0, 1.8);
+    var pause = gsap.utils.random(1.5, 2.5);
+    var curLeft = parseFloat(pointer.style.left) || 25;
+    var curTop  = parseFloat(pointer.style.top)  || 45;
+    var midLeft = (curLeft + parseFloat(wp.left)) / 2 + gsap.utils.random(-3, 3);
+    var midTop  = (curTop  + parseFloat(wp.top))  / 2 + gsap.utils.random(-3, 3);
+    gsap.to(pointer, { left: midLeft + '%', top: midTop + '%', duration: duration * 0.45, ease: 'power1.in',
+      onComplete: function () {
+        gsap.to(pointer, { left: wp.left, top: wp.top, duration: duration * 0.55, ease: 'power2.out',
+          onComplete: function () { setTimeout(moveNext, pause * 1000); }
+        });
+      }
+    });
+  }
+  gsap.to(pointer, { opacity: 1, duration: 0.3 });
+  setTimeout(moveNext, 100);
+})();
+
+// Faire card 2 — animate FigJam cursors on scroll into view
+(function () {
+  var card = document.querySelector('#cs-faire .faire-card-2');
+  var cursors = card ? card.querySelectorAll('.faire-cursor') : [];
+  if (!cursors.length || typeof gsap === 'undefined') return;
+
+  var startPos = [
+    { left: '12%', top: '18%' },
+    { left: '58%', top: '30%' },
+    { left: '28%', top: '62%' },
+    { left: '72%', top: '54%' }
+  ];
+
+  cursors.forEach(function (cursor, i) {
+    gsap.set(cursor, { left: startPos[i].left, top: startPos[i].top, opacity: 0 });
+  });
+
+  function wander(el) {
+    gsap.to(el, {
+      left: gsap.utils.random(6, 78) + '%',
+      top: gsap.utils.random(8, 78) + '%',
+      duration: gsap.utils.random(5, 9),
+      ease: 'power1.inOut',
+      onComplete: function () { wander(el); }
+    });
+  }
+
+  var triggered = false;
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting || triggered) return;
+    triggered = true;
+    cursors.forEach(function (cursor, i) {
+      gsap.to(cursor, { opacity: 1, duration: 0.6, delay: i * 0.25 });
+      setTimeout(function () { wander(cursor); }, i * 250);
+    });
+    obs.disconnect();
+  }, { root: document.getElementById('cs-faire'), threshold: 0.5 });
+  obs.observe(card);
+})();
+
+// Faire card 1 video — play once card is fully in view, keep playing after
+(function () {
+  var card = document.querySelector('#cs-faire .faire-card-1');
+  var video = card ? card.querySelector('video') : null;
+  if (!card || !video) return;
+  var observer = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    video.play();
+    observer.disconnect();
+  }, { root: document.getElementById('cs-faire'), threshold: 1.0 });
+  observer.observe(card);
+})();
+
+// Faire mosaic — big image slowly zooms to normal on scroll reveal
+(function () {
+  var imgEl = document.querySelector('#cs-faire .faire-mosaic-main img');
+  var mainEl = document.querySelector('#cs-faire .faire-mosaic-main');
+  if (!imgEl || !mainEl || typeof gsap === 'undefined') return;
+  gsap.set(imgEl, { scale: 1.12, transformOrigin: 'center center' });
+  var triggered = false;
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting || triggered) return;
+    triggered = true;
+    gsap.to(imgEl, { scale: 1, duration: 3.5, ease: 'power2.out' });
+    obs.disconnect();
+  }, { root: document.getElementById('cs-faire'), threshold: 0.3 });
+  obs.observe(mainEl);
+})();
+
+// Faire mosaic — small images pop in as big image reaches 95% scroll, then stagger by time
+(function () {
+  var smEls = document.querySelectorAll('#cs-faire .faire-mosaic-sm');
+  var mainEl = document.querySelector('#cs-faire .faire-mosaic-main');
+  if (!smEls.length || !mainEl || typeof gsap === 'undefined') return;
+  gsap.set(smEls, { opacity: 0, scale: 0.65, transformOrigin: 'center center' });
+  var triggered = false;
+  var delays = [0, 0.2, 0.4];
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting || triggered) return;
+    triggered = true;
+    smEls.forEach(function (el, i) {
+      gsap.to(el, { opacity: 1, scale: 1, duration: 0.45, ease: 'back.out(1.4)', delay: delays[i] });
+    });
+    obs.disconnect();
+  }, { root: document.getElementById('cs-faire'), threshold: 0.95 });
+  obs.observe(mainEl);
+})();
+
+// Faire intro text — fade up on scroll into view inside the overlay
+(function () {
+  var el = document.querySelector('#cs-faire .faire-intro-text');
+  if (!el || typeof gsap === 'undefined') return;
+  gsap.set(el, { opacity: 0, y: 48 });
+  var observer = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    gsap.to(el, { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' });
+    observer.disconnect();
+  }, { root: document.getElementById('cs-faire'), threshold: 0.15 });
+  observer.observe(el);
+})();
+
+// DoorDash intro text — same fade-up as Faire
+(function () {
+  var el = document.querySelector('#cs-dd .dd-intro-text');
+  if (!el || typeof gsap === 'undefined') return;
+  gsap.set(el, { opacity: 0, y: 48 });
+  var observer = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    gsap.to(el, { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' });
+    observer.disconnect();
+  }, { root: document.getElementById('cs-dd'), threshold: 0.15 });
+  observer.observe(el);
+})();
+
+// BC sprint image — same slow zoom-to-normal as Faire mosaic
+(function () {
+  var imgEl = document.querySelector('#cs-bc .bc-sprint-img');
+  var wrapEl = document.querySelector('#cs-bc .bc-sprint-img-wrap');
+  if (!imgEl || !wrapEl || typeof gsap === 'undefined') return;
+  gsap.set(imgEl, { scale: 1.12, transformOrigin: 'center center' });
+  var triggered = false;
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting || triggered) return;
+    triggered = true;
+    gsap.to(imgEl, { scale: 1, duration: 3.5, ease: 'power2.out' });
+    obs.disconnect();
+  }, { root: document.getElementById('cs-bc'), threshold: 0.3 });
+  obs.observe(wrapEl);
+})();
+
+// BC intro pullquote — same fade-up animation
+(function () {
+  var el = document.querySelector('#cs-bc .bc-pullquote');
+  if (!el || typeof gsap === 'undefined') return;
+  gsap.set(el, { opacity: 0, y: 48 });
+  var observer = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    gsap.to(el, { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' });
+    observer.disconnect();
+  }, { root: document.getElementById('cs-bc'), threshold: 0.15 });
+  observer.observe(el);
+})();
+</script>
+
 <script>
 // Email copy to clipboard (desktop + tablet only)
 (function () {
@@ -1271,6 +3634,812 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
         tooltip.classList.remove('visible');
       }, 2000);
     });
+  });
+})();
+</script>
+<script>
+// Case study overlay animation engine
+(function () {
+  'use strict';
+
+  // slow start → builds speed → snaps into place (the alvinn.design feel)
+  var EASE_OPEN = 'expo.out';
+  var EASE_OUT  = 'power3.out';
+
+  var expanded = {};
+  var bottomCollapsed = {};
+  function peekHeight() { return Math.round(window.innerHeight * 0.25); }
+  var PEEK_GAP = 20;
+  var snapping         = {};
+  var bottomCollapsedAt = {};
+  var nextProjectMap = {
+    'cs-dd':    { id: 'cs-faire', label: 'Faire' },
+    'cs-faire': { id: 'cs-bc',    label: 'BigCommerce' },
+    'cs-bc':    { id: 'cs-trail', label: 'Trail575' },
+    'cs-trail': { id: 'cs-dd',    label: 'DoorDash' }
+  };
+
+  var peekingState = null; // { id, activeId }
+
+  window._resetOverlayState = function (id) {
+    expanded[id]          = false;
+    bottomCollapsed[id]   = false;
+    snapping[id]          = false;
+    bottomCollapsedAt[id] = 0;
+    var el = document.getElementById(id);
+    if (el) {
+      el.scrollTop = 0;
+      if (typeof gsap !== 'undefined') gsap.set(el, { clearProps: 'top,left,right,bottom,y,borderRadius' });
+    }
+  };
+
+  function setupPeek(id) {
+    var next = nextProjectMap[id];
+    if (!next) return;
+    var nextEl = document.getElementById(next.id);
+    if (!nextEl) return;
+    var g      = gap();
+    var modalH = window.innerHeight - topGap();
+    var peekY  = modalH - peekHeight();
+    peekingState = { id: next.id, activeId: id };
+    nextEl.scrollTop = 0;
+    nextEl.style.display    = 'block';
+    nextEl.style.overflowY  = 'hidden';
+    nextEl.style.zIndex     = '9800';
+    nextEl.classList.add('cs-peeking');
+    gsap.killTweensOf(nextEl);
+    gsap.set(nextEl, { top: topGap(), left: g, right: g, bottom: 0, borderRadius: '24px 24px 0 0', y: modalH, scale: 0.85, opacity: 1 });
+    gsap.to(nextEl,  { y: peekY, scale: 1, duration: 0.6, ease: 'power3.out' });
+
+    var peekTitleIds = { 'cs-bc': 'cs-bc-peek-title', 'cs-faire': 'cs-faire-peek-title', 'cs-trail': 'cs-trail-peek-title', 'cs-dd': 'cs-dd-peek-title' };
+    var peekTitleEl = peekTitleIds[next.id] ? document.getElementById(peekTitleIds[next.id]) : null;
+    if (peekTitleEl) {
+      var ph = peekHeight();
+      gsap.killTweensOf(peekTitleEl);
+      peekTitleEl.style.display = 'block';
+      var titleH  = peekTitleEl.offsetHeight;
+      var centerY = window.innerHeight - ph / 2 - titleH / 2;
+      gsap.set(peekTitleEl, { opacity: 0, y: centerY });
+      gsap.to(peekTitleEl, { opacity: 1, duration: 0.55, delay: 0.15, ease: 'power2.inOut' });
+      peekTitleEl.dataset.centerY = centerY;
+    }
+  }
+
+  function teardownPeek() {
+    if (!peekingState) return;
+    var nextEl = document.getElementById(peekingState.id);
+
+    var _ptIds = { 'cs-bc': 'cs-bc-peek-title', 'cs-faire': 'cs-faire-peek-title', 'cs-trail': 'cs-trail-peek-title', 'cs-dd': 'cs-dd-peek-title' };
+    var _ptEl = _ptIds[peekingState.id] ? document.getElementById(_ptIds[peekingState.id]) : null;
+    if (_ptEl) {
+      gsap.killTweensOf(_ptEl);
+      _ptEl.style.display = 'none';
+      gsap.set(_ptEl, { clearProps: 'all' });
+    }
+
+    peekingState = null;
+    if (!nextEl) return;
+    gsap.killTweensOf(nextEl);
+    gsap.to(nextEl, { y: window.innerHeight - topGap(), scale: 0.85, duration: 0.6, ease: 'power3.out', overwrite: 'auto',
+      onComplete: function () { nextEl.classList.remove('cs-peeking'); nextEl.style.display = 'none'; clearGsapProps(nextEl); }
+    });
+  }
+
+  function openFromPeek() {
+    if (!peekingState) return;
+    var fromId = peekingState.activeId;
+    var toId   = peekingState.id;
+    var from   = document.getElementById(fromId);
+    var to     = document.getElementById(toId);
+    peekingState = null;
+    bottomCollapsed[fromId] = false;
+    expanded[fromId] = false;
+
+    if (from) {
+      from.style.overflowY = 'hidden';
+      gsap.killTweensOf(from);
+      gsap.to(from, { opacity: 0, y: '-=60', scale: 0.96, duration: 0.3, ease: 'power3.in',
+        onComplete: function () { from.style.display = 'none'; clearGsapProps(from); from.scrollTop = 0; }
+      });
+    }
+
+    var _openPtIds = { 'cs-bc': 'cs-bc-peek-title', 'cs-faire': 'cs-faire-peek-title', 'cs-trail': 'cs-trail-peek-title', 'cs-dd': 'cs-dd-peek-title' };
+    var _openPtEl = _openPtIds[toId] ? document.getElementById(_openPtIds[toId]) : null;
+    if (_openPtEl && _openPtEl.style.display !== 'none') {
+      gsap.killTweensOf(_openPtEl);
+      (function (el) {
+        gsap.to(el, { opacity: 0, duration: 0.25, onComplete: function () {
+          el.style.display = 'none';
+          gsap.set(el, { clearProps: 'all' });
+        }});
+      })(_openPtEl);
+    }
+
+    to.classList.remove('cs-peeking');
+    to.style.zIndex = '10001';
+    var toNav = to.querySelector('.cs-nav-bar');
+    if (toNav) gsap.set(toNav, { clearProps: 'top' });
+    gsap.killTweensOf(to);
+    gsap.to(to, { y: 0, scale: 1, opacity: 1, duration: 0.55, ease: EASE_OPEN, delay: 0.05,
+      onComplete: function () {
+        to.style.overflowY = 'auto';
+        to.style.zIndex = '10000';
+        expanded[toId] = false;
+      }
+    });
+  }
+
+  function gap() { return window.innerWidth <= 479 ? 8 : 48; }
+  function topGap() { return window.innerWidth <= 479 ? 8 : 48; }
+
+  function clearGsapProps(el) {
+    gsap.set(el, { clearProps: 'top,left,right,bottom,borderRadius,overflowY,opacity,transform' });
+  }
+
+  // Homepage elements fade + subtly shrink on CS open, restore on close
+  var HOME_SEL      = 'header.div-nav-section, main, .projects-section, .about-section';
+  var HOME_SEL_BODY = 'main, .projects-section, .about-section';
+  function fadeHome(out) {
+    var allEls  = document.querySelectorAll(HOME_SEL);
+    var bodyEls = document.querySelectorAll(HOME_SEL_BODY);
+    gsap.to(out ? allEls : bodyEls, {
+      opacity: out ? 0 : 1,
+      scale:   out ? 0.99 : 1,
+      duration: out ? 0.35 : 0.45,
+      ease:    out ? 'power2.out' : EASE_OUT,
+      transformOrigin: 'center center',
+      overwrite: 'auto',
+      onComplete: out ? null : function () {
+        gsap.set(allEls, { clearProps: 'opacity,transform,scale' });
+        var navEl = document.querySelector('header.div-nav-section');
+        if (navEl) navEl.classList.remove('cs-no-transition');
+      }
+    });
+  }
+
+  function openCS(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    window._activeCSId = id;
+    el.scrollTop = 0;
+    el.style.display = 'block';
+    var g = gap();
+    var navEl = el.querySelector('.cs-nav-bar');
+    if (navEl) gsap.set(navEl, { clearProps: 'top' });
+
+    gsap.set(el, {
+      top: topGap(), left: g, right: g, bottom: 0,
+      borderRadius: '24px 24px 0 0',
+      y: window.innerHeight, scale: 0.96, opacity: 0.8,
+      overflowY: 'hidden'
+    });
+
+    var scrollbarW = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = scrollbarW + 'px';
+    window._csIsOpen = true;
+    gsap.killTweensOf(window);
+    expanded[id] = false;
+    bottomCollapsed[id] = false;
+    snapping[id] = false;
+    bottomCollapsedAt[id] = 0;
+    var tint = document.getElementById('cs-tint');
+    gsap.killTweensOf(tint);
+    gsap.to(tint, { opacity: 1, duration: 0.3, ease: 'expo.out', delay: 0 });
+
+    gsap.to(el, {
+      y: 0, scale: 1, opacity: 1,
+      duration: 0.48,
+      ease: EASE_OPEN,
+      delay: 0.14,
+      onComplete: function () { el.style.overflowY = 'auto'; }
+    });
+
+    if (id === 'cs-faire' || id === 'cs-dd' || id === 'cs-bc' || id === 'cs-trail') {
+      var heroLines    = el.querySelectorAll('.cs-hero-line');
+      var heroTitle    = el.querySelector('.cs-hero-title');
+      var heroSubtitle = el.querySelector('.cs-hero-subtitle');
+      var heroTargets  = heroLines.length ? Array.from(heroLines).concat([heroSubtitle]) : [heroTitle, heroSubtitle];
+      gsap.killTweensOf(heroTargets);
+      gsap.set(heroTargets, { opacity: 0, y: 18 });
+      gsap.to(heroTargets, { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out', stagger: 0.15, delay: 0.42 });
+    }
+  }
+  window._openCS = openCS;
+
+  function closeCS(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.style.overflowY = 'hidden';
+    gsap.killTweensOf(el);
+
+    var wasExpanded = expanded[id] || bottomCollapsed[id];
+    expanded[id] = false;
+    bottomCollapsed[id] = false;
+
+    teardownPeek();
+    var tint = document.getElementById('cs-tint');
+    gsap.killTweensOf(tint);
+    gsap.to(tint, { opacity: 0, duration: 2, ease: 'expo.out', delay: 0.15,
+      onComplete: function () {
+        window._csIsOpen = false;
+        gsap.set(tint, { opacity: 0 });
+      }
+    });
+
+    if (wasExpanded) {
+      gsap.to(el, { opacity: 0, duration: 0.2, ease: 'power2.out', overwrite: false });
+    }
+    gsap.to(el, {
+      y: window.innerHeight, scale: 0.98,
+      duration: 0.42,
+      ease: 'power3.in',
+      onComplete: function () {
+        el.style.display = 'none';
+        clearGsapProps(el);
+        var nav = el.querySelector('.cs-nav-bar');
+        if (nav) gsap.set(nav, { clearProps: 'top' });
+        el.scrollTop = 0;
+        expanded[id] = false;
+        bottomCollapsed[id] = false;
+        snapping[id] = false;
+        bottomCollapsedAt[id] = 0;
+        window._activeCSId = null;
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }
+    });
+  }
+
+  function transitionCS(fromId, toId) {
+    var from = document.getElementById(fromId);
+    var to   = document.getElementById(toId);
+    if (!from || !to) return;
+
+    teardownPeek();
+    var g = gap();
+
+    if (expanded[fromId]) {
+      gsap.set(from, { top: topGap(), left: g, right: g });
+      expanded[fromId] = false;
+      from.classList.remove('is-expanded');
+    }
+
+    to.scrollTop = 0;
+    to.style.display = 'block';
+    to.style.zIndex = '10001';
+    gsap.set(to, {
+      top: topGap(), left: g, right: g, bottom: 0,
+      borderRadius: '24px 24px 0 0',
+      y: window.innerHeight, scale: 0.96,
+      overflowY: 'hidden'
+    });
+
+    from.style.overflowY = 'hidden';
+    gsap.killTweensOf(from);
+    gsap.to(from, {
+      opacity: 0, y: -56, scale: 0.96,
+      duration: 0.3, ease: 'power3.in',
+      onComplete: function () {
+        from.style.display = 'none';
+        clearGsapProps(from);
+        from.scrollTop = 0;
+        expanded[fromId] = false;
+      }
+    });
+
+    gsap.to(to, {
+      y: 0, scale: 1,
+      duration: 0.55,
+      ease: EASE_OPEN,
+      delay: 0.05,
+      onComplete: function () {
+        to.style.overflowY = 'auto';
+        to.style.zIndex = '10000';
+        expanded[toId] = false;
+      }
+    });
+  }
+
+  // One-way expand: once scrolled, card pushes top to -32px so rounded corners
+  // are hidden above the viewport — no flicker, no auto-contract.
+  function attachScrollExpand(id, opts) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var ticking  = false;
+    var noPeekOpt = opts && opts.noPeek;
+    function noPeek() { return typeof noPeekOpt === 'function' ? noPeekOpt() : noPeekOpt; }
+
+    el.addEventListener('wheel', function (e) {
+      if (el.scrollTop <= 0 && e.deltaY < 0) e.preventDefault();
+    }, { passive: false });
+
+    var nav  = el.querySelector('.cs-nav-bar');
+    var hero = el.querySelector('.cs-hero-img');
+
+    el.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var g              = gap();
+        var distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+        var nearBottom     = distFromBottom < 10;
+
+        // Snap zone: fire scroll + collapse simultaneously, anchored to new bottom
+        if (!noPeek() &&expanded[id] && !bottomCollapsed[id] && !snapping[id] && distFromBottom > 10 && distFromBottom < 30) {
+          snapping[id]          = true;
+          expanded[id]          = false;
+          bottomCollapsed[id]   = true;
+          bottomCollapsedAt[id] = el.scrollTop;
+          var snapG      = g;
+          var snapBottom = PEEK_GAP + peekHeight();
+          var elTop      = gsap.getProperty(el, 'top') || topGap();
+          gsap.to(el, { scrollTop: el.scrollHeight - el.clientHeight,
+                        duration: 0.55, ease: 'power3.out', overwrite: 'auto',
+                        onComplete: function () { snapping[id] = false; } });
+          gsap.to(el, { left: snapG, right: snapG, y: -snapBottom, borderRadius: '24px',
+                        duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(nav, { top: snapBottom - elTop, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+          setupPeek(id);
+        }
+
+        if (!expanded[id] && !bottomCollapsed[id] && el.scrollTop > 30) {
+          // collapsed_top → expanded (full width, full height)
+          expanded[id] = true;
+          snapping[id] = false;
+          gsap.to(el,  { left: 0, right: 0, bottom: 0, duration: 0.6,  ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(el,  { top: -30,                      duration: 0.7,  ease: 'power2.out', overwrite: 'auto' });
+          gsap.to(nav, { top: 54,                        duration: 0.7,  ease: 'power2.out', overwrite: 'auto' });
+
+        } else if (!noPeek() &&expanded[id] && nearBottom && !snapping[id]) {
+          // fast-scroll bypass: collapsed without snap
+          expanded[id] = false;
+          bottomCollapsed[id] = true;
+          bottomCollapsedAt[id] = el.scrollTop;
+          var bypassOffset = PEEK_GAP + peekHeight();
+          var bypassTop    = gsap.getProperty(el, 'top') || topGap();
+          gsap.to(el,  { left: g, right: g, y: -bypassOffset, borderRadius: '24px', duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(nav, { top: bypassOffset - bypassTop, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+          setupPeek(id);
+
+        } else if (!noPeek() &&bottomCollapsed[id] && el.scrollTop < (bottomCollapsedAt[id] || 0) - 80) {
+          // collapsed_bottom → expanded
+          bottomCollapsed[id] = false;
+          expanded[id] = true;
+          snapping[id] = false;
+          teardownPeek();
+          gsap.to(el,  { top: -30, left: 0, right: 0, y: 0, borderRadius: '24px 24px 0 0', duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(nav, { top: 54,  duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+
+        } else if (expanded[id] && el.scrollTop < 10) {
+          // expanded → collapsed_top
+          expanded[id] = false;
+          snapping[id] = false;
+          gsap.to(el,  { top: topGap(), left: g, right: g, y: 0, borderRadius: '24px 24px 0 0', duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(nav, { top: 0,                                                                   duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
+
+        } else if (!noPeek() &&bottomCollapsed[id] && el.scrollTop < 10) {
+          // collapsed_bottom → collapsed_top
+          bottomCollapsed[id] = false;
+          snapping[id] = false;
+          teardownPeek();
+          gsap.to(el,  { top: topGap(), left: g, right: g, y: 0, borderRadius: '24px 24px 0 0', duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(nav, { top: 0,                                                                   duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
+        }
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+
+  attachScrollExpand('cs-dd', { noPeek: function() { var p = document.getElementById('cs-dd-protected'); return p && p.style.display === 'none'; } });
+  attachScrollExpand('cs-faire', { noPeek: function() { var p = document.getElementById('cs-faire-protected'); return p && p.style.display === 'none'; } });
+  attachScrollExpand('cs-bc', { noPeek: function() { var p = document.getElementById('cs-bc-protected'); return p && p.style.display === 'none'; } });
+  attachScrollExpand('cs-trail', { noPeek: function() { var p = document.getElementById('cs-trail-protected'); return p && p.style.display === 'none'; } });
+
+  ['cs-dd', 'cs-faire', 'cs-bc', 'cs-trail'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('mouseenter', function () {
+      if (!el.classList.contains('cs-peeking')) return;
+      gsap.to(el, { scale: 1.012, duration: 0.45, ease: 'back.out(3)', overwrite: 'auto' });
+      var _hoverPtMap = { 'cs-bc': 'cs-bc-peek-title', 'cs-faire': 'cs-faire-peek-title', 'cs-trail': 'cs-trail-peek-title', 'cs-dd': 'cs-dd-peek-title' };
+      var _ht = _hoverPtMap[id] ? document.getElementById(_hoverPtMap[id]) : null;
+      if (_ht && _ht.style.display !== 'none') {
+        var cy = parseFloat(_ht.dataset.centerY) || 0;
+        gsap.to(_ht, { y: cy - 8, duration: 0.45, ease: 'back.out(3)', overwrite: 'auto' });
+      }
+    });
+    el.addEventListener('mouseleave', function () {
+      if (!el.classList.contains('cs-peeking')) return;
+      gsap.to(el, { scale: 1, duration: 0.3, ease: 'power3.out', overwrite: 'auto' });
+      var _hoverPtMap = { 'cs-bc': 'cs-bc-peek-title', 'cs-faire': 'cs-faire-peek-title', 'cs-trail': 'cs-trail-peek-title', 'cs-dd': 'cs-dd-peek-title' };
+      var _ht = _hoverPtMap[id] ? document.getElementById(_hoverPtMap[id]) : null;
+      if (_ht && _ht.style.display !== 'none') {
+        var cy = parseFloat(_ht.dataset.centerY) || 0;
+        gsap.to(_ht, { y: cy, duration: 0.3, ease: 'power3.out', overwrite: 'auto' });
+      }
+    });
+  });
+
+  // Forward wheel events from anywhere on page to the active modal
+  document.addEventListener('wheel', function (e) {
+    if (!window._csIsOpen) return;
+    var target = e.target.closest('.cs-overlay');
+    if (target && target.style.overflowY === 'auto') return; // already inside scrollable modal
+    var overlays = document.querySelectorAll('.cs-overlay');
+    for (var i = 0; i < overlays.length; i++) {
+      if (overlays[i].style.overflowY === 'auto') {
+        if (snapping[overlays[i].id]) return; // don't fight the smooth scroll
+        overlays[i].scrollTop += e.deltaY;
+        break;
+      }
+    }
+  }, { passive: true });
+
+  ['cs-dd', 'cs-faire', 'cs-bc', 'cs-trail'].forEach(function (id) {
+    var el   = document.getElementById(id);
+    var nav  = el ? el.querySelector('.cs-nav-bar') : null;
+    var hero = el ? el.querySelector('.cs-hero-img') : null;
+    if (!el || !nav || !hero) return;
+    el.addEventListener('scroll', function () {
+      var heroBottom   = hero.getBoundingClientRect().bottom;
+      var containerTop = el.getBoundingClientRect().top;
+      nav.classList.toggle('nav-past-hero', heroBottom - containerTop <= nav.offsetHeight);
+    }, { passive: true });
+  });
+
+  // Next-footer peeks in via IntersectionObserver
+  var footerObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.classList.toggle('is-peeking', entry.isIntersecting);
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.cs-next-footer').forEach(function (el) {
+    footerObserver.observe(el);
+  });
+
+  // Event delegation (capture phase to beat pw-overlay handler)
+  document.addEventListener('click', function (e) {
+    var csLink = e.target.closest('[data-casestudy]');
+    if (csLink && !csLink.classList.contains('mobile-project-link')) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      openCS('cs-' + csLink.dataset.casestudy);
+      return;
+    }
+    var closeBtn = e.target.closest('[data-close]');
+    if (closeBtn) {
+      e.preventDefault();
+      closeCS(closeBtn.dataset.close);
+      return;
+    }
+    var clickedOverlay = e.target.closest('.cs-overlay');
+    if (peekingState && clickedOverlay && clickedOverlay.id === peekingState.id) {
+      openFromPeek();
+      return;
+    }
+    var nextEl = e.target.closest('[data-to]');
+    if (nextEl) {
+      e.preventDefault();
+      var overlay = nextEl.closest('.cs-overlay');
+      if (overlay) transitionCS(overlay.id, nextEl.dataset.to);
+      return;
+    }
+  }, true);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || !window._csIsOpen) return;
+    var id = window._activeCSId;
+    if (id) closeCS(id);
+  });
+
+})();
+
+
+// Before/after comparison slider — supports multiple instances
+(function () {
+  var easing = 'cubic-bezier(0.4, 0, 0.2, 1)';
+
+  function initSlider(wrap) {
+    var before      = wrap.querySelector('.fbc-before');
+    var line        = wrap.querySelector('.fbc-line');
+    var handle      = wrap.querySelector('.fbc-handle');
+    var labelBefore = wrap.querySelector('.fbc-label-before');
+    var labelAfter  = wrap.querySelector('.fbc-label-after');
+    var isDragging  = false;
+    var introPlayed = false;
+    var rafId       = null;
+    var pendingX    = 0;
+
+    function applyPos(pct) {
+      pct = Math.max(0, Math.min(1, pct));
+      var p = (pct * 100).toFixed(3);
+      before.style.clipPath = 'inset(0 0 0 ' + p + '%)';
+      line.style.left       = p + '%';
+      handle.style.left     = p + '%';
+      var wrapW = wrap.offsetWidth;
+      if (labelAfter  && wrapW > 0) labelAfter.style.opacity  = pct > 1 - (24 + labelAfter.offsetWidth)  / wrapW ? '0' : '1';
+      if (labelBefore && wrapW > 0) labelBefore.style.opacity = pct < (24 + labelBefore.offsetWidth) / wrapW ? '0' : '1';
+    }
+
+    function enableTransitions(dur) {
+      var t = dur + 'ms ' + easing;
+      before.style.transition = 'clip-path ' + t;
+      line.style.transition   = 'left ' + t;
+      handle.style.transition = 'left ' + t;
+    }
+
+    function disableTransitions() {
+      before.style.transition = 'none';
+      line.style.transition   = 'none';
+      handle.style.transition = 'none';
+    }
+
+    handle.addEventListener('mousedown', function (e) {
+      isDragging = true;
+      disableTransitions();
+      document.body.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', function (e) {
+      if (!isDragging) return;
+      pendingX = e.clientX;
+      if (!rafId) {
+        rafId = requestAnimationFrame(function () {
+          rafId = null;
+          var rect = wrap.getBoundingClientRect();
+          applyPos((pendingX - rect.left) / rect.width);
+        });
+      }
+    });
+
+    document.addEventListener('mouseup', function () {
+      if (!isDragging) return;
+      isDragging = false;
+      document.body.style.cursor = '';
+      enableTransitions(400);
+    });
+
+    function playIntro() {
+      var steps = [
+        { pct: 0.32, dur: 560 },
+        { pct: 0.68, dur: 660 },
+        { pct: 0.50, dur: 460 },
+      ];
+      var delay = 700;
+      steps.forEach(function (s) {
+        setTimeout(function () {
+          enableTransitions(s.dur);
+          applyPos(s.pct);
+        }, delay);
+        delay += s.dur;
+      });
+      setTimeout(function () { enableTransitions(400); }, delay);
+    }
+
+    var band = wrap.closest('.faire-full-band');
+    if (band && 'IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting && !introPlayed) {
+          introPlayed = true;
+          obs.disconnect();
+          playIntro();
+        }
+      }, { threshold: 0.5 });
+      obs.observe(band);
+    }
+  }
+
+  document.querySelectorAll('.fbc-wrap').forEach(initSlider);
+})();
+
+(function () {
+  var overlay = document.getElementById('cs-faire');
+  var purpleBand = document.querySelector('.faire-full-band[style*="EBECEF"]');
+  if (!overlay || !purpleBand) return;
+
+  var row        = purpleBand.querySelector('.faire-band-row');
+  var stickyText = purpleBand.querySelector('.faire-band-text-sticky');
+  var col        = purpleBand.querySelector('.faire-band-windows-col');
+  var win2       = col.children[1];
+
+  // Text is absolute within the row; col gets margin-left to preserve the 315+16px gap.
+  // bottom:0 anchors text to row bottom (= win2 bottom = pos2).
+  // translateY(-snapDelta) shifts UP to win1 bottom (= pos1).
+  row.style.position   = 'relative';
+  col.style.marginLeft = '331px';
+  stickyText.style.position = 'absolute';
+  stickyText.style.left     = '0';
+  stickyText.style.width    = '315px';
+  stickyText.style.bottom   = '0';
+  stickyText.style.top      = 'auto';
+
+  var inPos2    = false;
+  var snapDelta = 0; // 0 = not yet initialised (overlay was display:none at page load)
+
+  function applyPos(toPos2) {
+    if (toPos2 === inPos2) return;
+    inPos2 = toPos2;
+    stickyText.style.transform = 'translateY(' + (toPos2 ? 0 : -snapDelta) + 'px)';
+  }
+
+  function check() {
+    var r = win2.getBoundingClientRect();
+    var h = r.height;
+    if (h <= 0) return;
+
+    // Lazy init: runs on first scroll after the overlay becomes visible.
+    // offsetHeight is 0 while display:none, so we can't compute snapDelta until now.
+    if (snapDelta === 0) {
+      snapDelta = 32 + win2.offsetHeight;
+      inPos2    = false;
+      stickyText.style.transition = 'none';
+      stickyText.style.transform  = 'translateY(-' + snapDelta + 'px)';
+      void stickyText.offsetHeight;
+      stickyText.style.transition = '';
+      return; // let layout settle; next scroll event will do the trigger check
+    }
+
+    var oRect    = overlay.getBoundingClientRect();
+    var overlayH = overlay.clientHeight;
+    var top      = r.top    - oRect.top;
+    var bottom   = r.bottom - oRect.top;
+
+    if (!inPos2 && bottom <= overlayH) { applyPos(true);  return; }
+    if (inPos2) {
+      var visible = Math.max(0, Math.min(overlayH, bottom) - Math.max(0, top));
+      if (visible / h <= 0.2) applyPos(false);
+    }
+  }
+
+  overlay.addEventListener('scroll', check);
+
+  // Reset on every overlay open so re-opens re-initialise correctly.
+  new MutationObserver(function () {
+    if (overlay.style.display === 'flex') { snapDelta = 0; inPos2 = false; }
+  }).observe(overlay, { attributes: true, attributeFilter: ['style'] });
+
+  window.addEventListener('resize', function () {
+    if (snapDelta === 0) return;
+    snapDelta = 32 + win2.offsetHeight;
+    inPos2    = false;
+    stickyText.style.transition = 'none';
+    stickyText.style.transform  = 'translateY(-' + snapDelta + 'px)';
+    void stickyText.offsetHeight;
+    stickyText.style.transition = '';
+  });
+})();
+
+// ── Page lock (Faire + Trail575) ─────────────────────────────────────────
+(function () {
+  var UNLOCK_KEY = 'portfolio-unlocked';
+  var PASSWORD   = 'woof';
+
+  function isUnlocked() {
+    try { return localStorage.getItem(UNLOCK_KEY) === '1'; } catch (e) { return false; }
+  }
+
+  function fireConfetti(modalEl) {
+    if (typeof confetti === 'undefined' || !modalEl) return;
+    var rect = modalEl.getBoundingClientRect();
+    var x = (rect.left + rect.width / 2) / window.innerWidth;
+    var y = (rect.top + rect.height / 2) / window.innerHeight;
+    var opts = { zIndex: 99999, colors: ['#e5604e','#f7c948','#7ecba1','#6ec6f5','#c084fc','#fff'] };
+    confetti(Object.assign({ particleCount: 120, spread: 80, origin: { x: x, y: y } }, opts));
+    setTimeout(function () {
+      confetti(Object.assign({ particleCount: 60, spread: 120, origin: { x: x - 0.15, y: y }, angle: 120 }, opts));
+      confetti(Object.assign({ particleCount: 60, spread: 120, origin: { x: x + 0.15, y: y }, angle: 60  }, opts));
+    }, 150);
+  }
+
+  function initLock(cfg) {
+    var overlayEl   = document.getElementById(cfg.overlayId);
+    var lockUI      = document.getElementById(cfg.lockUIId);
+    var gradient    = document.getElementById(cfg.gradientId);
+    var modal       = document.getElementById(cfg.modalId);
+    var protectedEl = document.getElementById(cfg.protectedId);
+    var input       = document.getElementById(cfg.inputId);
+    var btn         = document.getElementById(cfg.btnId);
+
+    function setLocked() {
+      if (typeof gsap !== 'undefined') gsap.set([gradient, modal], { opacity: 1 });
+      if (lockUI)       lockUI.style.display      = '';
+      if (protectedEl)  protectedEl.style.display = 'none';
+    }
+
+    function setUnlocked() {
+      if (lockUI)       lockUI.style.display      = 'none';
+      if (protectedEl)  protectedEl.style.display = '';
+    }
+
+    function doUnlock() {
+      try { localStorage.setItem(UNLOCK_KEY, '1'); } catch (e) {}
+      fireConfetti(modal);
+      if (typeof gsap !== 'undefined' && gradient && modal) {
+        gsap.to([gradient, modal], {
+          opacity: 0, duration: 0.5, ease: 'power2.out',
+          onComplete: function () {
+            if (lockUI) lockUI.style.display = 'none';
+            if (protectedEl) {
+              protectedEl.style.display = '';
+              gsap.fromTo(protectedEl, { opacity: 0 }, { opacity: 1, duration: 1.0, ease: 'sine.out' });
+            }
+          }
+        });
+      } else {
+        setUnlocked();
+      }
+    }
+
+    if (isUnlocked()) { setUnlocked(); } else { setLocked(); }
+
+    if (overlayEl) {
+      new MutationObserver(function () {
+        if (overlayEl.style.display === 'block') {
+          if (isUnlocked()) { setUnlocked(); } else { setLocked(); }
+        }
+      }).observe(overlayEl, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    if (btn) {
+      btn.addEventListener('click', function () {
+        if (!input) return;
+        if (input.value.trim().toLowerCase() === PASSWORD) {
+          doUnlock();
+        } else {
+          input.classList.remove('cs-lock-error');
+          void input.offsetWidth;
+          input.classList.add('cs-lock-error');
+          setTimeout(function () { input.classList.remove('cs-lock-error'); }, 600);
+        }
+      });
+    }
+
+    if (input) {
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && btn) btn.click();
+      });
+    }
+  }
+
+  initLock({
+    overlayId:   'cs-faire',
+    lockUIId:    'cs-faire-lock-ui',
+    gradientId:  'cs-faire-lock-gradient',
+    modalId:     'cs-faire-lock-modal',
+    protectedId: 'cs-faire-protected',
+    inputId:     'cs-faire-pw-input',
+    btnId:       'cs-faire-pw-btn'
+  });
+
+  initLock({
+    overlayId:   'cs-bc',
+    lockUIId:    'cs-bc-lock-ui',
+    gradientId:  'cs-bc-lock-gradient',
+    modalId:     'cs-bc-lock-modal',
+    protectedId: 'cs-bc-protected',
+    inputId:     'cs-bc-pw-input',
+    btnId:       'cs-bc-pw-btn'
+  });
+
+  initLock({
+    overlayId:   'cs-trail',
+    lockUIId:    'cs-trail-lock-ui',
+    gradientId:  'cs-trail-lock-gradient',
+    modalId:     'cs-trail-lock-modal',
+    protectedId: 'cs-trail-protected',
+    inputId:     'cs-trail-pw-input',
+    btnId:       'cs-trail-pw-btn'
+  });
+  initLock({
+    overlayId:   'cs-dd',
+    lockUIId:    'cs-dd-lock-ui',
+    gradientId:  'cs-dd-lock-gradient',
+    modalId:     'cs-dd-lock-modal',
+    protectedId: 'cs-dd-protected',
+    inputId:     'cs-dd-pw-input',
+    btnId:       'cs-dd-pw-btn'
   });
 })();
 </script>
