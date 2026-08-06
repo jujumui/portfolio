@@ -900,7 +900,7 @@ img { display: block; max-width: 100%; height: auto; }
 #cs-dd .dd-phones {
   display: flex;
   justify-content: center;
-  padding: 0 40px 200px;
+  padding: 0 40px 80px;
 }
 #cs-dd .dd-phones img {
   width: 744px;
@@ -1342,6 +1342,12 @@ img { display: block; max-width: 100%; height: auto; }
   .cs-section h2 { font-size: 30px; }
 }
 @media (max-width: 479px) {
+  .cs-hero-img { height: 100svh; }
+  .cs-hero-caption { left: 24px !important; right: 24px !important; bottom: 48px !important; }
+  #cs-dd .cs-hero-line,
+  #cs-faire .cs-hero-line,
+  #cs-bc .cs-hero-line,
+  #cs-trail .cs-hero-line { display: inline; }
   .cs-body { padding: 36px 20px 80px; }
   .cs-body h1 { font-size: 40px; }
   .cs-section h2 { font-size: 26px; }
@@ -1757,6 +1763,7 @@ img { display: block; max-width: 100%; height: auto; }
 }
 @media (max-width: 991px) {
   #cs-faire .cs-body { padding: 0 24px 80px; }
+  .faire-intro { padding: 120px 0 100px; }
   #cs-faire .faire-intro-text { font-size: 32px; margin-left: 0; max-width: 100%; }
   .faire-img-block { flex: 0 0 auto; width: 100%; height: 280px; }
   .faire-quote-row { flex-direction: column; align-items: flex-start; }
@@ -1770,19 +1777,101 @@ img { display: block; max-width: 100%; height: auto; }
   .faire-card-pointer, .faire-card-pointer-2, .faire-card-pointer-3, .faire-card-pointer-4 { width: 44px; height: auto; }
 }
 @media (max-width: 479px) {
-  .faire-intro { padding: 48px 0; }
-  #cs-faire .faire-intro-text { font-size: 26px; }
+  .faire-intro { padding: 80px 0; }
+  #cs-faire .faire-intro-text { font-size: 28px; }
+  #cs-faire .cs-body { padding: 0 24px 80px; }
+  .faire-mosaic { height: auto; margin: 0 0 48px; }
+  .faire-mosaic-main { position: relative; width: 100%; height: 240px; left: auto; top: auto; border-radius: 16px; }
+  .faire-mosaic-sm { display: none; }
+  #cs-faire-lock-ui    { margin-top: -420px !important; }
+  #cs-faire-lock-modal { margin-top: -84px !important; }
   .faire-section { padding: 48px 0; }
   .faire-text-col { max-width: 100%; }
-  .faire-section-title { font-size: 20px; }
+  .faire-section-title { font-size: 25px; }
   #cs-faire .faire-section-body { font-size: 16px; }
   #cs-faire .faire-quote-text { font-size: 24px; }
-  #cs-faire .cs-body { padding: 0 20px 80px; }
   .faire-card-media { height: 220px; margin: 12px 12px 16px; }
   .faire-card-images { height: 200px; }
   .faire-card-overlay { display: none; }
   .faire-card-pointer, .faire-card-pointer-2, .faire-card-pointer-3, .faire-card-pointer-4 { display: none; }
   .faire-band-window { height: calc(100vh - 120px); }
+}
+
+/* ── All case studies: hero mobile ────────────────────────── */
+@media (max-width: 991px) {
+  #cs-dd .cs-hero-title,
+  #cs-faire .cs-hero-title,
+  #cs-bc .cs-hero-title,
+  #cs-trail .cs-hero-title    { font-size: 38px; }
+  #cs-dd .cs-hero-subtitle,
+  #cs-faire .cs-hero-subtitle,
+  #cs-bc .cs-hero-subtitle,
+  #cs-trail .cs-hero-subtitle { font-size: 17px; }
+}
+@media (max-width: 479px) {
+  #cs-dd .cs-hero-title,
+  #cs-faire .cs-hero-title,
+  #cs-bc .cs-hero-title,
+  #cs-trail .cs-hero-title    { font-size: 47px; }
+  #cs-dd .cs-hero-subtitle,
+  #cs-faire .cs-hero-subtitle,
+  #cs-bc .cs-hero-subtitle,
+  #cs-trail .cs-hero-subtitle { font-size: 17px; }
+}
+
+/* ── DoorDash mobile ──────────────────────────────────────── */
+@media (max-width: 991px) {
+  #cs-dd .dd-intro         { padding: 120px 24px 100px; max-width: 100%; }
+  #cs-dd .dd-intro-text    { font-size: 32px; max-width: 100%; }
+}
+@media (max-width: 479px) {
+  #cs-dd .dd-intro      { padding: 80px 24px 80px; }
+  #cs-dd .dd-intro-text { font-size: 28px; max-width: 100%; }
+  #cs-dd .dd-phones        { padding-bottom: 120px; }
+  /* Lock UI: no negative margin on mobile, gradient hidden */
+  #cs-dd-lock-ui      { margin-top: -280px !important; }
+  #cs-dd-lock-spacer  { height: 48px !important; display: block !important; }
+  #cs-dd-lock-modal {
+    width: calc(100% - 48px) !important;
+    border-radius: 12px !important;
+    margin: -20px 24px 0 !important;
+    padding: 40px 24px 40px !important;
+  }
+}
+
+/* ── BigCommerce mobile ────────────────────────────────────── */
+@media (max-width: 991px) {
+  #cs-bc .bc-pullquote-section { padding: 120px 24px 100px; }
+  #cs-bc .bc-pullquote         { font-size: 32px; max-width: 100%; }
+}
+@media (max-width: 479px) {
+  #cs-bc .bc-pullquote-section { padding: 80px 24px 80px; }
+  #cs-bc .bc-pullquote         { font-size: 28px; max-width: 100%; }
+  #cs-bc .bc-text-section    { padding: 80px 24px 48px; }
+  #cs-bc .bc-text-block      { max-width: 100%; }
+  #cs-bc .bc-section-heading { font-size: 25px; }
+  #cs-bc .bc-section-body p  { font-size: 16px; }
+  #cs-bc .bc-gray-band .bc-container { padding: 64px 24px; }
+  #cs-bc .bc-milestone-row { padding-top: 98px; }
+  #cs-bc .bc-img-caption { margin-bottom: 80px; }
+  #cs-bc-lock-modal { margin-top: -52px !important; }
+}
+
+/* ── Trail575 mobile ───────────────────────────────────────── */
+@media (max-width: 991px) {
+  #cs-trail .trail-pullquote    { font-size: 32px; }
+  #cs-trail .trail-section-serif { font-size: 32px; }
+}
+@media (max-width: 479px) {
+  #cs-trail .trail-container    { padding-left: 24px; padding-right: 24px; }
+  #cs-trail .trail-text-block   { max-width: 100%; }
+  #cs-trail .trail-intro        { padding-top: 80px; padding-bottom: 80px; }
+  #cs-trail .trail-takeaways   { padding-top: 80px; }
+  #cs-trail .trail-takeaway-h  { font-size: 22px; }
+  #cs-trail .trail-pullquote    { font-size: 28px; }
+  #cs-trail .trail-section-serif { font-size: 28px; }
+  #cs-trail .trail-body p       { font-size: 16px; }
+  #cs-trail .trail-takeaway-p   { font-size: 16px; }
 }
 
 /* ── Page lock ──────────────────────────────────────── */
@@ -1826,18 +1915,16 @@ img { display: block; max-width: 100%; height: auto; }
 #cs-dd-lock-ui {
   position: relative;
   z-index: 5;
-  margin-top: -560px;
+  margin-top: -440px;
 }
 #cs-dd-lock-gradient {
-  height: 300px;
+  height: 160px;
   background: linear-gradient(
     to bottom,
     rgba(255,254,253,0)    0%,
-    rgba(255,254,253,0.08) 12%,
-    rgba(255,254,253,0.30) 28%,
-    rgba(255,254,253,0.65) 48%,
-    rgba(255,254,253,0.90) 66%,
-    rgba(255,254,253,0.99) 78%,
+    rgba(255,254,253,0.30) 30%,
+    rgba(255,254,253,0.75) 58%,
+    rgba(255,254,253,0.97) 80%,
     #fffefd                100%
   );
   pointer-events: none;
@@ -2652,8 +2739,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     </video>
     <div class="cs-hero-caption">
       <div class="cs-hero-title">
-        <span class="cs-hero-line">Designing rewards that</span>
-        <span class="cs-hero-line">keep diners coming back</span>
+        <span class="cs-hero-line">Designing rewards that&nbsp;</span><span class="cs-hero-line">keep diners coming back</span>
       </div>
       <div class="cs-hero-subtitle">At DoorDash (2024–2026), I led 0→1 design for OmniChannel Loyalty, a core product in a new commerce suite that scaled to $179K MRR, +50% YoY</div>
     </div>
@@ -3649,7 +3735,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   var expanded = {};
   var bottomCollapsed = {};
   function peekHeight() { return Math.round(window.innerHeight * 0.25); }
-  var PEEK_GAP = 20;
+  function peekGap() { return window.innerWidth <= 479 ? 0 : 20; }
   var snapping         = {};
   var bottomCollapsedAt = {};
   var nextProjectMap = {
@@ -3688,7 +3774,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     nextEl.style.zIndex     = '9800';
     nextEl.classList.add('cs-peeking');
     gsap.killTweensOf(nextEl);
-    gsap.set(nextEl, { top: topGap(), left: g, right: g, bottom: 0, borderRadius: '24px 24px 0 0', y: modalH, scale: 0.85, opacity: 1 });
+    gsap.set(nextEl, { top: topGap(), left: g, right: g, bottom: 0, borderRadius: bRad('24px 24px 0 0'), y: modalH, scale: 0.85, opacity: 1 });
     gsap.to(nextEl,  { y: peekY, scale: 1, duration: 0.6, ease: 'power3.out' });
 
     var peekTitleIds = { 'cs-bc': 'cs-bc-peek-title', 'cs-faire': 'cs-faire-peek-title', 'cs-trail': 'cs-trail-peek-title', 'cs-dd': 'cs-dd-peek-title' };
@@ -3769,8 +3855,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     });
   }
 
-  function gap() { return window.innerWidth <= 479 ? 8 : 48; }
-  function topGap() { return window.innerWidth <= 479 ? 8 : 48; }
+  function gap() { return window.innerWidth <= 479 ? 0 : 48; }
+  function topGap() { return window.innerWidth <= 479 ? 0 : 48; }
+  function bRad(r) { return window.innerWidth <= 479 ? '0' : r; }
 
   function clearGsapProps(el) {
     gsap.set(el, { clearProps: 'top,left,right,bottom,borderRadius,overflowY,opacity,transform' });
@@ -3801,15 +3888,15 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     var el = document.getElementById(id);
     if (!el) return;
     window._activeCSId = id;
-    el.scrollTop = 0;
     el.style.display = 'block';
+    el.scrollTop = 0;
     var g = gap();
     var navEl = el.querySelector('.cs-nav-bar');
     if (navEl) gsap.set(navEl, { clearProps: 'top' });
 
     gsap.set(el, {
       top: topGap(), left: g, right: g, bottom: 0,
-      borderRadius: '24px 24px 0 0',
+      borderRadius: bRad('24px 24px 0 0'),
       y: window.innerHeight, scale: 0.96, opacity: 0.8,
       overflowY: 'hidden'
     });
@@ -3867,7 +3954,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       }
     });
 
-    if (wasExpanded) {
+    if (wasExpanded && window.innerWidth > 479) {
       gsap.to(el, { opacity: 0, duration: 0.2, ease: 'power2.out', overwrite: false });
     }
     gsap.to(el, {
@@ -3910,7 +3997,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     to.style.zIndex = '10001';
     gsap.set(to, {
       top: topGap(), left: g, right: g, bottom: 0,
-      borderRadius: '24px 24px 0 0',
+      borderRadius: bRad('24px 24px 0 0'),
       y: window.innerHeight, scale: 0.96,
       overflowY: 'hidden'
     });
@@ -3972,12 +4059,12 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
           bottomCollapsed[id]   = true;
           bottomCollapsedAt[id] = el.scrollTop;
           var snapG      = g;
-          var snapBottom = PEEK_GAP + peekHeight();
+          var snapBottom = peekGap() + peekHeight();
           var elTop      = gsap.getProperty(el, 'top') || topGap();
           gsap.to(el, { scrollTop: el.scrollHeight - el.clientHeight,
                         duration: 0.55, ease: 'power3.out', overwrite: 'auto',
                         onComplete: function () { snapping[id] = false; } });
-          gsap.to(el, { left: snapG, right: snapG, y: -snapBottom, borderRadius: '24px',
+          gsap.to(el, { left: snapG, right: snapG, y: -snapBottom, borderRadius: bRad('24px'),
                         duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
           gsap.to(nav, { top: snapBottom - elTop, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
           setupPeek(id);
@@ -3996,9 +4083,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
           expanded[id] = false;
           bottomCollapsed[id] = true;
           bottomCollapsedAt[id] = el.scrollTop;
-          var bypassOffset = PEEK_GAP + peekHeight();
+          var bypassOffset = peekGap() + peekHeight();
           var bypassTop    = gsap.getProperty(el, 'top') || topGap();
-          gsap.to(el,  { left: g, right: g, y: -bypassOffset, borderRadius: '24px', duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(el,  { left: g, right: g, y: -bypassOffset, borderRadius: bRad('24px'), duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
           gsap.to(nav, { top: bypassOffset - bypassTop, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
           setupPeek(id);
 
@@ -4008,14 +4095,14 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
           expanded[id] = true;
           snapping[id] = false;
           teardownPeek();
-          gsap.to(el,  { top: -30, left: 0, right: 0, y: 0, borderRadius: '24px 24px 0 0', duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(el,  { top: -30, left: 0, right: 0, y: 0, borderRadius: bRad('24px 24px 0 0'), duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
           gsap.to(nav, { top: 54,  duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
 
         } else if (expanded[id] && el.scrollTop < 10) {
           // expanded → collapsed_top
           expanded[id] = false;
           snapping[id] = false;
-          gsap.to(el,  { top: topGap(), left: g, right: g, y: 0, borderRadius: '24px 24px 0 0', duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(el,  { top: topGap(), left: g, right: g, y: 0, borderRadius: bRad('24px 24px 0 0'), duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
           gsap.to(nav, { top: 0,                                                                   duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
 
         } else if (!noPeek() &&bottomCollapsed[id] && el.scrollTop < 10) {
@@ -4023,7 +4110,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
           bottomCollapsed[id] = false;
           snapping[id] = false;
           teardownPeek();
-          gsap.to(el,  { top: topGap(), left: g, right: g, y: 0, borderRadius: '24px 24px 0 0', duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
+          gsap.to(el,  { top: topGap(), left: g, right: g, y: 0, borderRadius: bRad('24px 24px 0 0'), duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
           gsap.to(nav, { top: 0,                                                                   duration: 0.52, ease: 'power3.out', overwrite: 'auto' });
         }
         ticking = false;
@@ -4346,11 +4433,13 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       if (typeof gsap !== 'undefined') gsap.set([gradient, modal], { opacity: 1 });
       if (lockUI)       lockUI.style.display      = '';
       if (protectedEl)  protectedEl.style.display = 'none';
+      if (cfg.lockClass && overlayEl) overlayEl.classList.add(cfg.lockClass);
     }
 
     function setUnlocked() {
       if (lockUI)       lockUI.style.display      = 'none';
       if (protectedEl)  protectedEl.style.display = '';
+      if (cfg.lockClass && overlayEl) overlayEl.classList.remove(cfg.lockClass);
     }
 
     function doUnlock() {
@@ -4361,6 +4450,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
           opacity: 0, duration: 0.5, ease: 'power2.out',
           onComplete: function () {
             if (lockUI) lockUI.style.display = 'none';
+            if (cfg.lockClass && overlayEl) overlayEl.classList.remove(cfg.lockClass);
             if (protectedEl) {
               protectedEl.style.display = '';
               gsap.fromTo(protectedEl, { opacity: 0 }, { opacity: 1, duration: 1.0, ease: 'sine.out' });
@@ -4439,7 +4529,8 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     modalId:     'cs-dd-lock-modal',
     protectedId: 'cs-dd-protected',
     inputId:     'cs-dd-pw-input',
-    btnId:       'cs-dd-pw-btn'
+    btnId:       'cs-dd-pw-btn',
+    lockClass:   'cs-dd-locked'
   });
 })();
 </script>
