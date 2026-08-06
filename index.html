@@ -1167,6 +1167,7 @@ img { display: block; max-width: 100%; height: auto; }
 #cs-trail .trail-takeaway-p { font-family: var(--sans); font-size: 18px; line-height: 1.5; color: #222; margin: 0; }
 #cs-trail .trail-takeaway-p + .trail-takeaway-p { margin-top: 24px; }
 #cs-trail .trail-split-wrap { margin-top: 80px; }
+#cs-trail .trail-split-carousel { display: none; }
 #cs-trail .trail-full-img + .trail-text-block,
 #cs-trail .trail-split-wrap + .trail-text-block { margin-top: 180px; }
 #cs-trail .trail-split { display: flex; height: 386px; }
@@ -1858,7 +1859,8 @@ img { display: block; max-width: 100%; height: auto; }
   #cs-bc .bc-section-body p  { font-size: 16px; }
   #cs-bc .bc-gray-band .bc-container { padding: 64px 24px; }
   #cs-bc .bc-milestone-row { padding-top: 98px; }
-  #cs-bc .bc-img-caption { margin-bottom: 80px; }
+  #cs-bc .bc-img-caption { margin-bottom: 80px; margin-top: 16px; }
+  #cs-bc .bc-grid-caption { margin-top: 16px; }
   #cs-bc-lock-modal { margin-top: -52px !important; }
 }
 
@@ -1870,13 +1872,62 @@ img { display: block; max-width: 100%; height: auto; }
 @media (max-width: 479px) {
   #cs-trail .trail-container    { padding-left: 24px; padding-right: 24px; }
   #cs-trail .trail-text-block   { max-width: 100%; }
-  #cs-trail .trail-intro        { padding-top: 80px; padding-bottom: 80px; }
+  #cs-trail .trail-intro        { padding-top: 80px; padding-bottom: 48px; }
   #cs-trail .trail-takeaways   { padding-top: 80px; }
   #cs-trail .trail-takeaway-h  { font-size: 22px; }
+  #cs-trail .trail-takeaway    { margin-top: 48px; }
+  #cs-trail .trail-full-img + .trail-text-block,
+  #cs-trail .trail-split-wrap + .trail-text-block { margin-top: 100px; }
+  #cs-trail .trail-full-img  { margin-top: 48px; }
+#cs-trail .trail-split-wrap { margin-top: 48px; }
+  #cs-trail .trail-split { display: none; }
+  #cs-trail .trail-split-carousel { display: block; }
+  #cs-trail .trail-split-slides {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/2;
+    overflow: hidden;
+    background: #111;
+  }
+  #cs-trail .trail-split-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+  }
+  #cs-trail .trail-split-indicators {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 5px;
+    z-index: 2;
+  }
+  #cs-trail .trail-split-ind {
+    width: 32px;
+    height: 3px;
+    flex: none;
+    background: rgba(255,255,255,0.32);
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  #cs-trail .trail-split-ind-fill {
+    height: 100%;
+    width: 100%;
+    background: rgba(255,255,255,0.9);
+    border-radius: 3px;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  #cs-trail .trail-outro { padding-top: 100px; padding-bottom: 120px; }
   #cs-trail .trail-pullquote    { font-size: 28px; }
   #cs-trail .trail-section-serif { font-size: 28px; }
   #cs-trail .trail-body p       { font-size: 16px; }
   #cs-trail .trail-takeaway-p   { font-size: 16px; }
+  #cs-trail .trail-caption      { margin-top: 16px; }
 }
 
 /* ── Page lock ──────────────────────────────────────── */
@@ -3294,6 +3345,16 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
             <img class="trail-split-img" src="images/Trail575/trail5a.jpg" alt="" />
             <img class="trail-split-img" src="images/Trail575/trail5b.png" alt="" />
           </div>
+          <div class="trail-split-carousel">
+            <div class="trail-split-slides">
+              <img class="trail-split-slide" src="images/Trail575/trail5a.jpg" alt="" />
+              <img class="trail-split-slide" src="images/Trail575/trail5b.png" alt="" />
+              <div class="trail-split-indicators">
+                <div class="trail-split-ind"><div class="trail-split-ind-fill"></div></div>
+                <div class="trail-split-ind"><div class="trail-split-ind-fill"></div></div>
+              </div>
+            </div>
+          </div>
           <p class="trail-caption">Corporate gift boxes unlocked a new level of scale</p>
         </div>
 
@@ -3391,6 +3452,59 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
   slides.forEach(function (s, i) { gsap.set(s, { opacity: i === 0 ? 1 : 0, zIndex: 1, scale: 1, x: 0, filter: 'none' }); });
   startIndicator(0);
   timer = setTimeout(function () { goTo(1 % slides.length); }, DURATION * 1000);
+})();
+
+// Trail575 split carousel (mobile only)
+(function () {
+  if (typeof gsap === 'undefined') return;
+  if (window.innerWidth > 479) return;
+  var root = document.getElementById('cs-trail');
+  if (!root) return;
+  var slides = root.querySelectorAll('.trail-split-slide');
+  var indicators = root.querySelectorAll('.trail-split-ind');
+  var fills = root.querySelectorAll('.trail-split-ind-fill');
+  if (!slides.length) return;
+
+  var current = 0;
+  var DURATION = 2.8;
+  var FADE = 0.6;
+  var timer;
+
+  function startIndicator(idx) {
+    indicators.forEach(function (ind, i) {
+      fills[i].style.animation = 'none';
+      fills[i].style.transform = i < idx ? 'scaleX(1)' : 'scaleX(0)';
+    });
+    void fills[idx].offsetWidth;
+    fills[idx].style.transform = '';
+    fills[idx].style.animation = 'trail-fill ' + DURATION + 's linear forwards';
+  }
+
+  function goTo(idx) {
+    clearTimeout(timer);
+    var prev = slides[current];
+    var next = slides[idx];
+    gsap.set(next, { opacity: 0, zIndex: 2 });
+    gsap.set(prev, { opacity: 1, zIndex: 1 });
+    gsap.to(next, {
+      opacity: 1, duration: FADE, ease: 'power1.inOut',
+      onComplete: function () {
+        gsap.set(prev, { opacity: 0, zIndex: 1 });
+        gsap.set(next, { zIndex: 1 });
+      }
+    });
+    startIndicator(idx);
+    current = idx;
+    timer = setTimeout(function () { goTo((current + 1) % slides.length); }, DURATION * 1000);
+  }
+
+  indicators.forEach(function (ind, i) {
+    ind.addEventListener('click', function () { goTo(i); });
+  });
+
+  slides.forEach(function (s, i) { gsap.set(s, { opacity: i === 0 ? 1 : 0, zIndex: 1 }); });
+  startIndicator(0);
+  timer = setTimeout(function () { goTo(1); }, DURATION * 1000);
 })();
 </script>
 
